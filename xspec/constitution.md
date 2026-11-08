@@ -74,3 +74,4 @@ Toda entrega MUST incluir testes automatizados (unitários para regras de negóc
   - **PATCH**: Esclarecimentos de redação sem alterar o sentido normativo.
 
 **Version**: 1.0.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08
+

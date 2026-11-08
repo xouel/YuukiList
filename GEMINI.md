@@ -9,3 +9,4 @@ Comandos disponíveis no Gemini CLI para o fluxo X-Spec (`v2.0.1`):
 - `/xspec-build` (`xspec/commands/build.md`)
 - `/xspec-close` (`xspec/commands/close.md`)
 <!-- XSPEC:END -->
+

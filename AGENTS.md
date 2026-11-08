@@ -40,3 +40,4 @@ Quando o usuário invocar qualquer comando abaixo (via `/xspec-<cmd>`, `$xspec-<
    - A tabela `## Traceability Matrix` em `tasks.md` deve possuir exatamente 9 colunas e ter `Exec Result == PASS` comprovado em `.xspec/evidence/<id>/` antes do `close`.
 4. **Proteção das Living Specs:** Nunca edite `xspec/specs/` manualmente fora do `/xspec-init`; toda atualização de capacidade deve passar pelo `xspec merge` transacional em `/xspec-close`.
 <!-- XSPEC:END -->
+
