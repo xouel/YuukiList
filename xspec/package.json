@@ -1,0 +1,40 @@
+{
+  "name": "xspec",
+  "version": "2.0.1",
+  "description": "X-Spec — Spec-Driven Development (SDD) & Deterministic Governance Engine",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xouel/xspec.git"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "bin": {
+    "xspec": "./bin/xspec.mjs"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "commands/",
+    "templates/",
+    "docs/",
+    ".agents/",
+    ".claude/",
+    ".github/prompts/",
+    ".cursor/",
+    ".gemini/",
+    "AGENTS.md",
+    "GEMINI.md",
+    "install.md",
+    "README.md",
+    "CHANGELOG.md",
+    "VERSION"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "doctor": "node ./bin/xspec.mjs doctor",
+    "doctor:fix": "node ./bin/xspec.mjs doctor --fix"
+  }
+}

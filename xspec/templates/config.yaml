@@ -1,0 +1,89 @@
+# =============================================================================
+# X-Spec — Configuração do Projeto e do Motor Determinístico v2.0.1
+# =============================================================================
+version: 1
+schema_version: 2
+engine_version: "2.0.1"
+
+# Idioma da prosa livre nos artefatos (proposal, design, tasks, report e specs).
+# Nota: Cabeçalhos estruturais, headers de delta (ADDED/MODIFIED/REMOVED/RENAMED Requirements),
+# Requirement/Scenario, GIVEN/WHEN/THEN/AND e SHALL/MUST permanecem em inglês.
+language: "pt-BR"
+
+# Contexto técnico do projeto injetado em todas as etapas
+context: |
+  Stack: {{TECH_STACK_SUMMARY}}
+  Arquitetura: {{ARCHITECTURE_SUMMARY}}
+  Governança: xspec/constitution.md (princípios inegociáveis).
+
+# Perfil de rigor do fluxo:
+# - "minimal" : gates desativados | clarify: 1 pergunta | design: never | tdd: off
+# - "standard": gates ativos | clarify: 3 perguntas | design: auto | tdd: optional
+# - "strict"  : gates ativos | clarify: 5 perguntas | design: always | tdd: required
+profile: "standard"
+
+# Gates de confirmação humana entre etapas
+# true = pausa, apresenta o resumo e aguarda aprovação no chat antes de avançar
+# false = encadeia automaticamente a próxima etapa na mesma resposta
+gates:
+  after_define: true
+  after_plan: true
+  after_build: true
+
+# Clarification Gate na etapa /xspec-define
+clarify:
+  enabled: true
+  max_questions: 3
+  mode: "ask"              # "ask" (pergunta no chat) | "assume" (registra suposições em proposal.md sem pausar)
+
+# Geração de artefatos condicionais
+artifacts:
+  # design: auto (cria design.md se tocar em >1 capability, banco de dados, segurança ou >5 arquivos)
+  #         always (cria sempre) | never (pula direto para tasks.md)
+  design: "auto"
+  technical_docs: false    # true = inclui seções Data Model, Contracts e Research no design.md
+  report: "on_failure"     # "on_failure" (apenas se DIVERGED) | "always"
+
+# Política de Testes Automatizados (TDD)
+tdd:
+  mode: "optional"         # "off" | "optional" | "required"
+  test_command: ""         # Preenchido no init (ex: "node --test")
+
+# Convenção de numeração das mudanças em xspec/changes/<NNN>-<slug>/
+naming:
+  sequential: true
+  digits: 3
+  prefix: ""
+
+# Integração opcional com Git
+git:
+  branch_per_change: false
+  branch_pattern: "feat/{id}-{slug}"
+  auto_commit: false
+
+# Regras e limites estruturais por artefato
+rules:
+  proposal:
+    - "A seção '## Why' deve ter entre 50 e 1000 caracteres."
+    - "Inclua User Stories priorizadas (P1, P2, P3) com Independent Test."
+    - "Inclua Critérios de Sucesso mensuráveis (SC-001, SC-002...)."
+    - "Registre perguntas/respostas ou suposições em '## Clarifications'."
+  specs:
+    - "Todo requisito DEVE conter SHALL ou MUST em maiúsculas (máx. 500 caracteres)."
+    - "Todo cenário DEVE usar exatamente 4 hashtags ('#### Scenario:') com passos WHEN e THEN."
+    - "Inclua '## Purpose' (mín. 50 caracteres) APENAS em capabilities inéditas; omita para capabilities já existentes."
+    - "Em MODIFIED Requirements, copie o bloco completo do requisito de xspec/specs/ e preserve os cenários válidos."
+  design:
+    - "Decisões técnicas devem respeitar xspec/constitution.md e registrar alternativas consideradas."
+  tasks:
+    - "Tarefas sob '## N. Grupo' devem usar numeração 'N.M' e referência '(Ref: R:<Req> / S:<Scenario>)'."
+    - "Inclua a tabela '## Traceability Matrix' de 9 colunas cobrindo 100% dos cenários normativos."
+    - "Nunca use checkboxes ('- [ ]' ou '- [x]') em '## Traceability Matrix', '## Analysis' ou '## Drift Log'."
+
+# Comandos determinísticos executados pelo `xspec verify` no /xspec-close (shell: false)
+# Formato recomendado em v2.0.1: lista de objetos { id, cmd, args, timeout_ms, required }
+verification:
+  commands: []
+  run_on_build: false
+  require_clean_pass: true
+  block_archive_on_high: true

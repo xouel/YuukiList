@@ -1,0 +1,5 @@
+﻿description = "X-Spec (EXPLORE): Modo de exploracao livre, investigacao de codigo e analise tecnica"
+prompt = """
+Leia integralmente e execute as instrucoes de xspec/commands/explore.md.
+Argumentos do usuario: {{args}}
+"""

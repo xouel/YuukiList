@@ -1,0 +1,69 @@
+# =============================================================================
+# YuukiList — X-Spec Configuration (v2.0.1)
+# =============================================================================
+version: 2
+language: "pt-BR"
+
+context: |
+  Projeto: YuukiList — Plataforma de acompanhamento e catálogo de entretenimento asiático
+  Stack: TypeScript, Next.js 15 (App Router), NestJS, PostgreSQL (Prisma + pg_trgm), Tailwind CSS, shadcn/ui
+  Arquitetura: Monólito Modular desacoplado (apps/web, apps/api, packages/shared) com camadas data/catalog isoladas
+  Governança: xspec/constitution.md (princípios inegociáveis, custo zero permanente, soberania de dados)
+  Documentos de Referência: docs/YuukiList_Documento_Mestre_Contexto.md e docs/YuukiList_PRD.md
+
+profile: "standard"
+
+gates:
+  after_define: true
+  after_plan: true
+  after_build: true
+
+clarify:
+  enabled: true
+  max_questions: 3
+  mode: "ask"
+
+artifacts:
+  design: "always"
+  technical_docs: true
+  report: "on_failure"
+
+tdd:
+  mode: "required"
+  test_command: "node --test"
+
+naming:
+  sequential: true
+  digits: 3
+  prefix: ""
+
+git:
+  branch_per_change: false
+  branch_pattern: "feat/{id}-{slug}"
+  auto_commit: false
+
+rules:
+  proposal:
+    - "A seção '## Why' deve ter entre 50 e 1000 caracteres."
+    - "Inclua User Stories priorizadas (P1, P2, P3) com Independent Test."
+    - "Inclua Critérios de Sucesso mensuráveis (SC-001, SC-002...)."
+    - "Registre perguntas/respostas ou suposições em '## Clarifications'."
+  specs:
+    - "Todo requisito DEVE conter SHALL ou MUST em maiúsculas (máx. 500 caracteres)."
+    - "Todo cenário DEVE usar exatamente 4 hashtags ('#### Scenario:') com passos WHEN e THEN."
+    - "Inclua '## Purpose' (mín. 50 caracteres) APENAS em capabilities inéditas; omita para capabilities já existentes."
+    - "Em MODIFIED Requirements, copie o bloco completo do requisito de xspec/specs/ e preserve os cenários válidos."
+  design:
+    - "Decisões técnicas devem respeitar xspec/constitution.md e registrar alternativas consideradas."
+    - "Obrigatório registrar análise de custo zero e plano de saída em '## Research'."
+  tasks:
+    - "Tarefas sob '## N. Grupo' devem usar numeração 'N.M' e referência '(Ref: R:<Req> / S:<Scenario>)'."
+    - "Inclua a tabela '## Traceability Matrix' de 9 colunas cobrindo 100% dos cenários normativos."
+    - "Nunca use checkboxes ('- [ ]' ou '- [x]') em '## Traceability Matrix', '## Analysis' ou '## Drift Log'."
+
+verification:
+  commands:
+    - "node --test"
+  run_on_build: false
+  require_clean_pass: true
+  block_archive_on_high: true

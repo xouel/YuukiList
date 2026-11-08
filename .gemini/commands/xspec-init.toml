@@ -1,0 +1,5 @@
+﻿description = "X-Spec (INIT): Inicializa xspec/config.yaml, xspec/constitution.md e Living Specs iniciais"
+prompt = """
+Leia integralmente e execute as instrucoes de xspec/commands/init.md.
+Argumentos do usuario: {{args}}
+"""

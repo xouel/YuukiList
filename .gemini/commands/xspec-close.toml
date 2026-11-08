@@ -1,0 +1,5 @@
+﻿description = "X-Spec (CLOSE): Audita convergencia, mescla deltas em xspec/specs/ e arquiva mudanca"
+prompt = """
+Leia integralmente e execute as instrucoes de xspec/commands/close.md.
+Argumentos do usuario: {{args}}
+"""
