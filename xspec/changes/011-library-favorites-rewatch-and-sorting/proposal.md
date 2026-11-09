@@ -1,6 +1,6 @@
 # Proposal: 011-library-favorites-rewatch-and-sorting
 
-> **X-Spec** · ID: `011-library-favorites-rewatch-and-sorting` · Type: `feature` · Status: `DEFINED` · Created: `2026-11-09`
+> **X-Spec** · ID: `011-library-favorites-rewatch-and-sorting` · Type: `feature` · Status: `PLANNED` · Created: `2026-11-09`
 
 ## Why
 
@@ -77,3 +77,4 @@ Como usuário organizando um acervo volumoso, quero ordenar minha biblioteca por
 - Q: Como o usuário deve interagir com o fluxo de Reassistir/Reler na biblioteca pessoal? → A: Opção A — Modal/Ação com duas escolhas: 'Iniciar novo ciclo' (reseta progresso para 0 e incrementa rewatchCount em +1) ou 'Apenas incrementar contador' (+1 sem zerar progresso).
 - Q: Como deve ser tratada a exibição e o controle de progresso por Volumes em obras literárias? → A: Opção A — Campo opcional 'Volumes lidos' no modal de edição e exibição combinada (ex: 'Cap. 45 • Vol. 4') quando ambos forem preenchidos.
 - Q: Como o aviso de inconsistência entre status pessoal e progresso deve se comportar ao editar uma obra? → A: Opção A — Aviso informativo não-bloqueante (banner/badge âmbar no modal) alertando se o status for 'Concluído' com progresso < total da obra, respeitando a soberania do usuário.
+

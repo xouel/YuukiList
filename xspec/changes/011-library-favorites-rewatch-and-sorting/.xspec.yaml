@@ -2,7 +2,7 @@
 schema_version: 2
 id: "011-library-favorites-rewatch-and-sorting"
 type: "feature"
-status: "DEFINED"
+status: "PLANNED"
 skip_specs: false
 touched_capabilities:
   - "personal-library"

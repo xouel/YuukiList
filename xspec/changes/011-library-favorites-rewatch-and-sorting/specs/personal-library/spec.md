@@ -2,7 +2,7 @@
 
 ## ADDED Requirements
 
-### Requirement: Library Favorites, Rewatch Tracking and Advanced Sorting
+### Requirement: Library Favorites Rewatch Tracking and Advanced Sorting
 O backend da biblioteca pessoal SHALL suportar marcação de favoritos independente de notas, controle de ciclos de reassistir/reler com contador cumulativo e ordenações avançadas do acervo.
 
 #### Scenario: Marcacao de obra como favorita independente da nota

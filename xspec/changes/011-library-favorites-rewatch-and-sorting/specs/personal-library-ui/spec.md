@@ -2,7 +2,7 @@
 
 ## ADDED Requirements
 
-### Requirement: Interactive Favorites, Rewatch Actions and Inconsistency Warnings
+### Requirement: Interactive Favorites Rewatch Actions and Inconsistency Warnings
 A interface da biblioteca pessoal SHALL disponibilizar alternância ágil de favoritos com um clique, modal interativo para registrar novo ciclo ou contador de reassistir, controle de volumes e alertas não-bloqueantes de inconsistência.
 
 #### Scenario: Alternancia imediata de favorito no card ou linha
