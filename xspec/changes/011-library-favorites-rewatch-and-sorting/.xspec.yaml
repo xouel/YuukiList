@@ -1,0 +1,16 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "011-library-favorites-rewatch-and-sorting"
+type: "feature"
+status: "DEFINED"
+skip_specs: false
+touched_capabilities:
+  - "personal-library"
+  - "personal-library-ui"
+base_specs:
+  personal-library: "sha256:5570173a0dd3b7a64047f2979d4c1a38fc4835e7ccda173377f1d593efca48d9"
+  personal-library-ui: "sha256:70989bed3bad98af7ed558fa668fb080dc99bea0837929a6aab5edd3b36ee197"
+impacted_files: []
+depends_on:
+  - "010-navigation-ux-and-quick-actions"
+updated_at: "2026-11-09T23:00:07.015Z"
