@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "003-catalog-browse-ui"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "catalog-browse"
+base_specs:
+  catalog-browse: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-09T03:54:32.868Z"
