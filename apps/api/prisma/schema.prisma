@@ -40,6 +40,7 @@ model MediaItem {
   originCountry     String            @map("origin_country") @db.VarChar(64)
   rating            Float?
   coverPath         String            @map("cover_path") @db.VarChar(255)
+  provenance        Json?             @map("provenance")
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @updatedAt @map("updated_at")
 

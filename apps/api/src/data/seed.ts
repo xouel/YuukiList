@@ -9,6 +9,7 @@ import {
   validateMediaMetadata,
   type Category,
   type PublicationStatus,
+  type MediaItemProvenance,
 } from '../../../../packages/shared/src/index.ts';
 
 export interface StoredMediaItem {
@@ -25,6 +26,7 @@ export interface StoredMediaItem {
   originCountry: string;
   rating: number | null;
   coverPath: string;
+  provenance?: MediaItemProvenance | null;
   genres: string[];
   aliases: Array<{ alias: string; normalizedAlias: string; languageCode: string }>;
   totalEpisodes?: number | null;

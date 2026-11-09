@@ -15,6 +15,16 @@ export const EXTERNAL_SOURCES = Object.freeze([
 
 export type ExternalApiSource = (typeof EXTERNAL_SOURCES)[number];
 
+export type ProvenanceSource = ExternalApiSource | 'SEED_CANONICAL' | 'LOCAL';
+
+export interface FieldProvenance {
+  source: ProvenanceSource;
+  externalId?: string;
+  syncedAt: string;
+}
+
+export type MediaItemProvenance = Record<string, FieldProvenance>;
+
 export interface CanonicalExternalMediaDto {
   source: ExternalApiSource;
   externalId: string;

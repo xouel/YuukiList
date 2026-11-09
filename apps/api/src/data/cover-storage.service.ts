@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { CoverResult } from '../../../../packages/shared/src/types.ts';
+import { SvgCoverService } from './svg-cover.service.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,9 +18,11 @@ const SLUG_SAFE_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export class CoverStorageService {
   private coversDir: string;
   private placeholderSvgCache: string | null = null;
+  private svgCoverService: SvgCoverService;
 
-  constructor(coversDir = DEFAULT_COVERS_DIR) {
+  constructor(coversDir = DEFAULT_COVERS_DIR, svgCoverService?: SvgCoverService) {
     this.coversDir = coversDir;
+    this.svgCoverService = svgCoverService || new SvgCoverService(this.coversDir);
   }
 
   /**

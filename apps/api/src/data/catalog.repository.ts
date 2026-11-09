@@ -21,6 +21,8 @@ export interface ICatalogRepository {
   findBySlug(slug: string): Promise<MediaItemDetailDto | null>;
   findById(id: string): Promise<MediaItemDetailDto | null>;
   count(): Promise<number>;
+  upsertMediaItem(item: StoredMediaItem): Promise<StoredMediaItem>;
+  getAllItems?(): Promise<StoredMediaItem[]>;
 }
 
 /**
@@ -85,6 +87,12 @@ export class CatalogRepository implements ICatalogRepository {
         originCountry: input.originCountry,
         rating: input.rating ?? null,
         coverPath: `/assets/covers/${slug}.svg`,
+        provenance: {
+          title: { source: 'SEED_CANONICAL', syncedAt: '2026-01-01T00:00:00.000Z' },
+          synopsis: { source: 'SEED_CANONICAL', syncedAt: '2026-01-01T00:00:00.000Z' },
+          category: { source: 'SEED_CANONICAL', syncedAt: '2026-01-01T00:00:00.000Z' },
+          cover: { source: 'SEED_CANONICAL', syncedAt: '2026-01-01T00:00:00.000Z' },
+        },
         genres: [...input.genres],
         aliases: (input.aliases || []).map((a) => ({
           alias: a.alias,
@@ -125,6 +133,7 @@ export class CatalogRepository implements ICatalogRepository {
       coverUrl: `/api/v1/catalog/items/${item.slug}/cover`,
       genres: [...item.genres],
       aliases: item.aliases.map((a) => a.alias),
+      provenance: item.provenance || null,
     };
   }
 
@@ -149,7 +158,28 @@ export class CatalogRepository implements ICatalogRepository {
       coverUrl: `/api/v1/catalog/items/${item.slug}/cover`,
       genres: [...item.genres],
       aliases: item.aliases.map((a) => a.alias),
+      provenance: item.provenance || null,
     };
+  }
+
+  async upsertMediaItem(item: StoredMediaItem): Promise<StoredMediaItem> {
+    const existingIndex = this.items.findIndex(
+      (i) => i.slug === item.slug || i.id === item.id
+    );
+    if (existingIndex >= 0) {
+      this.items[existingIndex] = {
+        ...this.items[existingIndex],
+        ...item,
+        updatedAt: new Date(),
+      };
+      return this.items[existingIndex];
+    }
+    this.items.push(item);
+    return item;
+  }
+
+  async getAllItems(): Promise<StoredMediaItem[]> {
+    return [...this.items];
   }
 
   async findMany(query: CatalogQueryDto): Promise<PaginatedResponse<MediaItemSummaryDto>> {

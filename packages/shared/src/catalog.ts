@@ -3,6 +3,7 @@
  */
 
 import type { Category, PublicationStatus } from './enums.ts';
+import type { MediaItemProvenance } from './external.ts';
 
 export type CatalogSortBy = 'relevance' | 'title';
 
@@ -55,5 +56,6 @@ export interface MediaItemDetailDto {
   coverUrl: string;
   genres: string[];
   aliases: string[];
+  provenance?: MediaItemProvenance | null;
 }
 

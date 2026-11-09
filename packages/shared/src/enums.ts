@@ -3,6 +3,15 @@
  * Conforme estabelecido na Constituição (Princípio IX)
  */
 
+export const Category = Object.freeze({
+  DORAMA: 'DORAMA',
+  FILME: 'FILME',
+  ANIME: 'ANIME',
+  MANGA: 'MANGA',
+  MANHWA: 'MANHWA',
+  MANHUA: 'MANHUA',
+} as const);
+
 export const CATEGORIES = Object.freeze([
   'DORAMA',
   'FILME',
@@ -13,6 +22,14 @@ export const CATEGORIES = Object.freeze([
 ] as const);
 
 export type Category = (typeof CATEGORIES)[number];
+
+export const PublicationStatus = Object.freeze({
+  EM_ANDAMENTO: 'EM_ANDAMENTO',
+  FINALIZADA: 'FINALIZADA',
+  CANCELADA: 'CANCELADA',
+  HIATO: 'HIATO',
+  DESCONHECIDA: 'DESCONHECIDA',
+} as const);
 
 export const PUBLICATION_STATUSES = Object.freeze([
   'EM_ANDAMENTO',
