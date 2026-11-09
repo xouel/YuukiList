@@ -56,6 +56,12 @@ export class CatalogApiClient {
     if (query.genre && query.genre.trim()) {
       params.set('genre', query.genre.trim());
     }
+    if (query.country && query.country.trim()) {
+      params.set('country', query.country.trim());
+    }
+    if (query.theme && query.theme.trim()) {
+      params.set('theme', query.theme.trim());
+    }
     if (query.page && query.page > 1) {
       params.set('page', String(query.page));
     }
@@ -86,6 +92,8 @@ export class CatalogApiClient {
     const category = getVal('category') as CatalogQueryDto['category'];
     const status = getVal('status') as CatalogQueryDto['status'];
     const genre = getVal('genre');
+    const country = getVal('country');
+    const theme = getVal('theme');
     const pageRaw = getVal('page');
     const limitRaw = getVal('limit');
     const sortBy = getVal('sortBy') as CatalogQueryDto['sortBy'];
@@ -95,6 +103,8 @@ export class CatalogApiClient {
       category: category || undefined,
       status: status || undefined,
       genre: genre ? genre.trim() : undefined,
+      country: country ? country.trim() : undefined,
+      theme: theme ? theme.trim() : undefined,
       page: pageRaw ? Math.max(1, parseInt(pageRaw, 10) || 1) : 1,
       limit: limitRaw ? Math.min(50, Math.max(1, parseInt(limitRaw, 10) || 20)) : 20,
       sortBy: sortBy || undefined,

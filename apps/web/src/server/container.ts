@@ -1,24 +1,34 @@
 import {
   CatalogController,
+  CatalogService,
   AuthModule,
   LibraryController,
   LibraryRepository,
   LibraryService,
   CatalogRepository,
+  CatalogIngestionService,
 } from '@yuukilist/api';
+import { SAMPLE_EXTERNAL_TITLES } from '../../../../scripts/sync-catalog.mjs';
 
 class ServerContainer {
+  readonly catalogRepository: CatalogRepository;
+  readonly catalogService: CatalogService;
   readonly catalogController: CatalogController;
   readonly authModule: AuthModule;
   readonly libraryController: LibraryController;
 
   constructor() {
-    this.catalogController = new CatalogController();
+    this.catalogRepository = new CatalogRepository();
+    this.catalogService = new CatalogService(this.catalogRepository);
+    this.catalogController = new CatalogController(this.catalogService);
     this.authModule = new AuthModule();
-    const catalogRepo = new CatalogRepository();
     const libraryRepo = new LibraryRepository();
-    const libraryService = new LibraryService(libraryRepo, catalogRepo);
+    const libraryService = new LibraryService(libraryRepo, this.catalogRepository);
     this.libraryController = new LibraryController(libraryService, this.authModule.authGuard);
+
+    // Sincroniza lote canônico ingerido na memória do catálogo (Task 3.1)
+    const ingestion = new CatalogIngestionService(this.catalogRepository);
+    ingestion.syncCatalogBatch(SAMPLE_EXTERNAL_TITLES as any).catch(() => {});
   }
 }
 

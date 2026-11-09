@@ -404,6 +404,37 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
               </p>
             </div>
           )}
+
+          {/* Seção de Proveniência dos Dados e Atribuição Legal (TR-005) */}
+          <div className="space-y-3 pt-4 border-t border-[#262C3F]/80">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#06B6D4] flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Proveniência e Atribuição dos Dados</span>
+            </h2>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px] p-3 rounded-xl bg-[#0E111B] border border-[#262C3F]">
+              <div>
+                <span className="text-[#64748B] block">Sinopse &amp; Metadados</span>
+                <span className="text-white font-medium">
+                  {item.provenance?.synopsis?.source || (item.category === 'DORAMA' || item.category === 'FILME' ? 'TMDB / TVmaze' : 'ANN / Kitsu')}
+                </span>
+              </div>
+              <div>
+                <span className="text-[#64748B] block">Armazenamento de Capa</span>
+                <span className="text-emerald-400 font-medium">Soberania Local (SVG)</span>
+              </div>
+              <div>
+                <span className="text-[#64748B] block">Identificadores Canônicos</span>
+                <span className="text-white font-medium">YuukiList Sovereign UUID</span>
+              </div>
+            </div>
+
+            <p className="text-[10px] text-[#64748B] leading-relaxed">
+              This product uses the TMDB API but is not endorsed or certified by TMDB. Fontes adicionais: TVmaze, Anime News Network e MangaUpdates.
+            </p>
+          </div>
         </div>
       </article>
 

@@ -12,6 +12,8 @@ export interface CatalogQueryDto {
   category?: Category;
   status?: PublicationStatus;
   genre?: string;
+  country?: string;
+  theme?: string;
   page?: number;
   limit?: number;
   sortBy?: CatalogSortBy;

@@ -203,6 +203,22 @@ export class CatalogRepository implements ICatalogRepository {
       );
     }
 
+    // 3.1. Filtro por País de Origem
+    if (query.country) {
+      const targetCountry = query.country.trim().toUpperCase();
+      resultItems = resultItems.filter(
+        (item) => item.originCountry && item.originCountry.toUpperCase() === targetCountry
+      );
+    }
+
+    // 3.2. Filtro por Temas Transversais (BL/GL)
+    if (query.theme) {
+      const targetTheme = query.theme.trim().toUpperCase();
+      resultItems = resultItems.filter((item) =>
+        item.genres.some((g) => g.toUpperCase().includes(targetTheme))
+      );
+    }
+
     // 4. Busca Textual Inteligente (q) ou Ordenação Padrão
     const rawQ = query.q ? query.q.trim() : '';
     const normalizedQ = rawQ ? normalizeSearchText(rawQ) : '';

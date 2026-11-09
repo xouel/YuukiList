@@ -1,0 +1,15 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "010-navigation-ux-and-quick-actions"
+type: "feature"
+status: "BUILT"
+skip_specs: false
+touched_capabilities:
+  - "catalog-browse"
+  - "navigation-shell"
+base_specs:
+  catalog-browse: "sha256:6226264b6107bc0577a47abadae49a99f7cc8439f9fa8dc239249dd138171b03"
+  navigation-shell: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-09T22:31:14.568Z"

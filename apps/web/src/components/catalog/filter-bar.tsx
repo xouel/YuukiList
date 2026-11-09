@@ -9,12 +9,16 @@ import {
   type CatalogSortBy,
 } from '../../../../../packages/shared/src/index.ts';
 
-interface FilterBarProps {
+export interface FilterBarProps {
   selectedCategory?: Category;
   selectedStatus?: PublicationStatus;
+  selectedCountry?: string;
+  selectedTheme?: string;
   sortBy?: CatalogSortBy;
   onSelectCategory: (category?: Category) => void;
   onSelectStatus: (status?: PublicationStatus) => void;
+  onSelectCountry?: (country?: string) => void;
+  onSelectTheme?: (theme?: string) => void;
   onSelectSortBy: (sortBy?: CatalogSortBy) => void;
   onClearFilters: () => void;
   totalResults?: number;
@@ -37,17 +41,36 @@ const STATUS_DISPLAY_NAMES: Record<PublicationStatus, string> = {
   DESCONHECIDA: 'Desconhecida',
 };
 
+const COUNTRIES = [
+  { code: 'KR', name: 'Coreia do Sul (KR)' },
+  { code: 'JP', name: 'Japão (JP)' },
+  { code: 'CN', name: 'China (CN)' },
+  { code: 'TH', name: 'Tailândia (TH)' },
+  { code: 'TW', name: 'Taiwan (TW)' },
+];
+
+const THEMES = [
+  { code: 'BL', name: 'Boys\' Love (BL)' },
+  { code: 'GL', name: 'Girls\' Love (GL)' },
+];
+
 export function FilterBar({
   selectedCategory,
   selectedStatus,
+  selectedCountry,
+  selectedTheme,
   sortBy = 'relevance',
   onSelectCategory,
   onSelectStatus,
+  onSelectCountry,
+  onSelectTheme,
   onSelectSortBy,
   onClearFilters,
   totalResults,
 }: FilterBarProps) {
-  const hasActiveFilters = Boolean(selectedCategory || selectedStatus || sortBy === 'title');
+  const hasActiveFilters = Boolean(
+    selectedCategory || selectedStatus || selectedCountry || selectedTheme || sortBy === 'title'
+  );
 
   return (
     <div className="w-full space-y-4">
@@ -88,9 +111,49 @@ export function FilterBar({
         })}
       </div>
 
-      {/* Linha 2: Dropdowns de Status e Ordenação + Totalizador */}
+      {/* Linha 2: Dropdowns de Filtros (País, Tema, Status, Ordenação) + Totalizador */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-[#262C3F]/50">
         <div className="flex flex-wrap items-center gap-2.5">
+          {/* Seletor de País de Origem */}
+          <div className="relative">
+            <label htmlFor="filter-country" className="sr-only">
+              Filtrar por País de Origem
+            </label>
+            <select
+              id="filter-country"
+              value={selectedCountry || ''}
+              onChange={(e) => onSelectCountry && onSelectCountry(e.target.value || undefined)}
+              className="px-3 py-1.5 bg-[#121520] border border-[#262C3F] rounded-lg text-xs sm:text-sm text-[#F3F4F6] focus:border-[#06B6D4] focus-visible:ring-2 focus-visible:ring-[#06B6D4] outline-none transition-colors"
+            >
+              <option value="">Todos os Países</option>
+              {COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Seletor de Temas Transversais (BL/GL) */}
+          <div className="relative">
+            <label htmlFor="filter-theme" className="sr-only">
+              Filtrar por Temas Transversais
+            </label>
+            <select
+              id="filter-theme"
+              value={selectedTheme || ''}
+              onChange={(e) => onSelectTheme && onSelectTheme(e.target.value || undefined)}
+              className="px-3 py-1.5 bg-[#121520] border border-[#262C3F] rounded-lg text-xs sm:text-sm text-[#F3F4F6] focus:border-[#06B6D4] focus-visible:ring-2 focus-visible:ring-[#06B6D4] outline-none transition-colors"
+            >
+              <option value="">Todos os Temas</option>
+              {THEMES.map((t) => (
+                <option key={t.code} value={t.code}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Seletor de Status */}
           <div className="relative">
             <label htmlFor="filter-status" className="sr-only">
@@ -149,4 +212,3 @@ export function FilterBar({
     </div>
   );
 }
-

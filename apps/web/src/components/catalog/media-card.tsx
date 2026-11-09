@@ -1,11 +1,14 @@
 'use client';
 
-import React from 'react';
-import type { MediaItemSummaryDto } from '../../../../../packages/shared/src/index.ts';
+import React, { useState } from 'react';
+import type { MediaItemSummaryDto, ConsumptionStatus } from '../../../../../packages/shared/src/index.ts';
+import { useAuth } from '../../context/auth-context.tsx';
+import { LibraryApiClient } from '../../services/library-api.client.ts';
 
 interface MediaCardProps {
   item: MediaItemSummaryDto;
   onNavigate?: (slug: string) => void;
+  onQuickAdd?: (item: MediaItemSummaryDto) => Promise<void> | void;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -25,7 +28,28 @@ const STATUS_LABELS: Record<string, string> = {
   DESCONHECIDA: 'Desconhecida',
 };
 
-export function MediaCard({ item, onNavigate }: MediaCardProps) {
+const libraryApi = new LibraryApiClient();
+
+function getDefaultStatusForCategory(category: string): ConsumptionStatus {
+  switch (category) {
+    case 'FILME':
+      return 'QUERO_ASSISTIR';
+    case 'MANGA':
+    case 'MANHWA':
+    case 'MANHUA':
+      return 'LENDO';
+    case 'DORAMA':
+    case 'ANIME':
+    default:
+      return 'ASSISTINDO';
+  }
+}
+
+export function MediaCard({ item, onNavigate, onQuickAdd }: MediaCardProps) {
+  const { isAuthenticated } = useAuth();
+  const [isInLibrary, setIsInLibrary] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const categoryClass = CATEGORY_COLORS[item.category] || 'bg-gray-800 text-gray-300 border-gray-700';
   const statusLabel = STATUS_LABELS[item.publicationStatus] || item.publicationStatus;
 
@@ -33,6 +57,42 @@ export function MediaCard({ item, onNavigate }: MediaCardProps) {
     if (onNavigate) {
       e.preventDefault();
       onNavigate(item.slug);
+    }
+  };
+
+  const handleQuickAdd = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isInLibrary || isSubmitting) return;
+
+    if (!isAuthenticated) {
+      if (typeof window !== 'undefined') {
+        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.href = `/login?returnTo=${returnUrl}`;
+      }
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      // Otimista
+      setIsInLibrary(true);
+
+      if (onQuickAdd) {
+        await onQuickAdd(item);
+      } else {
+        const defaultStatus = getDefaultStatusForCategory(item.category);
+        await libraryApi.addItem({
+          mediaItemId: item.id,
+          status: defaultStatus,
+        });
+      }
+    } catch {
+      // Reverte estado se falhar
+      setIsInLibrary(false);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -54,14 +114,32 @@ export function MediaCard({ item, onNavigate }: MediaCardProps) {
           </span>
         </div>
 
-        {/* Badge de Ano de Lançamento */}
-        {item.releaseYear && (
-          <div className="absolute top-2.5 right-2.5">
-            <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-black/60 text-gray-300 backdrop-blur">
-              {item.releaseYear}
+        {/* Botão de Ação Rápida (quick-add) */}
+        <div className="absolute top-2.5 right-2.5 z-10">
+          {isInLibrary ? (
+            <span
+              className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500/90 text-black shadow-md backdrop-blur"
+              title="Obra adicionada à sua biblioteca"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Na Lista</span>
             </span>
-          </div>
-        )}
+          ) : (
+            <button
+              onClick={handleQuickAdd}
+              disabled={isSubmitting}
+              className="quick-add p-1.5 rounded-lg bg-black/70 hover:bg-[#06B6D4] text-white hover:text-black border border-white/20 transition-all backdrop-blur shadow-md hover:scale-110 active:scale-95"
+              aria-label={`Adicionar ${item.title} à biblioteca`}
+              title="Adicionar à biblioteca rapidamente"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Conteúdo do Card */}
@@ -71,7 +149,7 @@ export function MediaCard({ item, onNavigate }: MediaCardProps) {
             <a
               href={`/items/${item.slug}`}
               onClick={handleClick}
-              className="focus-visible:ring-2 focus-visible:ring-[#06B6D4] rounded outline-none after:absolute after:inset-0"
+              className="focus-visible:ring-2 focus-visible:ring-[#06B6D4] rounded outline-none after:absolute after:inset-0 after:z-0"
             >
               {item.title}
             </a>
@@ -97,4 +175,3 @@ export function MediaCard({ item, onNavigate }: MediaCardProps) {
     </article>
   );
 }
-

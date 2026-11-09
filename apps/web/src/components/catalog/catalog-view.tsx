@@ -186,6 +186,18 @@ export function CatalogView({
     loadInitialItems(updated);
   };
 
+  const handleSelectCountry = (country?: string) => {
+    const updated = { ...query, country, page: 1 };
+    setQuery(updated);
+    loadInitialItems(updated);
+  };
+
+  const handleSelectTheme = (theme?: string) => {
+    const updated = { ...query, theme, page: 1 };
+    setQuery(updated);
+    loadInitialItems(updated);
+  };
+
   const handleSelectSortBy = (sortBy?: CatalogSortBy) => {
     const updated = { ...query, sortBy, page: 1 };
     setQuery(updated);
@@ -197,6 +209,8 @@ export function CatalogView({
       q: '',
       category: undefined,
       status: undefined,
+      country: undefined,
+      theme: undefined,
       sortBy: 'relevance' as CatalogSortBy,
       page: 1,
       limit: 20,
@@ -243,9 +257,13 @@ export function CatalogView({
         <FilterBar
           selectedCategory={query.category}
           selectedStatus={query.status}
+          selectedCountry={query.country}
+          selectedTheme={query.theme}
           sortBy={query.sortBy}
           onSelectCategory={handleSelectCategory}
           onSelectStatus={handleSelectStatus}
+          onSelectCountry={handleSelectCountry}
+          onSelectTheme={handleSelectTheme}
           onSelectSortBy={handleSelectSortBy}
           onClearFilters={handleClearFilters}
           totalResults={viewStatus === 'success' ? meta.total : undefined}
