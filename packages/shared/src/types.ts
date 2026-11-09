@@ -46,6 +46,9 @@ export interface SeedItemInput {
   rating?: number;
   genres: string[];
   aliases?: Array<{ alias: string; languageCode: string }>;
+  totalEpisodes?: number | null;
+  totalChapters?: number | null;
+  totalVolumes?: number | null;
 }
 
 export interface CoverResult {

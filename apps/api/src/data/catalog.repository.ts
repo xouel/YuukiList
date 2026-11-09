@@ -19,6 +19,7 @@ import type { StoredMediaItem } from './seed.ts';
 export interface ICatalogRepository {
   findMany(query: CatalogQueryDto): Promise<PaginatedResponse<MediaItemSummaryDto>>;
   findBySlug(slug: string): Promise<MediaItemDetailDto | null>;
+  findById(id: string): Promise<MediaItemDetailDto | null>;
   count(): Promise<number>;
 }
 
@@ -90,6 +91,9 @@ export class CatalogRepository implements ICatalogRepository {
           normalizedAlias: normalizeSearchText(a.alias),
           languageCode: a.languageCode,
         })),
+        totalEpisodes: input.totalEpisodes ?? null,
+        totalChapters: input.totalChapters ?? null,
+        totalVolumes: input.totalVolumes ?? null,
         createdAt: new Date('2026-01-01T00:00:00Z'),
         updatedAt: new Date('2026-01-01T00:00:00Z'),
       };
@@ -114,9 +118,33 @@ export class CatalogRepository implements ICatalogRepository {
       category: item.category,
       publicationStatus: item.publicationStatus,
       synopsis: item.synopsis,
-      totalEpisodes: null,
-      totalChapters: null,
-      totalVolumes: null,
+      totalEpisodes: item.totalEpisodes ?? null,
+      totalChapters: item.totalChapters ?? null,
+      totalVolumes: item.totalVolumes ?? null,
+      releaseYear: item.releaseYear,
+      coverUrl: `/api/v1/catalog/items/${item.slug}/cover`,
+      genres: [...item.genres],
+      aliases: item.aliases.map((a) => a.alias),
+    };
+  }
+
+  async findById(id: string): Promise<MediaItemDetailDto | null> {
+    if (!id) return null;
+    const cleanId = id.trim().toLowerCase();
+    const item = this.items.find((i) => i.id.toLowerCase() === cleanId || i.slug === cleanId);
+    if (!item) return null;
+
+    return {
+      id: item.id,
+      slug: item.slug,
+      title: item.title,
+      originalTitle: item.originalTitle,
+      category: item.category,
+      publicationStatus: item.publicationStatus,
+      synopsis: item.synopsis,
+      totalEpisodes: item.totalEpisodes ?? null,
+      totalChapters: item.totalChapters ?? null,
+      totalVolumes: item.totalVolumes ?? null,
       releaseYear: item.releaseYear,
       coverUrl: `/api/v1/catalog/items/${item.slug}/cover`,
       genres: [...item.genres],

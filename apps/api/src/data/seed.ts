@@ -27,6 +27,9 @@ export interface StoredMediaItem {
   coverPath: string;
   genres: string[];
   aliases: Array<{ alias: string; normalizedAlias: string; languageCode: string }>;
+  totalEpisodes?: number | null;
+  totalChapters?: number | null;
+  totalVolumes?: number | null;
   createdAt: Date;
   updatedAt: Date;
 }

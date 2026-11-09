@@ -32,6 +32,10 @@ export class CatalogService {
     return this.repository.findBySlug(slug);
   }
 
+  async getItemById(id: string): Promise<MediaItemDetailDto | null> {
+    return this.repository.findById(id);
+  }
+
   getItemCover(slug: string) {
     return this.coverStorage.getCoverBySlug(slug);
   }

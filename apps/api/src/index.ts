@@ -19,6 +19,11 @@ export * from './auth/auth.guard.ts';
 export * from './auth/current-user.decorator.ts';
 export * from './auth/auth.controller.ts';
 export * from './auth/auth.module.ts';
+export * from './library/library.errors.ts';
+export * from './library/library.repository.ts';
+export * from './library/library.service.ts';
+export * from './library/library.controller.ts';
+export * from './library/library.module.ts';
 export * from './app.module.ts';
 export * from '../../../packages/shared/src/index.ts';
 
