@@ -1,0 +1,14 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "007-personal-library-ui"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "personal-library-ui"
+base_specs:
+  personal-library-ui: "NEW"
+impacted_files: []
+depends_on:
+  - "006-personal-library-api"
+updated_at: "2026-11-09T14:45:17.582Z"

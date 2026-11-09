@@ -11,7 +11,7 @@ import { LibraryService } from './library.service.ts';
 import { LibraryController } from './library.controller.ts';
 
 export class LibraryModule {
-  static readonly name = 'LibraryModule';
+  static readonly moduleName = 'LibraryModule';
 
   readonly libraryRepository: LibraryRepository;
   readonly catalogRepository: ICatalogRepository;
@@ -39,3 +39,4 @@ export class LibraryModule {
     this.libraryController = new LibraryController(this.libraryService, this.authGuard);
   }
 }
+

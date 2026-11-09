@@ -71,7 +71,7 @@ export function RegisterForm() {
       setIsSubmitting(true);
       try {
         await register(values);
-        router.push('/');
+        window.location.href = '/';
       } catch (err: any) {
         const message =
           err.statusCode === 409

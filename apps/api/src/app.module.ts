@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module.ts';
 import { LibraryModule } from './library/library.module.ts';
 
 export class AppModule {
-  static readonly name = 'AppModule';
+  static readonly moduleName = 'AppModule';
   static readonly imports = [DataModule, CatalogModule, AuthModule, LibraryModule];
 }
 

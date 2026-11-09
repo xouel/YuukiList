@@ -34,7 +34,7 @@ export class AuthApiClient {
 
   constructor(options: AuthApiClientOptions = {}) {
     this.baseUrl = options.baseUrl ? options.baseUrl.replace(/\/+$/, '') : '';
-    this.fetcher = options.fetcher || globalThis.fetch;
+    this.fetcher = options.fetcher || ((input, init) => globalThis.fetch(input, init));
   }
 
   async register(dto: RegisterDto): Promise<AuthUserResponse> {

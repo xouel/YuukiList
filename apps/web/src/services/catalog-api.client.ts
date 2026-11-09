@@ -35,7 +35,7 @@ export class CatalogApiClient {
 
   constructor(options: CatalogApiClientOptions = {}) {
     this.baseUrl = options.baseUrl ? options.baseUrl.replace(/\/+$/, '') : '';
-    this.fetcher = options.fetcher || globalThis.fetch;
+    this.fetcher = options.fetcher || ((input, init) => globalThis.fetch(input, init));
   }
 
   /**

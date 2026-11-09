@@ -27,3 +27,4 @@ ALTER TABLE "user_library_items" ADD CONSTRAINT "user_library_items_user_id_fkey
 
 -- AddForeignKey
 ALTER TABLE "user_library_items" ADD CONSTRAINT "user_library_items_media_item_id_fkey" FOREIGN KEY ("media_item_id") REFERENCES "media_items"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+

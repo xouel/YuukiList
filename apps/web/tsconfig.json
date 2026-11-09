@@ -1,15 +1,43 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@yuukilist/shared": [
+        "../../packages/shared/src/index"
+      ],
+      "@yuukilist/api": [
+        "../../apps/api/src/index"
+      ]
+    },
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "jsx": "preserve",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["src/**/*", "app/**/*"]
+  "include": [
+    "src/**/*",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
-

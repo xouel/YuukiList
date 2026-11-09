@@ -7,7 +7,7 @@ import { CatalogService } from './catalog.service.ts';
 import { CatalogController, CatalogNotFoundError } from './catalog.controller.ts';
 
 export class CatalogModule {
-  static readonly name = 'CatalogModule';
+  static readonly moduleName = 'CatalogModule';
   static readonly imports = [DataModule];
   static readonly controllers = [CatalogController];
   static readonly providers = [CatalogService];

@@ -74,7 +74,7 @@ export function LoginForm() {
       setIsSubmitting(true);
       try {
         await login(values);
-        router.push(redirectUrl);
+        window.location.href = redirectUrl || '/';
       } catch (err: any) {
         const message =
           err.statusCode === 401
