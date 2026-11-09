@@ -1,6 +1,6 @@
 # Proposal: 010-navigation-ux-and-quick-actions
 
-> **X-Spec** · ID: `010-navigation-ux-and-quick-actions` · Type: `feature` · Status: `BUILT` · Created: `2026-11-09`
+> **X-Spec** · ID: `010-navigation-ux-and-quick-actions` · Type: `feature` · Status: `ARCHIVED` · Created: `2026-11-09`
 
 ## Why
 

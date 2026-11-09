@@ -2,7 +2,7 @@
 schema_version: 2
 id: "010-navigation-ux-and-quick-actions"
 type: "feature"
-status: "BUILT"
+status: "ARCHIVED"
 skip_specs: false
 touched_capabilities:
   - "catalog-browse"
@@ -12,4 +12,4 @@ base_specs:
   navigation-shell: "NEW"
 impacted_files: []
 depends_on: []
-updated_at: "2026-11-09T22:31:14.568Z"
+updated_at: "2026-11-09T22:50:11.545Z"
