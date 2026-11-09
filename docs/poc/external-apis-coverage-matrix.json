@@ -1,0 +1,613 @@
+{
+  "generatedAt": "2026-11-09T15:31:59.750Z",
+  "totalTitlesEvaluated": 13,
+  "sourcesEvaluated": [
+    "TMDB",
+    "TVMAZE",
+    "KITSU",
+    "ANN",
+    "MANGAUPDATES"
+  ],
+  "coverageByTitle": [
+    {
+      "title": "Moving",
+      "category": "DORAMA",
+      "targetFormat": "AUDIOVISUAL",
+      "evaluatedSources": [
+        {
+          "source": "TMDB",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 95,
+          "notes": "Metadados completos, sinopses em múltiplos idiomas e contagem exata de episódios."
+        },
+        {
+          "source": "TVMAZE",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": false,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 88,
+          "notes": "Excelente para cronograma de episódios e datas de exibição; títulos originais ausentes."
+        }
+      ],
+      "primaryRecommendedSource": "TMDB",
+      "secondaryFallbackSource": "TVMAZE",
+      "licensingSummary": {
+        "licenseType": "Termos de Uso de API TMDB (Uso Não Comercial Gratuito)",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Queen of Tears",
+      "category": "DORAMA",
+      "targetFormat": "AUDIOVISUAL",
+      "evaluatedSources": [
+        {
+          "source": "TMDB",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 95,
+          "notes": "Metadados completos, sinopses em múltiplos idiomas e contagem exata de episódios."
+        },
+        {
+          "source": "TVMAZE",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": false,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 88,
+          "notes": "Excelente para cronograma de episódios e datas de exibição; títulos originais ausentes."
+        }
+      ],
+      "primaryRecommendedSource": "TMDB",
+      "secondaryFallbackSource": "TVMAZE",
+      "licensingSummary": {
+        "licenseType": "Termos de Uso de API TMDB (Uso Não Comercial Gratuito)",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Alice in Borderland",
+      "category": "DORAMA",
+      "targetFormat": "AUDIOVISUAL",
+      "evaluatedSources": [
+        {
+          "source": "TMDB",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 95,
+          "notes": "Metadados completos, sinopses em múltiplos idiomas e contagem exata de episódios."
+        },
+        {
+          "source": "TVMAZE",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": false,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 88,
+          "notes": "Excelente para cronograma de episódios e datas de exibição; títulos originais ausentes."
+        }
+      ],
+      "primaryRecommendedSource": "TMDB",
+      "secondaryFallbackSource": "TVMAZE",
+      "licensingSummary": {
+        "licenseType": "Termos de Uso de API TMDB (Uso Não Comercial Gratuito)",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Oldboy",
+      "category": "FILME",
+      "targetFormat": "AUDIOVISUAL",
+      "evaluatedSources": [
+        {
+          "source": "TMDB",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 98,
+          "notes": "Fonte definitiva para longas-metragens orientais."
+        }
+      ],
+      "primaryRecommendedSource": "TMDB",
+      "licensingSummary": {
+        "licenseType": "Termos de Uso de API TMDB (Uso Não Comercial Gratuito)",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Your Name.",
+      "category": "FILME",
+      "targetFormat": "AUDIOVISUAL",
+      "evaluatedSources": [
+        {
+          "source": "TMDB",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 98,
+          "notes": "Fonte definitiva para longas-metragens orientais."
+        }
+      ],
+      "primaryRecommendedSource": "TMDB",
+      "licensingSummary": {
+        "licenseType": "Termos de Uso de API TMDB (Uso Não Comercial Gratuito)",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Naruto",
+      "category": "ANIME",
+      "targetFormat": "AUDIOVISUAL",
+      "evaluatedSources": [
+        {
+          "source": "KITSU",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 92,
+          "notes": "Boa cobertura de títulos romanizados e episódios."
+        },
+        {
+          "source": "ANN",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 90,
+          "notes": "Enciclopédia histórica completa em XML, com datas e episódios precisos."
+        }
+      ],
+      "primaryRecommendedSource": "KITSU",
+      "secondaryFallbackSource": "ANN",
+      "licensingSummary": {
+        "licenseType": "Kitsu Public API Terms (Uso Justo / Não Comercial)",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "Dados de anime e mangá fornecidos por Kitsu.io.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Frieren: Beyond Journey's End",
+      "category": "ANIME",
+      "targetFormat": "AUDIOVISUAL",
+      "evaluatedSources": [
+        {
+          "source": "KITSU",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 92,
+          "notes": "Boa cobertura de títulos romanizados e episódios."
+        },
+        {
+          "source": "ANN",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 90,
+          "notes": "Enciclopédia histórica completa em XML, com datas e episódios precisos."
+        }
+      ],
+      "primaryRecommendedSource": "KITSU",
+      "secondaryFallbackSource": "ANN",
+      "licensingSummary": {
+        "licenseType": "Kitsu Public API Terms (Uso Justo / Não Comercial)",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "Dados de anime e mangá fornecidos por Kitsu.io.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Solo Leveling",
+      "category": "ANIME",
+      "targetFormat": "AUDIOVISUAL",
+      "evaluatedSources": [
+        {
+          "source": "KITSU",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 92,
+          "notes": "Boa cobertura de títulos romanizados e episódios."
+        },
+        {
+          "source": "ANN",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 90,
+          "notes": "Enciclopédia histórica completa em XML, com datas e episódios precisos."
+        }
+      ],
+      "primaryRecommendedSource": "KITSU",
+      "secondaryFallbackSource": "ANN",
+      "licensingSummary": {
+        "licenseType": "Kitsu Public API Terms (Uso Justo / Não Comercial)",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "Dados de anime e mangá fornecidos por Kitsu.io.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "One Piece",
+      "category": "MANGA",
+      "targetFormat": "LITERARY",
+      "evaluatedSources": [
+        {
+          "source": "MANGAUPDATES",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 96,
+          "notes": "Única fonte que diferencia com perfeição Mangá vs. Manhwa vs. Manhua e rastreia contagem de capítulos."
+        },
+        {
+          "source": "KITSU",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": false,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 78,
+          "notes": "Capítulos frequentemente nulos para obras em andamento longo."
+        }
+      ],
+      "primaryRecommendedSource": "MANGAUPDATES",
+      "secondaryFallbackSource": "KITSU",
+      "licensingSummary": {
+        "licenseType": "Baka-Updates Manga API Terms of Service",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "Informações de séries e releases fornecidas por MangaUpdates.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Berserk",
+      "category": "MANGA",
+      "targetFormat": "LITERARY",
+      "evaluatedSources": [
+        {
+          "source": "MANGAUPDATES",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 96,
+          "notes": "Única fonte que diferencia com perfeição Mangá vs. Manhwa vs. Manhua e rastreia contagem de capítulos."
+        },
+        {
+          "source": "KITSU",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": false,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 78,
+          "notes": "Capítulos frequentemente nulos para obras em andamento longo."
+        }
+      ],
+      "primaryRecommendedSource": "MANGAUPDATES",
+      "secondaryFallbackSource": "KITSU",
+      "licensingSummary": {
+        "licenseType": "Baka-Updates Manga API Terms of Service",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "Informações de séries e releases fornecidas por MangaUpdates.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Solo Leveling",
+      "category": "MANHWA",
+      "targetFormat": "LITERARY",
+      "evaluatedSources": [
+        {
+          "source": "MANGAUPDATES",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 96,
+          "notes": "Única fonte que diferencia com perfeição Mangá vs. Manhwa vs. Manhua e rastreia contagem de capítulos."
+        }
+      ],
+      "primaryRecommendedSource": "MANGAUPDATES",
+      "licensingSummary": {
+        "licenseType": "Baka-Updates Manga API Terms of Service",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "Informações de séries e releases fornecidas por MangaUpdates.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "The Beginning After the End",
+      "category": "MANHWA",
+      "targetFormat": "LITERARY",
+      "evaluatedSources": [
+        {
+          "source": "MANGAUPDATES",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 96,
+          "notes": "Única fonte que diferencia com perfeição Mangá vs. Manhwa vs. Manhua e rastreia contagem de capítulos."
+        }
+      ],
+      "primaryRecommendedSource": "MANGAUPDATES",
+      "licensingSummary": {
+        "licenseType": "Baka-Updates Manga API Terms of Service",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "Informações de séries e releases fornecidas por MangaUpdates.",
+        "imageReuseAllowed": false
+      }
+    },
+    {
+      "title": "Heaven Official's Blessing",
+      "category": "MANHUA",
+      "targetFormat": "LITERARY",
+      "evaluatedSources": [
+        {
+          "source": "MANGAUPDATES",
+          "found": true,
+          "coverage": {
+            "hasTitle": true,
+            "hasOriginalTitle": true,
+            "hasSynopsis": true,
+            "hasReleaseYear": true,
+            "hasOriginCountry": true,
+            "hasUnitsCount": true,
+            "hasGenres": true,
+            "hasCover": true,
+            "hasStatus": true
+          },
+          "confidenceScore": 96,
+          "notes": "Única fonte que diferencia com perfeição Mangá vs. Manhwa vs. Manhua e rastreia contagem de capítulos."
+        }
+      ],
+      "primaryRecommendedSource": "MANGAUPDATES",
+      "licensingSummary": {
+        "licenseType": "Baka-Updates Manga API Terms of Service",
+        "commercialUseAllowed": false,
+        "attributionRequired": true,
+        "attributionNotice": "Informações de séries e releases fornecidas por MangaUpdates.",
+        "imageReuseAllowed": false
+      }
+    }
+  ],
+  "conclusionsByCategory": {
+    "DORAMA": {
+      "recommendedPrimary": "TMDB",
+      "recommendedFallback": "TVMAZE",
+      "justification": "TMDB possui metadados coreanos e japoneses ricos com sinopses localizadas; TVmaze serve como autoridade de contagem de episódios e calendário."
+    },
+    "FILME": {
+      "recommendedPrimary": "TMDB",
+      "justification": "TMDB oferece cobertura exaustiva de longas-metragens asiáticos sem concorrente gratuito comparável."
+    },
+    "ANIME": {
+      "recommendedPrimary": "KITSU",
+      "recommendedFallback": "ANN",
+      "justification": "Kitsu possui API REST/JSON rápida e limpa; ANN possui a enciclopédia histórica mais confiável para datas e episódios clássicos."
+    },
+    "MANGA": {
+      "recommendedPrimary": "MANGAUPDATES",
+      "recommendedFallback": "KITSU",
+      "justification": "MangaUpdates possui a contagem de capítulos mais atualizada pela comunidade e sinopses ricas."
+    },
+    "MANHWA": {
+      "recommendedPrimary": "MANGAUPDATES",
+      "justification": "MangaUpdates é a única fonte gratuita confiável com categorização formal e metadados detalhados para títulos sul-coreanos."
+    },
+    "MANHUA": {
+      "recommendedPrimary": "MANGAUPDATES",
+      "justification": "MangaUpdates identifica explicitamente produções chinesas (manhua) com dados de autores e artistas."
+    }
+  },
+  "permanentZeroCostCheck": {
+    "passed": true,
+    "freeTierLimitsBySource": {
+      "TMDB": "Gratuito com chave pública sem cobrança",
+      "TVMAZE": "Gratuito até 20 req/10s sem chave nem cartão",
+      "KITSU": "Gratuito sem chave para endpoints públicos",
+      "ANN": "Gratuito com 1 req/s por IP",
+      "MANGAUPDATES": "Gratuito com limite de taxa comunitário"
+    },
+    "creditCardRequired": false
+  }
+}

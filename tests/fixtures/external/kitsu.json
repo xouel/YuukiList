@@ -1,0 +1,92 @@
+{
+  "naruto": {
+    "id": "11",
+    "type": "anime",
+    "attributes": {
+      "slug": "naruto",
+      "synopsis": "Moments prior to Naruto Uzumaki's birth, a huge demon known as the Kyuubi, the Nine-Tailed Fox, attacked Konohagakure.",
+      "canonicalTitle": "Naruto",
+      "titles": {
+        "en_jp": "Naruto",
+        "ja_jp": "NARUTO -ナルト-"
+      },
+      "startDate": "2002-10-03",
+      "endDate": "2007-02-08",
+      "status": "finished",
+      "episodeCount": 220,
+      "episodeLength": 23,
+      "posterImage": {
+        "tiny": "https://media.kitsu.io/anime/poster_images/11/tiny.jpg",
+        "small": "https://media.kitsu.io/anime/poster_images/11/small.jpg",
+        "medium": "https://media.kitsu.io/anime/poster_images/11/medium.jpg",
+        "large": "https://media.kitsu.io/anime/poster_images/11/large.jpg",
+        "original": "https://media.kitsu.io/anime/poster_images/11/original.jpg"
+      },
+      "showType": "TV"
+    }
+  },
+  "frieren": {
+    "id": "46474",
+    "type": "anime",
+    "attributes": {
+      "slug": "sousou-no-frieren",
+      "synopsis": "The demon king has been defeated, and the victorious hero party returns home before disbanding.",
+      "canonicalTitle": "Frieren: Beyond Journey's End",
+      "titles": {
+        "en": "Frieren: Beyond Journey's End",
+        "en_jp": "Sousou no Frieren",
+        "ja_jp": "葬送のフリーレン"
+      },
+      "startDate": "2023-09-29",
+      "endDate": "2024-03-22",
+      "status": "finished",
+      "episodeCount": 28,
+      "episodeLength": 24,
+      "posterImage": {
+        "original": "https://media.kitsu.io/anime/poster_images/46474/original.jpg"
+      },
+      "showType": "TV"
+    }
+  },
+  "solo_leveling_anime": {
+    "id": "46231",
+    "type": "anime",
+    "attributes": {
+      "slug": "ore-dake-level-up-na-ken",
+      "synopsis": "Over a decade has passed since the sudden appearance of the gates connecting the real world with the magic realm.",
+      "canonicalTitle": "Solo Leveling",
+      "titles": {
+        "en": "Solo Leveling",
+        "en_jp": "Ore dake Level Up na Ken",
+        "ja_jp": "俺だけレベルアップな件"
+      },
+      "startDate": "2024-01-07",
+      "endDate": "2024-03-31",
+      "status": "finished",
+      "episodeCount": 12,
+      "posterImage": {
+        "original": "https://media.kitsu.io/anime/poster_images/46231/original.jpg"
+      },
+      "showType": "TV"
+    }
+  },
+  "one_piece_manga": {
+    "id": "1002",
+    "type": "manga",
+    "attributes": {
+      "slug": "one-piece",
+      "synopsis": "Gol D. Roger was known as the Pirate King, the strongest and most infamous being to have sailed the Grand Line.",
+      "canonicalTitle": "One Piece",
+      "titles": {
+        "en": "One Piece",
+        "ja_jp": "ONE PIECE"
+      },
+      "startDate": "1997-07-22",
+      "status": "current",
+      "chapterCount": null,
+      "volumeCount": null,
+      "mangaType": "manga"
+    }
+  }
+}
+

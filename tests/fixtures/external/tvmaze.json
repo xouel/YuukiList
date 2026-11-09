@@ -1,0 +1,76 @@
+{
+  "moving": {
+    "id": 61250,
+    "name": "Moving",
+    "type": "Scripted",
+    "language": "Korean",
+    "genres": ["Drama", "Action", "Science-Fiction"],
+    "status": "Ended",
+    "premiered": "2023-08-09",
+    "officialSite": "https://www.disneyplus.com",
+    "network": { "name": "Disney+", "country": { "name": "Korea, Republic of", "code": "KR" } },
+    "summary": "<p>A supernatural drama about three teenagers discovering their super powers and their parents fighting to protect them from being exploited by other people.</p>",
+    "image": {
+      "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/476/1190280.jpg",
+      "original": "https://static.tvmaze.com/uploads/images/original_untouched/476/1190280.jpg"
+    },
+    "_embedded": {
+      "episodes": [
+        { "id": 2600101, "name": "Senior", "season": 1, "number": 1, "airdate": "2023-08-09" },
+        { "id": 2600102, "name": "Boombastic", "season": 1, "number": 2, "airdate": "2023-08-09" },
+        { "id": 2600120, "name": "Graduation", "season": 1, "number": 20, "airdate": "2023-09-20" }
+      ]
+    },
+    "totalEpisodes": 20,
+    "totalSeasons": 1
+  },
+  "queen_of_tears": {
+    "id": 67320,
+    "name": "Queen of Tears",
+    "type": "Scripted",
+    "language": "Korean",
+    "genres": ["Drama", "Romance", "Comedy"],
+    "status": "Ended",
+    "premiered": "2024-03-09",
+    "network": { "name": "tvN", "country": { "name": "Korea, Republic of", "code": "KR" } },
+    "summary": "<p>The story of Hong Hae-in, a third-generation chaebol, and Baek Hyun-woo, a lawyer from a humble background.</p>",
+    "image": {
+      "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/504/1261320.jpg",
+      "original": "https://static.tvmaze.com/uploads/images/original_untouched/504/1261320.jpg"
+    },
+    "_embedded": {
+      "episodes": [
+        { "id": 2750101, "name": "Episode 1", "season": 1, "number": 1, "airdate": "2024-03-09" },
+        { "id": 2750116, "name": "Episode 16", "season": 1, "number": 16, "airdate": "2024-04-28" }
+      ]
+    },
+    "totalEpisodes": 16,
+    "totalSeasons": 1
+  },
+  "alice_in_borderland": {
+    "id": 43818,
+    "name": "Alice in Borderland",
+    "type": "Scripted",
+    "language": "Japanese",
+    "genres": ["Action", "Drama", "Science-Fiction"],
+    "status": "Running",
+    "premiered": "2020-12-10",
+    "network": { "name": "Netflix", "country": { "name": "Japan", "code": "JP" } },
+    "summary": "<p>With his two friends, a video-game-obsessed young man finds himself in a strange version of Tokyo where they must compete in dangerous games to win.</p>",
+    "image": {
+      "medium": "https://static.tvmaze.com/uploads/images/medium_portrait/285/713290.jpg",
+      "original": "https://static.tvmaze.com/uploads/images/original_untouched/285/713290.jpg"
+    },
+    "_embedded": {
+      "episodes": [
+        { "id": 1980101, "name": "Episode 1", "season": 1, "number": 1, "airdate": "2020-12-10" },
+        { "id": 1980108, "name": "Episode 8", "season": 1, "number": 8, "airdate": "2020-12-10" },
+        { "id": 2420201, "name": "Episode 1", "season": 2, "number": 1, "airdate": "2022-12-22" },
+        { "id": 2420208, "name": "Episode 8", "season": 2, "number": 8, "airdate": "2022-12-22" }
+      ]
+    },
+    "totalEpisodes": 16,
+    "totalSeasons": 2
+  }
+}
+

@@ -1,0 +1,123 @@
+{
+  "solo_leveling": {
+    "series_id": 151342,
+    "title": "Solo Leveling",
+    "associated": [
+      { "title": "Na Honjaman Rebeleob" },
+      { "title": "I Alone Level Up" },
+      { "title": "나 혼자만 레벨업" }
+    ],
+    "description": "10 years ago, after 'the Gate' that connected the real world with the monster world opened, some of the ordinary, everyday people received the power to hunt monsters within the Gate.",
+    "type": "Manhwa",
+    "year": "2018",
+    "genres": [
+      { "genre": "Action" },
+      { "genre": "Adventure" },
+      { "genre": "Fantasy" },
+      { "genre": "Supernatural" }
+    ],
+    "status": "Complete",
+    "licensed": true,
+    "latest_chapter": 200,
+    "authors": [
+      { "author_id": 34102, "name": "Chugong", "type": "Author" },
+      { "author_id": 34103, "name": "DUBU (REDICE STUDIO)", "type": "Artist" }
+    ],
+    "image": {
+      "url": { "original": "https://cdn.mangaupdates.com/image/i151342.jpg" }
+    }
+  },
+  "the_beginning_after_the_end": {
+    "series_id": 152174,
+    "title": "The Beginning After the End",
+    "associated": [
+      { "title": "TBATE" }
+    ],
+    "description": "King Grey has unrivaled strength, wealth, and prestige in a world governed by martial ability. However, solitude lingers closely behind those with great power.",
+    "type": "Manhwa",
+    "year": "2018",
+    "genres": [
+      { "genre": "Action" },
+      { "genre": "Adventure" },
+      { "genre": "Fantasy" }
+    ],
+    "status": "Ongoing",
+    "latest_chapter": 185,
+    "authors": [
+      { "author_id": 35210, "name": "TurtleMe", "type": "Author" },
+      { "author_id": 35211, "name": "Fuyuki23", "type": "Artist" }
+    ]
+  },
+  "heaven_officials_blessing": {
+    "series_id": 158291,
+    "title": "Heaven Official's Blessing",
+    "associated": [
+      { "title": "Tian Guan Ci Fu" },
+      { "title": "天官赐福" }
+    ],
+    "description": "Eight hundred years ago, Xie Lian was the Crown Prince of the Xian Le kingdom; one who was beloved by his citizens and the darling of the world.",
+    "type": "Manhua",
+    "year": "2019",
+    "genres": [
+      { "genre": "Drama" },
+      { "genre": "Fantasy" },
+      { "genre": "Historical" },
+      { "genre": "Mystery" },
+      { "genre": "Romance" },
+      { "genre": "Shounen Ai" }
+    ],
+    "status": "Ongoing",
+    "latest_chapter": 110,
+    "authors": [
+      { "author_id": 36101, "name": "Mo Xiang Tong Xiu", "type": "Author" },
+      { "author_id": 36102, "name": "STARember", "type": "Artist" }
+    ]
+  },
+  "one_piece": {
+    "series_id": 33,
+    "title": "One Piece",
+    "associated": [
+      { "title": "ONE PIECE" },
+      { "title": "ワンピース" }
+    ],
+    "description": "As a child, Monkey D. Luffy was inspired to become a pirate by listening to the tales of the buccaneer 'Red-Haired' Shanks.",
+    "type": "Manga",
+    "year": "1997",
+    "genres": [
+      { "genre": "Action" },
+      { "genre": "Adventure" },
+      { "genre": "Comedy" },
+      { "genre": "Fantasy" },
+      { "genre": "Shounen" }
+    ],
+    "status": "Ongoing",
+    "latest_chapter": 1130,
+    "authors": [
+      { "author_id": 32, "name": "ODA Eiichiro", "type": "Author" }
+    ]
+  },
+  "berserk": {
+    "series_id": 88,
+    "title": "Berserk",
+    "associated": [
+      { "title": "ベルセルク" }
+    ],
+    "description": "Guts, known as the Black Swordsman, seeks sanctuary from the demonic forces that pursue him and his woman, and also vengeance against the man who branded him as an unholy sacrifice.",
+    "type": "Manga",
+    "year": "1989",
+    "genres": [
+      { "genre": "Action" },
+      { "genre": "Adventure" },
+      { "genre": "Dark Fantasy" },
+      { "genre": "Horror" },
+      { "genre": "Seinen" }
+    ],
+    "status": "Ongoing",
+    "latest_chapter": 376,
+    "authors": [
+      { "author_id": 85, "name": "MIURA Kentaro", "type": "Author" },
+      { "author_id": 86, "name": "Studio Gaga", "type": "Artist" }
+    ]
+  }
+}
+

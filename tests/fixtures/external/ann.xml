@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ann>
+  <anime id="1822" gid="2639149021" type="TV" name="Naruto" precision="anime">
+    <info gid="1651582299" type="Picture" src="https://cdn.animenewsnetwork.com/thumbnails/fit200x200/encyc/A1822-16.jpg"/>
+    <info gid="3456220101" type="Main title" lang="JA">Naruto</info>
+    <info gid="1983020011" type="Alternative title" lang="JA">NARUTO -ナルト-</info>
+    <info gid="2020101011" type="Genres">action</info>
+    <info gid="2020101012" type="Genres">adventure</info>
+    <info gid="2020101013" type="Themes">ninja</info>
+    <info gid="2991020301" type="Plot Summary">Naruto Uzumaki is a young ninja boy who dreams of becoming the leader of his ninja village.</info>
+    <info gid="3010101021" type="Number of episodes">220</info>
+    <info gid="1829010101" type="Vintage">2002-10-03 to 2007-02-08</info>
+  </anime>
+  <anime id="26388" gid="1992010203" type="TV" name="Frieren: Beyond Journey's End" precision="anime">
+    <info gid="2910201021" type="Picture" src="https://cdn.animenewsnetwork.com/thumbnails/fit200x200/encyc/A26388-10.jpg"/>
+    <info gid="3010201022" type="Main title" lang="EN">Frieren: Beyond Journey's End</info>
+    <info gid="3010201023" type="Alternative title" lang="JA">Sousou no Frieren</info>
+    <info gid="3010201024" type="Alternative title" lang="JA">葬送のフリーレン</info>
+    <info gid="2920101011" type="Genres">adventure</info>
+    <info gid="2920101012" type="Genres">drama</info>
+    <info gid="2920101013" type="Genres">fantasy</info>
+    <info gid="1901020101" type="Number of episodes">28</info>
+    <info gid="1901020102" type="Vintage">2023-09-29 to 2024-03-22</info>
+  </anime>
+</ann>
+

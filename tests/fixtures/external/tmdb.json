@@ -1,0 +1,83 @@
+{
+  "moving": {
+    "id": 126280,
+    "name": "Moving",
+    "original_name": "무빙",
+    "overview": "Children who live in hiding with superpowers, along with their parents who live with painful secrets of the past, face enormous dangers together.",
+    "first_air_date": "2023-08-09",
+    "origin_country": ["KR"],
+    "number_of_episodes": 20,
+    "number_of_seasons": 1,
+    "genres": [
+      { "id": 10759, "name": "Action & Adventure" },
+      { "id": 18, "name": "Drama" },
+      { "id": 10765, "name": "Sci-Fi & Fantasy" }
+    ],
+    "poster_path": "/vgpAkm2XGg8VzV5a1dZ7Y4vP59h.jpg",
+    "vote_average": 8.4
+  },
+  "queen_of_tears": {
+    "id": 218230,
+    "name": "Queen of Tears",
+    "original_name": "눈물의 여왕",
+    "overview": "The queen of department stores and the prince of supermarkets weather a marital crisis—until love miraculously begins to bloom again.",
+    "first_air_date": "2024-03-09",
+    "origin_country": ["KR"],
+    "number_of_episodes": 16,
+    "number_of_seasons": 1,
+    "genres": [
+      { "id": 18, "name": "Drama" },
+      { "id": 35, "name": "Comedy" }
+    ],
+    "poster_path": "/6fC2rGvE2jG5yC3b7K6p5V4qW7z.jpg",
+    "vote_average": 8.7
+  },
+  "alice_in_borderland": {
+    "id": 110316,
+    "name": "Alice in Borderland",
+    "original_name": "今際の国のアリス",
+    "overview": "An aimless gamer and his two friends find themselves in a parallel Tokyo, where they're forced to compete in sadistic games to survive.",
+    "first_air_date": "2020-12-10",
+    "origin_country": ["JP"],
+    "number_of_episodes": 16,
+    "number_of_seasons": 2,
+    "genres": [
+      { "id": 18, "name": "Drama" },
+      { "id": 10759, "name": "Action & Adventure" },
+      { "id": 9648, "name": "Mystery" }
+    ],
+    "poster_path": "/20mbtMx0vD7V0b5B5Y9V6m1qW8.jpg",
+    "vote_average": 8.2
+  },
+  "oldboy": {
+    "id": 670,
+    "title": "Oldboy",
+    "original_title": "올드보이",
+    "overview": "After being mysteriously imprisoned for fifteen years, Oh Dae-Su is suddenly released and given five days to track down his captor.",
+    "release_date": "2003-11-21",
+    "origin_country": ["KR"],
+    "genres": [
+      { "id": 18, "name": "Drama" },
+      { "id": 53, "name": "Thriller" },
+      { "id": 9648, "name": "Mystery" }
+    ],
+    "poster_path": "/pWDtjs568ZfOTMbURQBYuT4Qx5a.jpg",
+    "vote_average": 8.3
+  },
+  "your_name": {
+    "id": 372058,
+    "title": "Your Name.",
+    "original_title": "君の名は。",
+    "overview": "High schoolers Mitsuha and Taki are complete strangers living separate lives in different parts of Japan. But one day they suddenly switch bodies.",
+    "release_date": "2016-08-26",
+    "origin_country": ["JP"],
+    "genres": [
+      { "id": 16, "name": "Animation" },
+      { "id": 18, "name": "Drama" },
+      { "id": 10749, "name": "Romance" }
+    ],
+    "poster_path": "/q719jXXEzOoYaps6q2PWi93qW8b.jpg",
+    "vote_average": 8.5
+  }
+}
+
