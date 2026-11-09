@@ -74,3 +74,19 @@ model ItemAlias {
   @@map("item_aliases")
 }
 
+model User {
+  id                 String   @id @default(uuid()) @db.Uuid
+  email              String   @unique @db.VarChar(255)
+  normalizedEmail    String   @unique @map("normalized_email") @db.VarChar(255)
+  username           String   @unique @db.VarChar(64)
+  normalizedUsername String   @unique @map("normalized_username") @db.VarChar(64)
+  passwordHash       String   @map("password_hash") @db.VarChar(255)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@index([normalizedEmail])
+  @@index([normalizedUsername])
+  @@map("users")
+}
+
+

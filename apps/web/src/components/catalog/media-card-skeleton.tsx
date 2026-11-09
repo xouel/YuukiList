@@ -33,3 +33,4 @@ export function MediaGridSkeleton({ count = 8 }: { count?: number }) {
     </div>
   );
 }
+

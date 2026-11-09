@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "004-auth-backend"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "auth-session"
+base_specs:
+  auth-session: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-09T04:18:07.398Z"

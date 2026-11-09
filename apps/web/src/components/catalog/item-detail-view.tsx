@@ -134,3 +134,4 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     </div>
   );
 }
+

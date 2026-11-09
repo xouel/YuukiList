@@ -97,3 +97,4 @@ export function MediaCard({ item, onNavigate }: MediaCardProps) {
     </article>
   );
 }
+

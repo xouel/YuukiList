@@ -82,3 +82,4 @@ export default function ItemDetailPage() {
 
   return <ItemDetailView item={item} onBack={handleBack} />;
 }
+

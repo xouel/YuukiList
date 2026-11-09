@@ -63,7 +63,7 @@ rules:
 
 verification:
   commands:
-    - "node --experimental-strip-types --test tests/catalog-data.test.mjs tests/catalog-search.test.mjs tests/catalog-browse-ui.test.mjs"
+    - "node --experimental-strip-types --test tests/catalog-data.test.mjs tests/catalog-search.test.mjs tests/catalog-browse-ui.test.mjs tests/auth-backend.test.mjs"
   run_on_build: false
   require_clean_pass: true
   block_archive_on_high: true
