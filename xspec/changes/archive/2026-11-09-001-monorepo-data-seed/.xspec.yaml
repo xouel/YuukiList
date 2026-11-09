@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "001-monorepo-data-seed"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "catalog-data"
+base_specs:
+  catalog-data: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-09T02:43:02.010Z"

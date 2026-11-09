@@ -30,7 +30,7 @@ artifacts:
 
 tdd:
   mode: "required"
-  test_command: "node --test"
+  test_command: "node --experimental-strip-types --test tests/catalog-data.test.mjs"
 
 naming:
   sequential: true
@@ -63,7 +63,7 @@ rules:
 
 verification:
   commands:
-    - "node --test"
+    - "node --experimental-strip-types --test tests/catalog-data.test.mjs"
   run_on_build: false
   require_clean_pass: true
   block_archive_on_high: true

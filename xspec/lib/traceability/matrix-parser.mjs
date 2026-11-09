@@ -45,7 +45,8 @@ const ATTESTATION_RE = /^(AI_AUDITED|HUMAN_VERIFIED):[a-zA-Z0-9_.-]+$/;
  */
 export function parseFileReferenceToken(rawToken) {
   const token = String(rawToken || '').trim().replace(/^`+|`+$/g, '');
-  if (!token || token === '-' || token.toUpperCase() === 'N/A' || token.toUpperCase() === 'TBD') {
+  const upper = token.toUpperCase();
+  if (!token || token === '-' || upper === 'N/A' || upper === 'TBD' || upper === 'PENDING') {
     return null;
   }
 
@@ -144,22 +145,22 @@ export function extractTraceabilityMatrix(tasksAst, tasksRelPath = 'tasks.md') {
       evidenceRaw,
     ] = rawRow.cells;
 
-    const rowId = rowIdRaw.trim();
-    const requirement = requirementRaw.trim().replace(/^R:\s*/i, '');
-    const scenario = scenarioRaw.trim().replace(/^S:\s*/i, '');
+    const rowId = rowIdRaw.trim().replace(/^`+|`+$/g, '');
+    const requirement = requirementRaw.trim().replace(/^`+|`+$/g, '').replace(/^R:\s*/i, '');
+    const scenario = scenarioRaw.trim().replace(/^`+|`+$/g, '').replace(/^S:\s*/i, '');
     const taskIds = taskIdsRaw
       .split(',')
-      .map((t) => t.trim())
+      .map((t) => t.trim().replace(/^`+|`+$/g, ''))
       .filter(Boolean);
     const codeFiles = parseFileReferenceList(codeFilesRaw);
     const testFiles = parseFileReferenceList(testFilesRaw);
-    const method = methodRaw.trim().toLowerCase();
-    const execResult = execResultRaw.trim().toUpperCase();
+    const method = methodRaw.trim().replace(/^`+|`+$/g, '').toLowerCase();
+    const execResult = execResultRaw.trim().replace(/^`+|`+$/g, '').toUpperCase();
 
     // Evidence & Attestation: "<cmd-id> | <attestation>"
     const evParts = evidenceRaw
       .split('|')
-      .map((p) => p.trim())
+      .map((p) => p.trim().replace(/^`+|`+$/g, ''))
       .filter(Boolean);
     const commandId = evParts[0] || null;
     const attestation = evParts[1] || null;
