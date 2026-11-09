@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "002-catalog-search-api"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "catalog-search"
+base_specs:
+  catalog-search: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-09T03:30:27.448Z"

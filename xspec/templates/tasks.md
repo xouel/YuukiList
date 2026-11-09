@@ -9,7 +9,7 @@
 
 ## 1. Setup & Foundational
 
-- [ ] 1.1 {{TASK_DESCRIPTION_AND_VERIFICATION}} (Ref: R:{{REQUIREMENT_NAME}})
+- [ ] 1.1 {{TASK_DESCRIPTION_AND_VERIFICATION}} (Ref: R:{{REQUIREMENT_NAME}} / S:{{SCENARIO_NAME}})
 
 ## 2. Core Implementation (User Stories)
 

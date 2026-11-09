@@ -2,7 +2,7 @@
  * YuukiList — Contratos e Interfaces Compartilhados
  */
 
-import type { Category, PublicationStatus } from './enums.js';
+import type { Category, PublicationStatus } from './enums.ts';
 
 export interface ItemGenreDto {
   name: string;
