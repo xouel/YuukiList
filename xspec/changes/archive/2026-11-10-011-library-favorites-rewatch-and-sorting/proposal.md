@@ -1,6 +1,6 @@
 # Proposal: 011-library-favorites-rewatch-and-sorting
 
-> **X-Spec** · ID: `011-library-favorites-rewatch-and-sorting` · Type: `feature` · Status: `PLANNED` · Created: `2026-11-09`
+> **X-Spec** · ID: `011-library-favorites-rewatch-and-sorting` · Type: `feature` · Status: `ARCHIVED` · Created: `2026-11-09`
 
 ## Why
 

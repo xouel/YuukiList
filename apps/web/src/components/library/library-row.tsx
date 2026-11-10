@@ -15,6 +15,7 @@ import {
 export interface LibraryRowProps {
   item: LibraryItemDto;
   onQuickIncrement?: (item: LibraryItemDto) => void;
+  onToggleFavorite?: (item: LibraryItemDto) => void;
   onOpenEdit?: (item: LibraryItemDto) => void;
   isMutating?: boolean;
 }
@@ -42,6 +43,7 @@ const STATUS_LABELS: Record<string, string> = {
 export function LibraryRow({
   item,
   onQuickIncrement,
+  onToggleFavorite,
   onOpenEdit,
   isMutating = false,
 }: LibraryRowProps) {
@@ -54,7 +56,10 @@ export function LibraryRow({
     category !== 'FILME' &&
     calculateNextProgress(item.progress, undefined, category) !== null;
 
-  const progressText = formatProgressDisplay(item.progress, undefined, category);
+  const baseProgress = formatProgressDisplay(item.progress, undefined, category);
+  const progressText = item.progressVolumes != null && item.progressVolumes > 0
+    ? `${baseProgress} • Vol. ${item.progressVolumes}`
+    : baseProgress;
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -67,6 +72,13 @@ export function LibraryRow({
     e.stopPropagation();
     if (!isMutating && onQuickIncrement) {
       onQuickIncrement(item);
+    }
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(item);
     }
   };
 
@@ -108,6 +120,16 @@ export function LibraryRow({
             <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-black/60 text-gray-300 border border-white/5">
               {statusLabel}
             </span>
+
+            {/* Badge Reassistido / Relido */}
+            {item.rewatchCount > 0 && (
+              <span
+                className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#8B5CF6]/30 text-[#C4B5FD] border border-[#8B5CF6]/40"
+                title={`Reassistido/Relido ${item.rewatchCount} vezes`}
+              >
+                ↻ {item.rewatchCount}x
+              </span>
+            )}
 
             {/* Badge Em dia */}
             {item.isUpToDate && (
@@ -176,6 +198,32 @@ export function LibraryRow({
             )}
           </button>
         )}
+
+        {/* Botão Interativo de Favorito (♥) */}
+        <button
+          type="button"
+          onClick={handleToggleFavorite}
+          aria-label={item.isFavorite ? 'Desmarcar favorito' : 'Marcar como favorito'}
+          className={`p-1.5 rounded-lg border transition-all ${
+            item.isFavorite
+              ? 'bg-rose-500/25 text-rose-400 border-rose-500/50 hover:bg-rose-500/35'
+              : 'bg-[#121520] hover:bg-[#262C3F] text-gray-400 hover:text-rose-400 border-[#262C3F]'
+          }`}
+        >
+          <svg
+            className="w-4 h-4"
+            fill={item.isFavorite ? 'currentColor' : 'none'}
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            />
+          </svg>
+        </button>
 
         {/* Botão de Edição */}
         <button

@@ -2,7 +2,7 @@
 
 /**
  * YuukiList — Card de Obra na Biblioteca Pessoal (Modo Grade)
- * Conforme Requisitos: Personal Library View and Layout Toggle & Quick Progress Tracking
+ * Conforme Requisitos: Personal Library View and Layout Toggle & Quick Progress Tracking & Favoritos
  */
 
 import React from 'react';
@@ -15,6 +15,7 @@ import {
 export interface LibraryCardProps {
   item: LibraryItemDto;
   onQuickIncrement?: (item: LibraryItemDto) => void;
+  onToggleFavorite?: (item: LibraryItemDto) => void;
   onOpenEdit?: (item: LibraryItemDto) => void;
   isMutating?: boolean;
 }
@@ -42,6 +43,7 @@ const STATUS_LABELS: Record<string, string> = {
 export function LibraryCard({
   item,
   onQuickIncrement,
+  onToggleFavorite,
   onOpenEdit,
   isMutating = false,
 }: LibraryCardProps) {
@@ -54,7 +56,10 @@ export function LibraryCard({
     category !== 'FILME' &&
     calculateNextProgress(item.progress, undefined, category) !== null;
 
-  const progressText = formatProgressDisplay(item.progress, undefined, category);
+  const baseProgress = formatProgressDisplay(item.progress, undefined, category);
+  const progressText = item.progressVolumes != null && item.progressVolumes > 0
+    ? `${baseProgress} • Vol. ${item.progressVolumes}`
+    : baseProgress;
 
   const handleCardClick = () => {
     if (onOpenEdit) {
@@ -66,6 +71,13 @@ export function LibraryCard({
     e.stopPropagation();
     if (!isMutating && onQuickIncrement) {
       onQuickIncrement(item);
+    }
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(item);
     }
   };
 
@@ -103,9 +115,9 @@ export function LibraryCard({
           </div>
         )}
 
-        {/* Badge "Em dia" destacado */}
-        {item.isUpToDate && (
-          <div className="absolute top-2.5 right-2.5">
+        {/* Badges do Canto Superior Direito: Em Dia e Favorito */}
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10">
+          {item.isUpToDate && (
             <span
               data-testid="up-to-date-badge"
               className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded bg-[#064E3B] text-[#34D399] border border-[#059669]/60 shadow-lg shadow-black/40 backdrop-blur"
@@ -119,14 +131,47 @@ export function LibraryCard({
               </svg>
               Em dia
             </span>
-          </div>
-        )}
+          )}
+
+          {/* Botão Interativo de Favorito (♥) */}
+          <button
+            type="button"
+            onClick={handleToggleFavorite}
+            aria-label={item.isFavorite ? 'Desmarcar favorito' : 'Marcar como favorito'}
+            className={`p-1.5 rounded-lg backdrop-blur transition-all shadow-md ${
+              item.isFavorite
+                ? 'bg-rose-500/25 text-rose-400 border border-rose-500/50 hover:bg-rose-500/35'
+                : 'bg-black/60 text-gray-400 hover:text-rose-400 border border-white/10'
+            }`}
+          >
+            <svg
+              className="w-3.5 h-3.5"
+              fill={item.isFavorite ? 'currentColor' : 'none'}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </button>
+        </div>
 
         {/* Badge de Status Pessoal Sobreposto na Base da Capa */}
         <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between">
-          <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-black/75 text-gray-200 border border-white/10 backdrop-blur">
-            {statusLabel}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-black/75 text-gray-200 border border-white/10 backdrop-blur">
+              {statusLabel}
+            </span>
+            {item.rewatchCount > 0 && (
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#8B5CF6]/30 text-[#C4B5FD] border border-[#8B5CF6]/40 backdrop-blur" title={`Reassistido/Relido ${item.rewatchCount} vezes`}>
+                ↻ {item.rewatchCount}x
+              </span>
+            )}
+          </div>
           {typeof item.rating === 'number' && item.rating > 0 && (
             <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1 backdrop-blur">
               ★ {item.rating.toFixed(1)}
@@ -174,4 +219,3 @@ export function LibraryCard({
     </article>
   );
 }
-

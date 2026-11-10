@@ -138,3 +138,4 @@ export interface LibraryFilterDto {
 - `[MODIFY]` `apps/web/src/components/library/library-grid.tsx`
 - `[MODIFY]` `apps/web/src/components/library/library-table.tsx`
 - `[CREATE]` `tests/personal-library-advanced.test.mjs`
+

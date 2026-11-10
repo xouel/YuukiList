@@ -10,6 +10,7 @@ import type {
   LibraryItemDto,
   Category,
   UpdateLibraryItemDto,
+  LibrarySortBy,
 } from '../../../../../packages/shared/src/index.ts';
 import { LibraryApiClient } from '../../services/library-api.client.ts';
 import {
@@ -27,6 +28,7 @@ import { EditItemModal } from './edit-item-modal.tsx';
 import { LibrarySkeleton } from './library-skeleton.tsx';
 import { ErrorState, NoResultsState } from '../catalog/async-feedback.tsx';
 
+const SORT_STORAGE_KEY = 'yuuki:library:sort';
 const libraryApi = new LibraryApiClient();
 
 export function LibraryView() {
@@ -36,18 +38,37 @@ export function LibraryView() {
   const [layout, setLayout] = useState<LibraryLayoutMode>('grid');
   const [selectedTab, setSelectedTab] = useState<StatusTabKey>('ALL');
   const [selectedCategory, setSelectedCategory] = useState<Category | 'ALL'>('ALL');
+  const [sortBy, setSortBy] = useState<LibrarySortBy>('updatedAt');
+  const [isFavoriteOnly, setIsFavoriteOnly] = useState<boolean>(false);
   const [editingItem, setEditingItem] = useState<LibraryItemDto | null>(null);
   const [mutatingIds, setMutatingIds] = useState<Set<string>>(new Set());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Carrega layout salvo no localStorage após montagem
+  // Carrega layout e ordenação salvos no localStorage após montagem
   useEffect(() => {
     setLayout(loadSavedLayout());
+    try {
+      const savedSort = localStorage.getItem(SORT_STORAGE_KEY) as LibrarySortBy | null;
+      if (savedSort) {
+        setSortBy(savedSort);
+      }
+    } catch {
+      // Ignora erro em ambientes sem localStorage
+    }
   }, []);
 
   const handleLayoutChange = (newLayout: LibraryLayoutMode) => {
     setLayout(newLayout);
     saveLayoutPreference(newLayout);
+  };
+
+  const handleSortChange = (newSort: LibrarySortBy) => {
+    setSortBy(newSort);
+    try {
+      localStorage.setItem(SORT_STORAGE_KEY, newSort);
+    } catch {
+      // Ignora erro em ambientes sem localStorage
+    }
   };
 
   // Carrega itens da biblioteca
@@ -74,6 +95,29 @@ export function LibraryView() {
     setTimeout(() => {
       setToastMessage((prev) => (prev === msg ? null : prev));
     }, 4000);
+  };
+
+  // Alternância de Favorito com atualização otimista (TR-004)
+  const handleToggleFavorite = async (item: LibraryItemDto) => {
+    const nextFavorite = !item.isFavorite;
+    const previousItems = items;
+
+    // Atualização otimista imediata
+    setItems((prev) =>
+      prev.map((it) =>
+        it.mediaItemId === item.mediaItemId ? { ...it, isFavorite: nextFavorite } : it
+      )
+    );
+
+    try {
+      const updated = await libraryApi.updateItem(item.mediaItemId, { isFavorite: nextFavorite });
+      setItems((prev) =>
+        prev.map((it) => (it.mediaItemId === item.mediaItemId ? updated : it))
+      );
+    } catch (err: any) {
+      setItems(previousItems);
+      showToast(`Falha ao alterar favorito de ${item.mediaItem?.title || 'obra'}.`);
+    }
   };
 
   // Incremento rápido "+1" com atualização otimista
@@ -126,9 +170,14 @@ export function LibraryView() {
     showToast('Obra removida da sua biblioteca.');
   };
 
-  // Filtragem local inteligente
+  // Filtragem e Ordenação local inteligente (TR-003)
   const filteredItems = useMemo(() => {
-    return items.filter((item) => {
+    const filtered = items.filter((item) => {
+      // Filtro de Favoritos
+      if (isFavoriteOnly && !item.isFavorite) {
+        return false;
+      }
+
       // Filtro de Categoria
       if (selectedCategory !== 'ALL' && item.mediaItem?.category !== selectedCategory) {
         return false;
@@ -153,7 +202,37 @@ export function LibraryView() {
           return true;
       }
     });
-  }, [items, selectedTab, selectedCategory]);
+
+    return [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'title': {
+          const titleA = (a.mediaItem?.title || '').toLowerCase();
+          const titleB = (b.mediaItem?.title || '').toLowerCase();
+          return titleA.localeCompare(titleB, 'pt-BR');
+        }
+        case 'rating': {
+          const rA = a.rating ?? -1;
+          const rB = b.rating ?? -1;
+          return rB - rA;
+        }
+        case 'progress': {
+          return (b.progress || 0) - (a.progress || 0);
+        }
+        case 'releaseYear': {
+          const yA = a.mediaItem?.releaseYear ?? 0;
+          const yB = b.mediaItem?.releaseYear ?? 0;
+          return yB - yA;
+        }
+        case 'createdAt': {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        }
+        case 'updatedAt':
+        default: {
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        }
+      }
+    });
+  }, [items, selectedTab, selectedCategory, isFavoriteOnly, sortBy]);
 
   // Contagens por aba inteligente
   const countsByTab = useMemo(() => {
@@ -220,6 +299,10 @@ export function LibraryView() {
         layout={layout}
         onLayoutChange={handleLayoutChange}
         countsByTab={countsByTab}
+        sortBy={sortBy}
+        onSortByChange={handleSortChange}
+        isFavoriteOnly={isFavoriteOnly}
+        onToggleFavoriteOnly={() => setIsFavoriteOnly((prev) => !prev)}
       />
 
       {/* Estados Assíncronos */}
@@ -259,6 +342,7 @@ export function LibraryView() {
           onClearFilters={() => {
             setSelectedTab('ALL');
             setSelectedCategory('ALL');
+            setIsFavoriteOnly(false);
           }}
         />
       ) : layout === 'grid' ? (
@@ -269,6 +353,7 @@ export function LibraryView() {
               key={item.id}
               item={item}
               onQuickIncrement={handleQuickIncrement}
+              onToggleFavorite={handleToggleFavorite}
               onOpenEdit={setEditingItem}
               isMutating={mutatingIds.has(item.mediaItemId)}
             />
@@ -282,6 +367,7 @@ export function LibraryView() {
               key={item.id}
               item={item}
               onQuickIncrement={handleQuickIncrement}
+              onToggleFavorite={handleToggleFavorite}
               onOpenEdit={setEditingItem}
               isMutating={mutatingIds.has(item.mediaItemId)}
             />

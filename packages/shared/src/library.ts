@@ -1,6 +1,6 @@
 /**
  * YuukiList — Contratos e Regras Canônicas da Biblioteca Pessoal
- * Conforme Documento Mestre de Contexto (Seção 5) e PRD (Fase 3)
+ * Conforme Documento Mestre de Contexto (Seção 5) e PRD (Fase 3 & Expansão R11)
  */
 
 import { type Category, type PublicationStatus } from './enums.ts';
@@ -27,6 +27,17 @@ export const CATEGORY_ALLOWED_STATUSES: Record<Category, readonly PersonalStatus
   MANHWA: ['QUERO_LER', 'LENDO', 'PAUSADO', 'CONCLUIDO', 'DROPADO'] as const,
   MANHUA: ['QUERO_LER', 'LENDO', 'PAUSADO', 'CONCLUIDO', 'DROPADO'] as const,
 });
+
+export const LIBRARY_SORT_OPTIONS = Object.freeze([
+  'updatedAt',
+  'createdAt',
+  'title',
+  'progress',
+  'rating',
+  'releaseYear',
+] as const);
+
+export type LibrarySortBy = (typeof LIBRARY_SORT_OPTIONS)[number];
 
 export function isPersonalStatus(value: unknown): value is PersonalStatus {
   return typeof value === 'string' && (PERSONAL_STATUSES as readonly string[]).includes(value);
@@ -71,15 +82,21 @@ export interface CreateLibraryItemDto {
   mediaItemId: string;
   status: PersonalStatus;
   progress?: number;
+  progressVolumes?: number | null;
   rating?: number | null;
   notes?: string | null;
+  isFavorite?: boolean;
+  rewatchCount?: number;
 }
 
 export interface UpdateLibraryItemDto {
   status?: PersonalStatus;
   progress?: number;
+  progressVolumes?: number | null;
   rating?: number | null;
   notes?: string | null;
+  isFavorite?: boolean;
+  rewatchCount?: number;
 }
 
 export interface LibraryItemDto {
@@ -88,8 +105,11 @@ export interface LibraryItemDto {
   mediaItemId: string;
   status: PersonalStatus;
   progress: number;
+  progressVolumes?: number | null;
   rating?: number | null;
   notes?: string | null;
+  isFavorite: boolean;
+  rewatchCount: number;
   isUpToDate: boolean;
   createdAt: string | Date;
   updatedAt: string | Date;
@@ -99,7 +119,9 @@ export interface LibraryItemDto {
 export interface LibraryFilterDto {
   status?: PersonalStatus;
   category?: Category;
+  isFavorite?: boolean;
+  originCountry?: string;
+  sortBy?: LibrarySortBy;
   page?: number;
   limit?: number;
 }
-

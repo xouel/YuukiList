@@ -43,6 +43,9 @@ export function EditItemModal({
   const [progress, setProgress] = useState<number>(0);
   const [rating, setRating] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [rewatchCount, setRewatchCount] = useState<number>(0);
+  const [progressVolumes, setProgressVolumes] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
@@ -55,6 +58,9 @@ export function EditItemModal({
       setProgress(item.progress || 0);
       setRating(item.rating != null ? String(item.rating) : '');
       setNotes(item.notes || '');
+      setIsFavorite(Boolean(item.isFavorite));
+      setRewatchCount(item.rewatchCount || 0);
+      setProgressVolumes(item.progressVolumes != null ? String(item.progressVolumes) : '');
       setShowConfirmDelete(false);
       setError(null);
     }
@@ -79,6 +85,7 @@ export function EditItemModal({
   const media = item.mediaItem;
   const category = media?.category;
   const isFilm = category === 'FILME';
+  const isLiterary = category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA';
   const allowedStatuses = (category && CATEGORY_ALLOWED_STATUSES[category]) || [
     'ASSISTINDO',
     'QUERO_ASSISTIR',
@@ -87,6 +94,26 @@ export function EditItemModal({
     'DROPADO',
   ];
 
+  const totalUnits = isLiterary
+    ? (media as any)?.totalChapters
+    : (media as any)?.totalEpisodes;
+
+  const hasInconsistency =
+    (status === 'CONCLUIDO' || status === 'ASSISTIDO') &&
+    typeof totalUnits === 'number' &&
+    totalUnits > 0 &&
+    progress < totalUnits;
+
+  const handleStartNewCycle = () => {
+    setRewatchCount((prev) => prev + 1);
+    setProgress(0);
+    setStatus(isLiterary ? 'LENDO' : 'ASSISTINDO');
+  };
+
+  const handleIncrementRewatch = () => {
+    setRewatchCount((prev) => prev + 1);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -94,11 +121,15 @@ export function EditItemModal({
 
     try {
       const parsedRating = rating.trim() !== '' ? Number(rating) : null;
+      const parsedVolumes = progressVolumes.trim() !== '' ? Math.max(0, parseInt(progressVolumes, 10)) : null;
       const updateDto: UpdateLibraryItemDto = {
         status,
         progress: isFilm ? 0 : Math.max(0, Math.floor(Number(progress) || 0)),
         rating: parsedRating != null && !isNaN(parsedRating) ? parsedRating : null,
         notes: notes.trim() !== '' ? notes.trim() : null,
+        isFavorite,
+        rewatchCount,
+        progressVolumes: parsedVolumes != null && !isNaN(parsedVolumes) ? parsedVolumes : null,
       };
 
       await onSave(item.mediaItemId, updateDto);
@@ -138,9 +169,16 @@ export function EditItemModal({
         {/* Cabeçalho */}
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#262C3F]">
           <div>
-            <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800">
-              {category || 'Obra'}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800">
+                {category || 'Obra'}
+              </span>
+              {rewatchCount > 0 && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#8B5CF6]/30 text-[#C4B5FD] border border-[#8B5CF6]/40">
+                  ↻ {rewatchCount}x
+                </span>
+              )}
+            </div>
             <h2
               id="edit-modal-title"
               className="text-lg font-bold text-[#F3F4F6] mt-1.5 line-clamp-1"
@@ -149,16 +187,43 @@ export function EditItemModal({
             </h2>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Fechar modal"
-            className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-[#262C3F] transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsFavorite(!isFavorite)}
+              aria-label={isFavorite ? 'Desmarcar favorito' : 'Marcar como favorito'}
+              className={`p-2 rounded-lg border transition-all ${
+                isFavorite
+                  ? 'bg-rose-500/25 text-rose-400 border-rose-500/50 hover:bg-rose-500/35'
+                  : 'bg-[#121520] text-gray-400 hover:text-rose-400 border-[#262C3F]'
+              }`}
+            >
+              <svg
+                className="w-5 h-5"
+                fill={isFavorite ? 'currentColor' : 'none'}
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Fechar modal"
+              className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-[#262C3F] transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Formulário com Scroll Interno */}
@@ -166,6 +231,22 @@ export function EditItemModal({
           {error && (
             <div className="p-3 text-xs rounded-lg bg-rose-950/40 border border-rose-800 text-rose-300">
               {error}
+            </div>
+          )}
+
+          {/* Banner de Aviso Amigável de Inconsistência de Status (TR-006) */}
+          {hasInconsistency && (
+            <div
+              data-testid="inconsistency-warning"
+              className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-600/50 text-amber-300 text-xs flex items-start gap-3 shadow-lg"
+            >
+              <span className="text-lg leading-none shrink-0">⚠️</span>
+              <div>
+                <p className="font-semibold text-amber-200">Aviso de Inconsistência de Status</p>
+                <p className="text-amber-300/90 mt-0.5 leading-relaxed">
+                  Atenção: A obra está marcada como Concluída, mas o progresso registrado ({progress}) é inferior ao total cadastrado ({totalUnits}). Você pode salvar normalmente se desejar.
+                </p>
+              </div>
             </div>
           )}
 
@@ -231,6 +312,27 @@ export function EditItemModal({
             </div>
           )}
 
+          {/* Volume Atual (Opcional para Obras Literárias) */}
+          {isLiterary && (
+            <div>
+              <label
+                htmlFor="volume-input"
+                className="block text-xs font-medium text-[#94A3B8] mb-1.5"
+              >
+                Volume Atual (Opcional)
+              </label>
+              <input
+                id="volume-input"
+                type="number"
+                min="0"
+                placeholder="Ex: 5"
+                value={progressVolumes}
+                onChange={(e) => setProgressVolumes(e.target.value)}
+                className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
+              />
+            </div>
+          )}
+
           {/* Nota Pessoal (0.0 a 10.0) */}
           <div>
             <label
@@ -260,6 +362,48 @@ export function EditItemModal({
                   Limpar
                 </button>
               )}
+            </div>
+          </div>
+
+          {/* Bloco de Reassistir / Reler (TR-005) */}
+          <div className="p-3.5 rounded-xl bg-[#121520] border border-[#262C3F] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-xs font-semibold text-[#F3F4F6]">
+                  {isLiterary ? 'Reler Obra' : 'Reassistir Obra'}
+                </h4>
+                <p className="text-[11px] text-[#94A3B8]">
+                  {isLiterary ? 'Relido' : 'Reassistido'}: <strong className="text-purple-300">{rewatchCount}</strong> {rewatchCount === 1 ? 'vez' : 'vezes'}
+                </p>
+              </div>
+
+              {rewatchCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setRewatchCount(Math.max(0, rewatchCount - 1))}
+                  className="text-[11px] text-[#94A3B8] hover:text-rose-400 px-2 py-0.5 rounded border border-[#262C3F] hover:border-rose-500/40 transition-colors"
+                  title="Decrementar contador"
+                >
+                  -1 vez
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleStartNewCycle}
+                className="flex-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#8B5CF6]/20 text-[#C4B5FD] border border-[#8B5CF6]/40 hover:bg-[#8B5CF6]/30 active:scale-95 transition-all text-center"
+              >
+                ↻ Iniciar Novo Ciclo
+              </button>
+              <button
+                type="button"
+                onClick={handleIncrementRewatch}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#262C3F] text-[#F3F4F6] hover:bg-[#323950] border border-white/5 active:scale-95 transition-all"
+              >
+                +1 Vez
+              </button>
             </div>
           </div>
 

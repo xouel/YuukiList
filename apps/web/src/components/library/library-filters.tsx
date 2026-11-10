@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import type { Category } from '../../../../../packages/shared/src/index.ts';
+import type { Category, LibrarySortBy } from '../../../../../packages/shared/src/index.ts';
 import {
   type LibraryLayoutMode,
   type StatusTabKey,
@@ -21,6 +21,10 @@ export interface LibraryFiltersProps {
   layout: LibraryLayoutMode;
   onLayoutChange: (layout: LibraryLayoutMode) => void;
   countsByTab?: Record<StatusTabKey, number>;
+  sortBy: LibrarySortBy;
+  onSortByChange: (sort: LibrarySortBy) => void;
+  isFavoriteOnly: boolean;
+  onToggleFavoriteOnly: () => void;
 }
 
 const CATEGORIES: Array<{ key: Category | 'ALL'; label: string }> = [
@@ -41,6 +45,10 @@ export function LibraryFilters({
   layout,
   onLayoutChange,
   countsByTab,
+  sortBy,
+  onSortByChange,
+  isFavoriteOnly,
+  onToggleFavoriteOnly,
 }: LibraryFiltersProps) {
   return (
     <div className="space-y-4 mb-6">
@@ -121,27 +129,68 @@ export function LibraryFilters({
         </div>
       </div>
 
-      {/* Linha Secundária: Filtro por Categoria */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
-        <span className="text-xs text-[#94A3B8] mr-1 hidden sm:inline">Categoria:</span>
-        <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
-          {CATEGORIES.map((cat) => {
-            const isCatActive = selectedCategory === cat.key;
-            return (
-              <button
-                key={cat.key}
-                type="button"
-                onClick={() => onCategoryChange(cat.key)}
-                className={`text-xs px-2.5 py-1 rounded-md transition-colors border focus-visible:ring-2 focus-visible:ring-[#06B6D4] ${
-                  isCatActive
-                    ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-[#06B6D4]/40 font-semibold'
-                    : 'bg-[#181C2B] text-[#94A3B8] border-[#262C3F] hover:text-[#F3F4F6] hover:border-[#38415c]'
-                }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
+      {/* Linha Secundária: Filtro por Categoria, Filtro de Favoritos e Ordenação */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+        {/* Chips de Categoria */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <span className="text-xs text-[#94A3B8] mr-1 hidden sm:inline">Categoria:</span>
+          <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
+            {CATEGORIES.map((cat) => {
+              const isCatActive = selectedCategory === cat.key;
+              return (
+                <button
+                  key={cat.key}
+                  type="button"
+                  onClick={() => onCategoryChange(cat.key)}
+                  className={`text-xs px-2.5 py-1 rounded-md transition-colors border focus-visible:ring-2 focus-visible:ring-[#06B6D4] ${
+                    isCatActive
+                      ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-[#06B6D4]/40 font-semibold'
+                      : 'bg-[#181C2B] text-[#94A3B8] border-[#262C3F] hover:text-[#F3F4F6] hover:border-[#38415c]'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Controles de Favoritos e Ordenação */}
+        <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto flex-wrap">
+          {/* Filtro Rápido de Favoritos */}
+          <button
+            type="button"
+            onClick={onToggleFavoriteOnly}
+            aria-pressed={isFavoriteOnly}
+            className={`text-xs px-2.5 py-1 rounded-md transition-colors border flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#06B6D4] ${
+              isFavoriteOnly
+                ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 font-semibold shadow-sm'
+                : 'bg-[#181C2B] text-[#94A3B8] border-[#262C3F] hover:text-[#F3F4F6] hover:border-[#38415c]'
+            }`}
+          >
+            <span className={isFavoriteOnly ? 'text-rose-400' : 'text-gray-400'}>♥</span>
+            <span>Favoritos</span>
+          </button>
+
+          {/* Seletor Canônico de Ordenação (6 Opções) */}
+          <div className="flex items-center gap-1.5 text-xs text-[#94A3B8]">
+            <label htmlFor="library-sort-select" className="sr-only sm:not-sr-only">
+              Ordenar:
+            </label>
+            <select
+              id="library-sort-select"
+              value={sortBy}
+              onChange={(e) => onSortByChange(e.target.value as LibrarySortBy)}
+              className="px-2.5 py-1 text-xs rounded-md bg-[#181C2B] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none cursor-pointer"
+            >
+              <option value="updatedAt">Atualização recente</option>
+              <option value="createdAt">Data de adição</option>
+              <option value="title">Título (A-Z)</option>
+              <option value="progress">Progresso</option>
+              <option value="rating">Avaliação (Maior)</option>
+              <option value="releaseYear">Ano de lançamento</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>

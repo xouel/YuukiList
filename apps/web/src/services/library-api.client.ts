@@ -48,6 +48,15 @@ export class LibraryApiClient {
     if (filter.category) {
       params.set('category', filter.category);
     }
+    if (filter.isFavorite !== undefined) {
+      params.set('isFavorite', String(filter.isFavorite));
+    }
+    if (filter.originCountry) {
+      params.set('originCountry', filter.originCountry);
+    }
+    if (filter.sortBy) {
+      params.set('sortBy', filter.sortBy);
+    }
     if (filter.page && filter.page > 0) {
       params.set('page', String(filter.page));
     }

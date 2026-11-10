@@ -11,8 +11,11 @@ export interface UserLibraryRecord {
   mediaItemId: string;
   status: PersonalStatus;
   progress: number;
+  progressVolumes: number | null;
   rating: number | null;
   notes: string | null;
+  isFavorite: boolean;
+  rewatchCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,8 +33,11 @@ export class LibraryRepository {
       mediaItemId: string;
       status: PersonalStatus;
       progress?: number;
+      progressVolumes?: number | null;
       rating?: number | null;
       notes?: string | null;
+      isFavorite?: boolean;
+      rewatchCount?: number;
     }
   ): Promise<UserLibraryRecord> {
     const key = this.makeKey(userId, data.mediaItemId);
@@ -43,8 +49,11 @@ export class LibraryRepository {
         ...existing,
         status: data.status,
         progress: typeof data.progress === 'number' ? data.progress : existing.progress,
+        progressVolumes: data.progressVolumes !== undefined ? data.progressVolumes : existing.progressVolumes,
         rating: data.rating !== undefined ? data.rating : existing.rating,
         notes: data.notes !== undefined ? data.notes : existing.notes,
+        isFavorite: data.isFavorite !== undefined ? data.isFavorite : existing.isFavorite,
+        rewatchCount: typeof data.rewatchCount === 'number' ? Math.max(0, data.rewatchCount) : existing.rewatchCount,
         updatedAt: now,
       };
       this.items.set(key, updated);
@@ -57,8 +66,11 @@ export class LibraryRepository {
       mediaItemId: data.mediaItemId,
       status: data.status,
       progress: typeof data.progress === 'number' ? data.progress : 0,
+      progressVolumes: data.progressVolumes !== undefined ? data.progressVolumes : null,
       rating: data.rating !== undefined ? data.rating : null,
       notes: data.notes !== undefined ? data.notes : null,
+      isFavorite: data.isFavorite ?? false,
+      rewatchCount: typeof data.rewatchCount === 'number' ? Math.max(0, data.rewatchCount) : 0,
       createdAt: now,
       updatedAt: now,
     };
@@ -79,8 +91,11 @@ export class LibraryRepository {
     data: {
       status?: PersonalStatus;
       progress?: number;
+      progressVolumes?: number | null;
       rating?: number | null;
       notes?: string | null;
+      isFavorite?: boolean;
+      rewatchCount?: number;
     }
   ): Promise<UserLibraryRecord | null> {
     const key = this.makeKey(userId, mediaItemId);
@@ -91,8 +106,11 @@ export class LibraryRepository {
       ...existing,
       status: data.status !== undefined ? data.status : existing.status,
       progress: typeof data.progress === 'number' ? data.progress : existing.progress,
+      progressVolumes: data.progressVolumes !== undefined ? data.progressVolumes : existing.progressVolumes,
       rating: data.rating !== undefined ? data.rating : existing.rating,
       notes: data.notes !== undefined ? data.notes : existing.notes,
+      isFavorite: data.isFavorite !== undefined ? data.isFavorite : existing.isFavorite,
+      rewatchCount: typeof data.rewatchCount === 'number' ? Math.max(0, data.rewatchCount) : existing.rewatchCount,
       updatedAt: new Date(),
     };
 
@@ -114,6 +132,7 @@ export class LibraryRepository {
     for (const item of this.items.values()) {
       if (item.userId !== userId) continue;
       if (filter.status && item.status !== filter.status) continue;
+      if (filter.isFavorite !== undefined && item.isFavorite !== filter.isFavorite) continue;
       userItems.push({ ...item });
     }
 
@@ -135,4 +154,3 @@ export class LibraryRepository {
     this.items.clear();
   }
 }
-

@@ -1,7 +1,7 @@
 /**
  * YuukiList — Serviço de Domínio da Biblioteca Pessoal
  * Implementa validação de compatibilidade de status por categoria,
- * regras de progresso, cálculo dinâmico de "Em dia" e isolamento por usuário.
+ * regras de progresso, cálculo dinâmico de "Em dia", favoritos, ciclos de reassistir e isolamento por usuário.
  */
 
 import {
@@ -84,12 +84,23 @@ export class LibraryService {
       }
     }
 
+    if (dto.rewatchCount !== undefined && dto.rewatchCount < 0) {
+      throw new InvalidProgressError('Contador de reassistir não pode ser negativo');
+    }
+
+    if (dto.progressVolumes !== undefined && dto.progressVolumes !== null && dto.progressVolumes < 0) {
+      throw new InvalidProgressError('Volumes lidos não podem ser negativos');
+    }
+
     const record = await this.libraryRepository.upsert(userId, {
       mediaItemId: media.id,
       status: dto.status,
       progress,
+      progressVolumes: dto.progressVolumes,
       rating: dto.rating,
       notes: dto.notes,
+      isFavorite: dto.isFavorite,
+      rewatchCount: dto.rewatchCount,
     });
 
     const isUpToDate = calculateIsUpToDate({
@@ -150,11 +161,22 @@ export class LibraryService {
       }
     }
 
+    if (dto.rewatchCount !== undefined && dto.rewatchCount < 0) {
+      throw new InvalidProgressError('Contador de reassistir não pode ser negativo');
+    }
+
+    if (dto.progressVolumes !== undefined && dto.progressVolumes !== null && dto.progressVolumes < 0) {
+      throw new InvalidProgressError('Volumes lidos não podem ser negativos');
+    }
+
     const updated = await this.libraryRepository.update(userId, media.id, {
       status: dto.status,
       progress,
+      progressVolumes: dto.progressVolumes,
       rating: dto.rating,
       notes: dto.notes,
+      isFavorite: dto.isFavorite,
+      rewatchCount: dto.rewatchCount,
     });
 
     if (!updated) {
@@ -224,6 +246,7 @@ export class LibraryService {
   ): Promise<PaginatedResponse<LibraryItemDto>> {
     const { items: allUserItems } = await this.libraryRepository.findMany(userId, {
       status: filter.status,
+      isFavorite: filter.isFavorite,
       page: 1,
       limit: 10000,
     });
@@ -238,6 +261,13 @@ export class LibraryService {
         continue;
       }
 
+      if (filter.originCountry) {
+        const country = (media as any).originCountry;
+        if (country && country.toUpperCase() !== filter.originCountry.toUpperCase()) {
+          continue;
+        }
+      }
+
       const totalUnits = this.getTotalUnits(media.category, media);
       const isUpToDate = calculateIsUpToDate({
         category: media.category,
@@ -249,6 +279,32 @@ export class LibraryService {
 
       enrichedList.push(this.mapToDto(item, media, isUpToDate));
     }
+
+    // Ordenações Avançadas (Seção 3.4 do Documento Mestre)
+    const sortBy = filter.sortBy || 'updatedAt';
+    enrichedList.sort((a, b) => {
+      switch (sortBy) {
+        case 'createdAt':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'title':
+          return (a.mediaItem?.title || '').localeCompare(b.mediaItem?.title || '', 'pt-BR');
+        case 'progress':
+          return b.progress - a.progress;
+        case 'rating': {
+          const ratingA = typeof a.rating === 'number' ? a.rating : -1;
+          const ratingB = typeof b.rating === 'number' ? b.rating : -1;
+          return ratingB - ratingA;
+        }
+        case 'releaseYear': {
+          const yearA = a.mediaItem?.releaseYear || 0;
+          const yearB = b.mediaItem?.releaseYear || 0;
+          return yearB - yearA;
+        }
+        case 'updatedAt':
+        default:
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      }
+    });
 
     const total = enrichedList.length;
     const page = Math.max(1, Number(filter.page) || 1);
@@ -302,8 +358,11 @@ export class LibraryService {
       mediaItemId: item.mediaItemId,
       status: item.status,
       progress: item.progress,
+      progressVolumes: item.progressVolumes ?? null,
       rating: item.rating,
       notes: item.notes,
+      isFavorite: item.isFavorite,
+      rewatchCount: item.rewatchCount,
       isUpToDate,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
@@ -311,4 +370,3 @@ export class LibraryService {
     };
   }
 }
-
