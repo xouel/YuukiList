@@ -131,8 +131,8 @@ export class CatalogRepository implements ICatalogRepository {
       totalVolumes: item.totalVolumes ?? null,
       releaseYear: item.releaseYear,
       coverUrl: `/api/v1/catalog/items/${item.slug}/cover`,
-      genres: [...item.genres],
-      aliases: item.aliases.map((a) => a.alias),
+      genres: item.genres ? [...item.genres] : [],
+      aliases: item.aliases ? item.aliases.map((a: any) => (typeof a === 'string' ? a : a.alias)) : [],
       provenance: item.provenance || null,
     };
   }
@@ -156,8 +156,8 @@ export class CatalogRepository implements ICatalogRepository {
       totalVolumes: item.totalVolumes ?? null,
       releaseYear: item.releaseYear,
       coverUrl: `/api/v1/catalog/items/${item.slug}/cover`,
-      genres: [...item.genres],
-      aliases: item.aliases.map((a) => a.alias),
+      genres: item.genres ? [...item.genres] : [],
+      aliases: item.aliases ? item.aliases.map((a: any) => (typeof a === 'string' ? a : a.alias)) : [],
       provenance: item.provenance || null,
     };
   }
@@ -176,6 +176,10 @@ export class CatalogRepository implements ICatalogRepository {
     }
     this.items.push(item);
     return item;
+  }
+
+  async save(item: any): Promise<StoredMediaItem> {
+    return this.upsertMediaItem(item);
   }
 
   async getAllItems(): Promise<StoredMediaItem[]> {

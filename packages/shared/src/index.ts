@@ -5,4 +5,5 @@ export * from './catalog.ts';
 export * from './auth.ts';
 export * from './library.ts';
 export * from './diary.ts';
+export * from './relations.ts';
 export * from './external.ts';

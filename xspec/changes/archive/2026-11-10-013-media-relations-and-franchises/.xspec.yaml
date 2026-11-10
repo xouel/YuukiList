@@ -1,0 +1,15 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "013-media-relations-and-franchises"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "media-relations"
+  - "media-relations-ui"
+base_specs:
+  media-relations: "NEW"
+  media-relations-ui: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-10T01:43:59.687Z"

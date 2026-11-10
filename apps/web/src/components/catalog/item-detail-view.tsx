@@ -12,14 +12,17 @@ import {
   type LibraryItemDto,
   type UpdateLibraryItemDto,
   type HistoryEventDto,
+  type ItemRelationsResponseDto,
   CATEGORY_ALLOWED_STATUSES,
 } from '../../../../../packages/shared/src/index.ts';
 import { useAuth } from '../../context/auth-context.tsx';
 import { LibraryApiClient } from '../../services/library-api.client.ts';
 import { DiaryApiClient } from '../../services/diary-api.client.ts';
+import { RelationsApiClient } from '../../services/relations-api.client.ts';
 import { EditItemModal } from '../library/edit-item-modal.tsx';
 import { TimelineView } from '../diary/timeline-view.tsx';
 import { CreateNoteModal } from '../diary/create-note-modal.tsx';
+import { RelatedWorksSection } from '../relations/related-works-section.tsx';
 import {
   formatProgressDisplay,
   calculateNextProgress,
@@ -61,6 +64,7 @@ const PERSONAL_STATUS_LABELS: Record<string, string> = {
 
 const libraryApi = new LibraryApiClient();
 const diaryApi = new DiaryApiClient();
+const relationsApi = new RelationsApiClient();
 
 function getDefaultStatus(category: string): PersonalStatus {
   if (category === 'FILME') return 'QUERO_ASSISTIR';
@@ -82,6 +86,9 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
   const [diaryEvents, setDiaryEvents] = useState<HistoryEventDto[]>([]);
   const [isLoadingDiary, setIsLoadingDiary] = useState<boolean>(false);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState<boolean>(false);
+
+  // Estados de Relacionamentos e Franquia
+  const [relationsData, setRelationsData] = useState<ItemRelationsResponseDto | null>(null);
 
   const categoryClass = CATEGORY_COLORS[item.category] || 'bg-gray-800 text-gray-300 border-gray-700';
   const pubStatusLabel = PUBLICATION_STATUS_LABELS[item.publicationStatus] || item.publicationStatus;
@@ -138,6 +145,20 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
   useEffect(() => {
     fetchDiaryEvents();
   }, [fetchDiaryEvents]);
+
+  // Carrega relacionamentos e universo da franquia para esta obra
+  const fetchRelations = useCallback(async () => {
+    try {
+      const data = await relationsApi.getItemRelations(item.slug || item.id);
+      setRelationsData(data);
+    } catch {
+      setRelationsData(null);
+    }
+  }, [item.id, item.slug]);
+
+  useEffect(() => {
+    fetchRelations();
+  }, [fetchRelations]);
 
   // Ação de adicionar obra à biblioteca
   const handleAddToLibrary = async () => {
@@ -505,6 +526,15 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
           </div>
         </div>
       </article>
+
+      {/* Seção de Obras Relacionadas, Adaptações e Franquia (TR-005, TR-006) */}
+      {relationsData && (relationsData.relations.length > 0 || relationsData.franchise) && (
+        <RelatedWorksSection
+          relations={relationsData.relations}
+          franchise={relationsData.franchise}
+          currentMediaSlug={item.slug}
+        />
+      )}
 
       {/* Seção de Diário Pessoal & Histórico da Obra */}
       <section className="bg-[#121520] border border-[#262C3F] rounded-2xl p-6 sm:p-8 space-y-6">

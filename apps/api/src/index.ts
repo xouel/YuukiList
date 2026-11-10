@@ -30,6 +30,10 @@ export * from './diary/diary.repository.ts';
 export * from './diary/diary.service.ts';
 export * from './diary/diary.controller.ts';
 export * from './diary/diary.module.ts';
+export * from './relations/relations.repository.ts';
+export * from './relations/relations.service.ts';
+export * from './relations/relations.controller.ts';
+export * from './relations/relations.module.ts';
 export * from './app.module.ts';
 export * from '../../../packages/shared/src/index.ts';
 
