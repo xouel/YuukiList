@@ -1,0 +1,17 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "015-profile-stats-and-sharing"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "data-export-lgpd"
+  - "granular-sharing"
+  - "user-profile-stats"
+base_specs:
+  data-export-lgpd: "NEW"
+  granular-sharing: "NEW"
+  user-profile-stats: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-10T02:39:18.929Z"

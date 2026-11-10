@@ -93,6 +93,10 @@ export class UsersRepository implements IUsersRepository {
     return this.users.size;
   }
 
+  async delete(id: string): Promise<boolean> {
+    return this.users.delete(id);
+  }
+
   async clear(): Promise<void> {
     this.users.clear();
   }

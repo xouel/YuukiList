@@ -1,157 +1,223 @@
 'use client';
 
-/**
- * YuukiList — Perfil do Usuário (Fase 1 do Módulo de Perfil)
- * Conforme Seção 8 do Documento Mestre de Contexto (P-037, P-038)
- */
-
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/auth-context.tsx';
-import { LibraryApiClient } from '../../services/library-api.client.ts';
-import type { LibraryItemDto } from '../../../../../packages/shared/src/index.ts';
-
-const libraryApi = new LibraryApiClient();
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@/context/auth-context';
+import type { ProfileStatsDto } from '@yuukilist/shared';
+import { profileApiClient } from '@/services/profile-api.client';
+import { ProfileStats } from '@/components/profile/profile-stats';
+import { FavoritesShowcase } from '@/components/profile/favorites-showcase';
+import { ShareDialog } from '@/components/profile/share-dialog';
+import { DeleteAccountDialog } from '@/components/profile/delete-account-dialog';
 
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading: isAuthLoading, logout } = useAuth();
-  const [libraryItems, setLibraryItems] = useState<LibraryItemDto[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [stats, setStats] = useState<ProfileStatsDto | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [isShareOpen, setIsShareOpen] = useState<boolean>(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const [exporting, setExporting] = useState<string | null>(null);
+
+  const loadProfile = useCallback(async () => {
+    if (!isAuthenticated) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await profileApiClient.getStats();
+      setStats(data);
+    } catch (err: any) {
+      setError(err.message || 'Falha ao carregar estatísticas do perfil');
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    async function loadStats() {
-      if (!isAuthenticated) {
-        setIsLoading(false);
-        return;
-      }
-      try {
-        setIsLoading(true);
-        const res = await libraryApi.list({ limit: 100 });
-        setLibraryItems(res.data);
-      } catch {
-        setLibraryItems([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
     if (!isAuthLoading) {
-      loadStats();
+      if (isAuthenticated) {
+        loadProfile();
+      } else {
+        setLoading(false);
+      }
     }
-  }, [isAuthenticated, isAuthLoading]);
+  }, [isAuthenticated, isAuthLoading, loadProfile]);
 
-  // Contadores por status
-  const totalItems = libraryItems.length;
-  const completedCount = libraryItems.filter((i) => i.status === 'COMPLETO').length;
-  const inProgressCount = libraryItems.filter(
-    (i) => i.status === 'ASSISTINDO' || i.status === 'LENDO'
-  ).length;
-  const plannedCount = libraryItems.filter(
-    (i) => i.status === 'QUERO_ASSISTIR' || i.status === 'QUERO_LER'
-  ).length;
+  const handleExportJson = async () => {
+    setExporting('JSON');
+    try {
+      const blob = await profileApiClient.exportJson();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `yuukilist-export-${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      alert('Erro ao exportar dados em JSON');
+    } finally {
+      setExporting(null);
+    }
+  };
 
-  if (isAuthLoading) {
+  const handleExportCsv = async () => {
+    setExporting('CSV');
+    try {
+      const blob = await profileApiClient.exportCsv();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `yuukilist-library-${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      alert('Erro ao exportar biblioteca em CSV');
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  if (isAuthLoading || loading) {
     return (
-      <div className="p-8 text-center text-[#94A3B8] animate-pulse">
-        Carregando informações do perfil...
-      </div>
+      <main className="max-w-5xl mx-auto px-4 py-20 flex flex-col items-center justify-center text-zinc-400 space-y-3">
+        <div className="w-8 h-8 rounded-full border-2 border-cyan-500/20 border-t-cyan-500 animate-spin" />
+        <p className="text-sm font-medium">Carregando perfil e estatísticas...</p>
+      </main>
     );
   }
 
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated) {
     return (
-      <div className="max-w-md mx-auto p-8 rounded-2xl bg-[#101422] border border-[#1E2337] text-center space-y-4 animate-fadeIn">
-        <div className="w-16 h-16 rounded-full bg-[#181C2B] text-[#06B6D4] flex items-center justify-center mx-auto text-2xl font-bold">
-          ?
-        </div>
-        <h1 className="text-xl font-bold text-white">Perfil não autenticado</h1>
-        <p className="text-xs text-[#94A3B8]">
-          Entre na sua conta YuukiList para acessar suas estatísticas, biblioteca e preferências.
+      <main className="max-w-md mx-auto px-4 py-20 text-center space-y-4">
+        <span className="text-4xl block text-zinc-600">🔒</span>
+        <h1 className="text-xl font-bold text-zinc-200">Acesso Restrito</h1>
+        <p className="text-xs text-zinc-400">
+          Você precisa estar conectado à sua conta para visualizar seu perfil, estatísticas e opções de compartilhamento.
         </p>
-        <div className="flex gap-3 justify-center pt-2">
-          <a
-            href="/login"
-            className="px-5 py-2.5 rounded-xl bg-[#06B6D4] text-black font-semibold text-xs hover:bg-[#22D3EE] transition-colors"
-          >
-            Fazer Login
-          </a>
-          <a
-            href="/register"
-            className="px-5 py-2.5 rounded-xl bg-[#181C2B] text-white font-semibold text-xs hover:bg-[#262C3F] transition-colors border border-[#1E2337]"
-          >
-            Criar Conta
-          </a>
-        </div>
-      </div>
+        <a
+          href="/login?redirect=/profile"
+          className="inline-block px-5 py-2.5 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-zinc-950 transition-colors"
+        >
+          Entrar no YuukiList
+        </a>
+      </main>
     );
   }
 
   return (
-    <div className="space-y-8 animate-fadeIn max-w-4xl mx-auto">
-      {/* Cabeçalho do Perfil */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-[#101422] border border-[#1E2337] flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
-        <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#06B6D4] to-[#8B5CF6] text-black flex items-center justify-center font-black text-3xl shadow-lg">
-            {user.username.slice(0, 1).toUpperCase()}
+    <main className="max-w-5xl mx-auto px-4 py-8 space-y-10 animate-fadeIn">
+      {/* 1. Cabeçalho do Perfil */}
+      <section className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-3xl bg-zinc-900/60 border border-zinc-800 backdrop-blur shadow-xl">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-cyan-500 via-sky-500 to-violet-500 flex items-center justify-center text-2xl sm:text-3xl font-black text-zinc-950 shadow-lg">
+            {stats?.username ? stats.username.charAt(0).toUpperCase() : 'Y'}
           </div>
           <div>
-            <h1 className="text-2xl font-black text-white">{user.username}</h1>
-            <p className="text-xs text-[#94A3B8] mt-0.5">{user.email}</p>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#181C2B] border border-[#1E2337] text-[11px] text-[#06B6D4] mt-3 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              Membro Ativo YuukiList
+            <h1 className="text-xl sm:text-2xl font-black text-zinc-100 tracking-tight">
+              {stats?.username || user?.username}
+            </h1>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              Membro desde{' '}
+              {stats?.joinedAt
+                ? new Date(stats.joinedAt).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+                : '2026'}
+            </p>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-cyan-950 text-cyan-300 border border-cyan-800/60">
+                Colecionador
+              </span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700">
+                Privacidade Ativa
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="flex sm:flex-col gap-2 shrink-0">
-          <a
-            href="/library"
-            className="px-4 py-2 rounded-xl bg-[#181C2B] hover:bg-[#262C3F] text-xs font-semibold text-white border border-[#1E2337] transition-colors text-center"
-          >
-            Minha Biblioteca
-          </a>
+        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
           <button
-            onClick={() => logout()}
-            className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-xs font-semibold text-red-400 border border-red-500/20 transition-colors"
+            onClick={() => setIsShareOpen(true)}
+            className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-colors flex items-center justify-center gap-1.5"
           >
-            Sair da Conta
+            <span>🔗</span> Compartilhar Perfil
+          </button>
+          <button
+            onClick={logout}
+            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-800 hover:bg-zinc-750 text-zinc-300 border border-zinc-700 transition-colors"
+          >
+            Sair
           </button>
         </div>
-      </div>
+      </section>
 
-      {/* Resumo da Biblioteca */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-white flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#8B5CF6]" />
-          Estatísticas da Minha Coleção
-        </h2>
+      {/* 2. Estatísticas Analíticas */}
+      {stats && <ProfileStats stats={stats} />}
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-xl bg-[#101422] border border-[#1E2337] text-center">
-            <span className="text-2xl font-black text-white">{isLoading ? '—' : totalItems}</span>
-            <p className="text-xs text-[#94A3B8] mt-1 font-medium">Total de Obras</p>
+      {/* 3. Vitrine de Favoritos */}
+      {stats && <FavoritesShowcase favorites={stats.favorites} />}
+
+      {/* 4. Soberania de Dados e LGPD */}
+      <section className="p-6 rounded-3xl bg-zinc-900/40 border border-zinc-800 space-y-6">
+        <div>
+          <h2 className="text-base font-bold text-zinc-100 flex items-center gap-2">
+            <span>🛡️</span> Soberania de Dados & LGPD
+          </h2>
+          <p className="text-xs text-zinc-400 mt-1">
+            Seus dados pertencem exclusivamente a você. Exporte seus registros em formatos abertos ou exerça seu direito de exclusão definitiva.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-4 rounded-2xl bg-zinc-850/40 border border-zinc-800/80 space-y-2.5">
+            <h3 className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
+              Portabilidade de Dados
+            </h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Faça o download de todos os seus registros de biblioteca, notas do diário e preferências da conta.
+            </p>
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                onClick={handleExportJson}
+                disabled={!!exporting}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 hover:bg-zinc-750 text-zinc-200 border border-zinc-700 transition-colors disabled:opacity-50"
+              >
+                {exporting === 'JSON' ? 'Baixando...' : 'Exportar JSON'}
+              </button>
+              <button
+                onClick={handleExportCsv}
+                disabled={!!exporting}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 hover:bg-zinc-750 text-zinc-200 border border-zinc-700 transition-colors disabled:opacity-50"
+              >
+                {exporting === 'CSV' ? 'Baixando...' : 'Exportar CSV'}
+              </button>
+            </div>
           </div>
-          <div className="p-4 rounded-xl bg-[#101422] border border-[#1E2337] text-center">
-            <span className="text-2xl font-black text-emerald-400">{isLoading ? '—' : completedCount}</span>
-            <p className="text-xs text-[#94A3B8] mt-1 font-medium">Completas</p>
-          </div>
-          <div className="p-4 rounded-xl bg-[#101422] border border-[#1E2337] text-center">
-            <span className="text-2xl font-black text-[#06B6D4]">{isLoading ? '—' : inProgressCount}</span>
-            <p className="text-xs text-[#94A3B8] mt-1 font-medium">Em Andamento</p>
-          </div>
-          <div className="p-4 rounded-xl bg-[#101422] border border-[#1E2337] text-center">
-            <span className="text-2xl font-black text-amber-400">{isLoading ? '—' : plannedCount}</span>
-            <p className="text-xs text-[#94A3B8] mt-1 font-medium">Planejadas</p>
+
+          <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-900/30 space-y-2.5">
+            <h3 className="text-xs font-bold text-rose-300 uppercase tracking-wider">
+              Exclusão Definitiva
+            </h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Elimine permanentemente sua conta, biblioteca, anotações de diário e links compartilhados.
+            </p>
+            <div className="pt-1">
+              <button
+                onClick={() => setIsDeleteOpen(true)}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 transition-colors"
+              >
+                Excluir Conta...
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Preferências e Privacidade */}
-      <div className="p-6 rounded-2xl bg-[#101422] border border-[#1E2337] space-y-4">
-        <h3 className="text-sm font-bold text-white">Privacidade &amp; Preferências (LGPD)</h3>
-        <p className="text-xs text-[#94A3B8]">
-          Seus dados e notas pessoais pertencem exclusivamente a você. A exportação completa e opções de perfil público/privado serão expandidas na fatia R15.
-        </p>
-      </div>
-    </div>
+      {/* Modais */}
+      <ShareDialog isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
+      <DeleteAccountDialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} />
+    </main>
   );
 }

@@ -15,6 +15,9 @@ import {
   CalendarRepository,
   CalendarService,
   NotificationRepository,
+  ProfileController,
+  ProfileRepository,
+  ProfileService,
   CatalogRepository,
   CatalogIngestionService,
 } from '@yuukilist/api';
@@ -30,6 +33,8 @@ class ServerContainer {
   readonly relationsController: RelationsController;
   readonly calendarController: CalendarController;
   readonly calendarService: CalendarService;
+  readonly profileController: ProfileController;
+  readonly profileService: ProfileService;
 
   constructor() {
     this.catalogRepository = new CatalogRepository();
@@ -51,6 +56,16 @@ class ServerContainer {
     const notifRepo = new NotificationRepository();
     this.calendarService = new CalendarService(calendarRepo, notifRepo, this.catalogRepository, libraryRepo);
     this.calendarController = new CalendarController(this.calendarService);
+
+    const profileRepo = new ProfileRepository();
+    this.profileService = new ProfileService(
+      profileRepo,
+      libraryRepo,
+      this.catalogRepository,
+      this.authModule.usersRepository,
+      diaryRepo
+    );
+    this.profileController = new ProfileController(this.profileService);
 
     // Sincroniza lote canônico ingerido na memória do catálogo (Task 3.1)
     const ingestion = new CatalogIngestionService(this.catalogRepository);

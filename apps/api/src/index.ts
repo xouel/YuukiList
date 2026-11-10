@@ -38,6 +38,10 @@ export * from './calendar/calendar.repository.ts';
 export * from './calendar/calendar.service.ts';
 export * from './calendar/calendar.controller.ts';
 export * from './calendar/calendar.module.ts';
+export * from './profile/profile.repository.ts';
+export * from './profile/profile.service.ts';
+export * from './profile/profile.controller.ts';
+export * from './profile/profile.module.ts';
 export * from './app.module.ts';
 export * from '../../../packages/shared/src/index.ts';
 

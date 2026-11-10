@@ -123,6 +123,17 @@ export class LibraryRepository {
     return this.items.delete(key);
   }
 
+  async deleteAllByUser(userId: string): Promise<number> {
+    let count = 0;
+    for (const [key, item] of this.items.entries()) {
+      if (item.userId === userId) {
+        this.items.delete(key);
+        count++;
+      }
+    }
+    return count;
+  }
+
   async findMany(
     userId: string,
     filter: LibraryFilterDto = {}

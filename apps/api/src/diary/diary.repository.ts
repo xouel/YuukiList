@@ -165,6 +165,17 @@ export class DiaryRepository {
     return this.events.delete(id);
   }
 
+  async deleteAllByUser(userId: string): Promise<number> {
+    let count = 0;
+    for (const [id, record] of this.events.entries()) {
+      if (record.userId === userId) {
+        this.events.delete(id);
+        count++;
+      }
+    }
+    return count;
+  }
+
   async count(userId: string, filter?: HistoryFilterDto): Promise<number> {
     const records = await this.findMany(userId, filter);
     return records.length;
