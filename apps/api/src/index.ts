@@ -34,6 +34,10 @@ export * from './relations/relations.repository.ts';
 export * from './relations/relations.service.ts';
 export * from './relations/relations.controller.ts';
 export * from './relations/relations.module.ts';
+export * from './calendar/calendar.repository.ts';
+export * from './calendar/calendar.service.ts';
+export * from './calendar/calendar.controller.ts';
+export * from './calendar/calendar.module.ts';
 export * from './app.module.ts';
 export * from '../../../packages/shared/src/index.ts';
 

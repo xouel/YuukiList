@@ -226,3 +226,4 @@ export function FranchiseView({ franchise }: FranchiseViewProps) {
     </div>
   );
 }
+

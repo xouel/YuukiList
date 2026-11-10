@@ -92,3 +92,4 @@ export function getInvertedRelationType(type: MediaRelationType): MediaRelationT
       return 'RELATED';
   }
 }
+

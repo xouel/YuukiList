@@ -7,3 +7,4 @@ export * from './library.ts';
 export * from './diary.ts';
 export * from './relations.ts';
 export * from './external.ts';
+export * from './calendar.ts';

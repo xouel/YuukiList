@@ -1,0 +1,17 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "014-calendar-and-notifications"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "calendar-events"
+  - "calendar-ui"
+  - "notification-center"
+base_specs:
+  calendar-events: "NEW"
+  calendar-ui: "NEW"
+  notification-center: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-10T02:10:29.004Z"

@@ -48,3 +48,4 @@ export class RelationsController {
     return franchise;
   }
 }
+

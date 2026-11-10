@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '../../context/auth-context.tsx';
 import { ThemeToggle } from './theme-toggle.tsx';
 import { LegalFooter } from './legal-footer.tsx';
+import { NotificationBell } from '../notifications/notification-bell.tsx';
 
 interface NavigationShellProps {
   children: React.ReactNode;
@@ -87,6 +88,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
           </span>
         </a>
         <div className="flex items-center gap-2">
+          {isAuthenticated && <NotificationBell />}
           <ThemeToggle />
           {isAuthenticated ? (
             <button
@@ -141,8 +143,11 @@ export function NavigationShell({ children }: NavigationShellProps) {
         {/* Rodapé da Sidebar: Sessão do Usuário & ThemeToggle */}
         <div className="p-4 border-t border-[#1E2337] space-y-3 bg-[#0A0D16]">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[#64748B]">Tema da Interface</span>
-            <ThemeToggle />
+            <span className="text-xs text-[#64748B]">Central & Tema</span>
+            <div className="flex items-center gap-1.5">
+              {isAuthenticated && <NotificationBell />}
+              <ThemeToggle />
+            </div>
           </div>
 
           {isAuthenticated && user ? (

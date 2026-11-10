@@ -26,3 +26,4 @@ export class RelationsModule {
     this.controller = new RelationsController(this.service, authGuard);
   }
 }
+
