@@ -27,13 +27,25 @@ import {
 export class LibraryService {
   private readonly libraryRepository: LibraryRepository;
   private readonly catalogRepository: ICatalogRepository;
+  private readonly diaryService?: any;
 
   constructor(
     libraryRepository: LibraryRepository = new LibraryRepository(),
-    catalogRepository: ICatalogRepository = new CatalogRepository()
+    catalogRepository: ICatalogRepository = new CatalogRepository(),
+    diaryService?: any
   ) {
     this.libraryRepository = libraryRepository;
     this.catalogRepository = catalogRepository;
+    this.diaryService = diaryService;
+  }
+
+  private async emitHistoryEvent(userId: string, data: any): Promise<void> {
+    if (!this.diaryService) return;
+    try {
+      await this.diaryService.createEvent(userId, data);
+    } catch {
+      // Desacoplamento estrito: erro em histórico não afeta biblioteca
+    }
   }
 
   private getTotalUnits(category: Category, media: { totalEpisodes?: number | null; totalChapters?: number | null }): number | null {
@@ -92,6 +104,8 @@ export class LibraryService {
       throw new InvalidProgressError('Volumes lidos não podem ser negativos');
     }
 
+    const existing = await this.libraryRepository.findByUserAndMedia(userId, media.id);
+
     const record = await this.libraryRepository.upsert(userId, {
       mediaItemId: media.id,
       status: dto.status,
@@ -102,6 +116,47 @@ export class LibraryService {
       isFavorite: dto.isFavorite,
       rewatchCount: dto.rewatchCount,
     });
+
+    // Emissão de evento de histórico (desacoplada)
+    if (!existing) {
+      await this.emitHistoryEvent(userId, {
+        mediaItemId: media.id,
+        type: 'STATUS_CHANGE',
+        newStatus: record.status,
+        newProgress: record.progress,
+      });
+    } else {
+      if (record.progress !== existing.progress) {
+        await this.emitHistoryEvent(userId, {
+          mediaItemId: media.id,
+          type: 'PROGRESS_UPDATE',
+          previousProgress: existing.progress,
+          newProgress: record.progress,
+        });
+      }
+      if (record.status !== existing.status) {
+        await this.emitHistoryEvent(userId, {
+          mediaItemId: media.id,
+          type: (record.status === 'CONCLUIDO' || record.status === 'ASSISTIDO') ? 'COMPLETED' : 'STATUS_CHANGE',
+          previousStatus: existing.status,
+          newStatus: record.status,
+        });
+      }
+      if (record.rating !== existing.rating && record.rating !== null) {
+        await this.emitHistoryEvent(userId, {
+          mediaItemId: media.id,
+          type: 'RATING_SET',
+          rating: record.rating,
+        });
+      }
+      if (record.isFavorite !== existing.isFavorite) {
+        await this.emitHistoryEvent(userId, {
+          mediaItemId: media.id,
+          type: 'FAVORITE_TOGGLED',
+          isFavorite: record.isFavorite,
+        });
+      }
+    }
 
     const isUpToDate = calculateIsUpToDate({
       category: media.category,
@@ -181,6 +236,45 @@ export class LibraryService {
 
     if (!updated) {
       throw new LibraryItemNotFoundError('Item não encontrado na biblioteca pessoal');
+    }
+
+    // Emissão de evento de histórico (desacoplada)
+    if (updated.progress !== existing.progress) {
+      await this.emitHistoryEvent(userId, {
+        mediaItemId: media.id,
+        type: 'PROGRESS_UPDATE',
+        previousProgress: existing.progress,
+        newProgress: updated.progress,
+      });
+    }
+    if (updated.status !== existing.status) {
+      await this.emitHistoryEvent(userId, {
+        mediaItemId: media.id,
+        type: (updated.status === 'CONCLUIDO' || updated.status === 'ASSISTIDO') ? 'COMPLETED' : 'STATUS_CHANGE',
+        previousStatus: existing.status,
+        newStatus: updated.status,
+      });
+    }
+    if (updated.rating !== existing.rating && updated.rating !== null) {
+      await this.emitHistoryEvent(userId, {
+        mediaItemId: media.id,
+        type: 'RATING_SET',
+        rating: updated.rating,
+      });
+    }
+    if (updated.isFavorite !== existing.isFavorite) {
+      await this.emitHistoryEvent(userId, {
+        mediaItemId: media.id,
+        type: 'FAVORITE_TOGGLED',
+        isFavorite: updated.isFavorite,
+      });
+    }
+    if (updated.rewatchCount > (existing.rewatchCount || 0)) {
+      await this.emitHistoryEvent(userId, {
+        mediaItemId: media.id,
+        type: 'REWATCH_CYCLE',
+        rewatchCount: updated.rewatchCount,
+      });
     }
 
     const isUpToDate = calculateIsUpToDate({

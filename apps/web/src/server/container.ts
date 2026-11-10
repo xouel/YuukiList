@@ -5,6 +5,9 @@ import {
   LibraryController,
   LibraryRepository,
   LibraryService,
+  DiaryController,
+  DiaryRepository,
+  DiaryService,
   CatalogRepository,
   CatalogIngestionService,
 } from '@yuukilist/api';
@@ -16,6 +19,7 @@ class ServerContainer {
   readonly catalogController: CatalogController;
   readonly authModule: AuthModule;
   readonly libraryController: LibraryController;
+  readonly diaryController: DiaryController;
 
   constructor() {
     this.catalogRepository = new CatalogRepository();
@@ -23,8 +27,11 @@ class ServerContainer {
     this.catalogController = new CatalogController(this.catalogService);
     this.authModule = new AuthModule();
     const libraryRepo = new LibraryRepository();
-    const libraryService = new LibraryService(libraryRepo, this.catalogRepository);
+    const diaryRepo = new DiaryRepository();
+    const diaryService = new DiaryService(diaryRepo, libraryRepo);
+    const libraryService = new LibraryService(libraryRepo, this.catalogRepository, diaryService);
     this.libraryController = new LibraryController(libraryService, this.authModule.authGuard);
+    this.diaryController = new DiaryController(diaryService, this.authModule.authGuard);
 
     // Sincroniza lote canônico ingerido na memória do catálogo (Task 3.1)
     const ingestion = new CatalogIngestionService(this.catalogRepository);

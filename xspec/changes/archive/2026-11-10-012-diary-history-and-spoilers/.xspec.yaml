@@ -1,0 +1,15 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "012-diary-history-and-spoilers"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "personal-diary"
+  - "personal-diary-ui"
+base_specs:
+  personal-diary: "NEW"
+  personal-diary-ui: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-10T01:19:32.661Z"

@@ -11,8 +11,10 @@ import type {
   Category,
   UpdateLibraryItemDto,
   LibrarySortBy,
+  HistoryEventDto,
 } from '../../../../../packages/shared/src/index.ts';
 import { LibraryApiClient } from '../../services/library-api.client.ts';
+import { DiaryApiClient } from '../../services/diary-api.client.ts';
 import {
   type LibraryLayoutMode,
   type StatusTabKey,
@@ -26,10 +28,13 @@ import { LibraryCard } from './library-card.tsx';
 import { LibraryRow } from './library-row.tsx';
 import { EditItemModal } from './edit-item-modal.tsx';
 import { LibrarySkeleton } from './library-skeleton.tsx';
+import { TimelineView } from '../diary/timeline-view.tsx';
+import { CreateNoteModal } from '../diary/create-note-modal.tsx';
 import { ErrorState, NoResultsState } from '../catalog/async-feedback.tsx';
 
 const SORT_STORAGE_KEY = 'yuuki:library:sort';
 const libraryApi = new LibraryApiClient();
+const diaryApi = new DiaryApiClient();
 
 export function LibraryView() {
   const [items, setItems] = useState<LibraryItemDto[]>([]);
@@ -43,6 +48,55 @@ export function LibraryView() {
   const [editingItem, setEditingItem] = useState<LibraryItemDto | null>(null);
   const [mutatingIds, setMutatingIds] = useState<Set<string>>(new Set());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Estados do Diário Pessoal e Linha do Tempo (R12)
+  const [viewMode, setViewMode] = useState<'COLLECTION' | 'DIARY'>('COLLECTION');
+  const [diaryEvents, setDiaryEvents] = useState<HistoryEventDto[]>([]);
+  const [isLoadingDiary, setIsLoadingDiary] = useState<boolean>(false);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState<boolean>(false);
+  const [selectedMediaForNote, setSelectedMediaForNote] = useState<{ id: string; title: string; category?: Category } | null>(null);
+
+  // Carrega eventos do diário
+  const fetchDiary = useCallback(async () => {
+    setIsLoadingDiary(true);
+    try {
+      const response = await diaryApi.list();
+      setDiaryEvents(response || []);
+    } catch {
+      // Ignora erro em falha inicial do diário
+    } finally {
+      setIsLoadingDiary(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === 'DIARY') {
+      fetchDiary();
+    }
+  }, [viewMode, fetchDiary]);
+
+  const handleDeleteDiaryEvent = async (id: string) => {
+    try {
+      await diaryApi.deleteEvent(id);
+      setDiaryEvents((prev) => prev.filter((e) => e.id !== id));
+      showToast('Registro do histórico removido com sucesso.');
+    } catch {
+      showToast('Falha ao excluir registro do histórico.');
+    }
+  };
+
+  const handleCreateDiaryNote = async (data: any) => {
+    try {
+      const created = await diaryApi.createEvent({
+        ...data,
+        type: 'NOTE',
+      });
+      setDiaryEvents((prev) => [created, ...prev]);
+      showToast('Anotação salva com sucesso no seu diário!');
+    } catch {
+      showToast('Falha ao salvar anotação.');
+    }
+  };
 
   // Carrega layout e ordenação salvos no localStorage após montagem
   useEffect(() => {
@@ -285,95 +339,181 @@ export function LibraryView() {
             Minha Biblioteca
           </h1>
           <p className="text-xs sm:text-sm text-[#94A3B8] mt-1">
-            Acompanhe seu progresso de exibição e leitura de doramas, animes e mangás.
+            Acompanhe seu progresso de exibição, leitura e linha do tempo de doramas, animes e mangás.
           </p>
+        </div>
+
+        {/* Alternador de Visão Principal: Acervo vs Histórico & Diário */}
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#181C2B] border border-[#262C3F] self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => setViewMode('COLLECTION')}
+            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
+              viewMode === 'COLLECTION'
+                ? 'bg-[#06B6D4] text-[#0B0D13] shadow-md shadow-[#06B6D4]/20'
+                : 'text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-white/5'
+            }`}
+          >
+            Acervo
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('DIARY')}
+            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
+              viewMode === 'DIARY'
+                ? 'bg-[#06B6D4] text-[#0B0D13] shadow-md shadow-[#06B6D4]/20'
+                : 'text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-white/5'
+            }`}
+          >
+            <span>Histórico & Diário</span>
+            {diaryEvents.length > 0 && (
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  viewMode === 'DIARY' ? 'bg-[#0B0D13]/30 text-[#0B0D13]' : 'bg-[#262C3F] text-gray-300'
+                }`}
+              >
+                {diaryEvents.length}
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Filtros e Alternador de Layout */}
-      <LibraryFilters
-        selectedTab={selectedTab}
-        onTabChange={setSelectedTab}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        layout={layout}
-        onLayoutChange={handleLayoutChange}
-        countsByTab={countsByTab}
-        sortBy={sortBy}
-        onSortByChange={handleSortChange}
-        isFavoriteOnly={isFavoriteOnly}
-        onToggleFavoriteOnly={() => setIsFavoriteOnly((prev) => !prev)}
-      />
+      {viewMode === 'DIARY' ? (
+        /* Seção do Diário e Linha do Tempo (R12) */
+        <div className="space-y-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-[#F3F4F6]">Linha do Tempo Pessoal</h2>
+              <p className="text-xs text-[#94A3B8]">
+                Registro cronológico independente das suas ações, reflexões e memórias de consumo.
+              </p>
+            </div>
 
-      {/* Estados Assíncronos */}
-      {isLoading ? (
-        <LibrarySkeleton layout={layout} />
-      ) : error ? (
-        <ErrorState message={error} onRetry={fetchLibrary} />
-      ) : items.length === 0 ? (
-        /* Estado Vazio Convidativo */
-        <div className="py-16 px-4 text-center border border-dashed border-[#262C3F] rounded-2xl bg-[#121520]/50 max-w-lg mx-auto my-8">
-          <div className="w-14 h-14 rounded-full bg-[#181C2B] border border-[#262C3F] flex items-center justify-center mx-auto mb-4 text-[#06B6D4]">
-            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-              />
-            </svg>
+            {items.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedMediaForNote(null);
+                  setIsNoteModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-[#06B6D4] text-[#0B0D13] hover:bg-[#22D3EE] transition-all shadow-md shadow-[#06B6D4]/20"
+              >
+                <span>+</span>
+                <span>Nova Anotação</span>
+              </button>
+            )}
           </div>
-          <h2 className="text-xl font-bold text-[#F3F4F6]">Sua biblioteca ainda está vazia</h2>
-          <p className="text-sm text-[#94A3B8] mt-2 max-w-sm mx-auto">
-            Explore nosso catálogo completo com doramas, filmes, animes e mangás e adicione suas primeiras obras para começar a acompanhar!
-          </p>
-          <div className="mt-6">
-            <a
-              href="/"
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-[#0B0D13] bg-[#06B6D4] hover:bg-[#22D3EE] rounded-xl transition-all shadow-lg shadow-[#06B6D4]/20 focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
-            >
-              Explorar Catálogo
-            </a>
-          </div>
-        </div>
-      ) : filteredItems.length === 0 ? (
-        /* Filtros sem resultados */
-        <NoResultsState
-          onClearFilters={() => {
-            setSelectedTab('ALL');
-            setSelectedCategory('ALL');
-            setIsFavoriteOnly(false);
-          }}
-        />
-      ) : layout === 'grid' ? (
-        /* Visualização em Grade */
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
-          {filteredItems.map((item) => (
-            <LibraryCard
-              key={item.id}
-              item={item}
-              onQuickIncrement={handleQuickIncrement}
-              onToggleFavorite={handleToggleFavorite}
-              onOpenEdit={setEditingItem}
-              isMutating={mutatingIds.has(item.mediaItemId)}
-            />
-          ))}
+
+          <TimelineView
+            events={diaryEvents}
+            isLoading={isLoadingDiary}
+            onDeleteEvent={handleDeleteDiaryEvent}
+            onAddNoteClick={() => {
+              setSelectedMediaForNote(null);
+              setIsNoteModalOpen(true);
+            }}
+          />
         </div>
       ) : (
-        /* Visualização em Lista */
-        <div className="space-y-3">
-          {filteredItems.map((item) => (
-            <LibraryRow
-              key={item.id}
-              item={item}
-              onQuickIncrement={handleQuickIncrement}
-              onToggleFavorite={handleToggleFavorite}
-              onOpenEdit={setEditingItem}
-              isMutating={mutatingIds.has(item.mediaItemId)}
+        /* Seção do Acervo da Biblioteca */
+        <>
+          {/* Filtros e Alternador de Layout */}
+          <LibraryFilters
+            selectedTab={selectedTab}
+            onTabChange={setSelectedTab}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            layout={layout}
+            onLayoutChange={handleLayoutChange}
+            countsByTab={countsByTab}
+            sortBy={sortBy}
+            onSortByChange={handleSortChange}
+            isFavoriteOnly={isFavoriteOnly}
+            onToggleFavoriteOnly={() => setIsFavoriteOnly((prev) => !prev)}
+          />
+
+          {/* Estados Assíncronos */}
+          {isLoading ? (
+            <LibrarySkeleton layout={layout} />
+          ) : error ? (
+            <ErrorState message={error} onRetry={fetchLibrary} />
+          ) : items.length === 0 ? (
+            /* Estado Vazio Convidativo */
+            <div className="py-16 px-4 text-center border border-dashed border-[#262C3F] rounded-2xl bg-[#121520]/50 max-w-lg mx-auto my-8">
+              <div className="w-14 h-14 rounded-full bg-[#181C2B] border border-[#262C3F] flex items-center justify-center mx-auto mb-4 text-[#06B6D4]">
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-[#F3F4F6]">Sua biblioteca ainda está vazia</h2>
+              <p className="text-sm text-[#94A3B8] mt-2 max-w-sm mx-auto">
+                Explore nosso catálogo completo com doramas, filmes, animes e mangás e adicione suas primeiras obras para começar a acompanhar!
+              </p>
+              <div className="mt-6">
+                <a
+                  href="/"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-[#0B0D13] bg-[#06B6D4] hover:bg-[#22D3EE] rounded-xl transition-all shadow-lg shadow-[#06B6D4]/20 focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
+                >
+                  Explorar Catálogo
+                </a>
+              </div>
+            </div>
+          ) : filteredItems.length === 0 ? (
+            /* Filtros sem resultados */
+            <NoResultsState
+              onClearFilters={() => {
+                setSelectedTab('ALL');
+                setSelectedCategory('ALL');
+                setIsFavoriteOnly(false);
+              }}
             />
-          ))}
-        </div>
+          ) : layout === 'grid' ? (
+            /* Visualização em Grade */
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+              {filteredItems.map((item) => (
+                <LibraryCard
+                  key={item.id}
+                  item={item}
+                  onQuickIncrement={handleQuickIncrement}
+                  onToggleFavorite={handleToggleFavorite}
+                  onOpenEdit={setEditingItem}
+                  isMutating={mutatingIds.has(item.mediaItemId)}
+                />
+              ))}
+            </div>
+          ) : (
+            /* Visualização em Lista */
+            <div className="space-y-3">
+              {filteredItems.map((item) => (
+                <LibraryRow
+                  key={item.id}
+                  item={item}
+                  onQuickIncrement={handleQuickIncrement}
+                  onToggleFavorite={handleToggleFavorite}
+                  onOpenEdit={setEditingItem}
+                  isMutating={mutatingIds.has(item.mediaItemId)}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
+
+      {/* Modal de Anotação do Diário */}
+      <CreateNoteModal
+        isOpen={isNoteModalOpen}
+        mediaItemId={selectedMediaForNote?.id || (items[0]?.mediaItemId || '')}
+        mediaTitle={selectedMediaForNote?.title || items[0]?.mediaItem?.title}
+        category={selectedMediaForNote?.category || items[0]?.mediaItem?.category}
+        onClose={() => setIsNoteModalOpen(false)}
+        onSubmit={handleCreateDiaryNote}
+      />
 
       {/* Modal de Edição Detalhada */}
       <EditItemModal

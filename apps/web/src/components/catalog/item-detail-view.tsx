@@ -11,11 +11,15 @@ import {
   type PersonalStatus,
   type LibraryItemDto,
   type UpdateLibraryItemDto,
+  type HistoryEventDto,
   CATEGORY_ALLOWED_STATUSES,
 } from '../../../../../packages/shared/src/index.ts';
 import { useAuth } from '../../context/auth-context.tsx';
 import { LibraryApiClient } from '../../services/library-api.client.ts';
+import { DiaryApiClient } from '../../services/diary-api.client.ts';
 import { EditItemModal } from '../library/edit-item-modal.tsx';
+import { TimelineView } from '../diary/timeline-view.tsx';
+import { CreateNoteModal } from '../diary/create-note-modal.tsx';
 import {
   formatProgressDisplay,
   calculateNextProgress,
@@ -56,6 +60,7 @@ const PERSONAL_STATUS_LABELS: Record<string, string> = {
 };
 
 const libraryApi = new LibraryApiClient();
+const diaryApi = new DiaryApiClient();
 
 function getDefaultStatus(category: string): PersonalStatus {
   if (category === 'FILME') return 'QUERO_ASSISTIR';
@@ -72,6 +77,11 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+
+  // Estados do Diário Pessoal & Histórico
+  const [diaryEvents, setDiaryEvents] = useState<HistoryEventDto[]>([]);
+  const [isLoadingDiary, setIsLoadingDiary] = useState<boolean>(false);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState<boolean>(false);
 
   const categoryClass = CATEGORY_COLORS[item.category] || 'bg-gray-800 text-gray-300 border-gray-700';
   const pubStatusLabel = PUBLICATION_STATUS_LABELS[item.publicationStatus] || item.publicationStatus;
@@ -108,6 +118,27 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     checkLibraryStatus();
   }, [checkLibraryStatus]);
 
+  // Carrega eventos e anotações do diário específicos para esta obra
+  const fetchDiaryEvents = useCallback(async () => {
+    if (!isAuthenticated) {
+      setDiaryEvents([]);
+      return;
+    }
+    setIsLoadingDiary(true);
+    try {
+      const res = await diaryApi.list({ mediaItemId: item.id });
+      setDiaryEvents(res.data || []);
+    } catch {
+      setDiaryEvents([]);
+    } finally {
+      setIsLoadingDiary(false);
+    }
+  }, [isAuthenticated, item.id]);
+
+  useEffect(() => {
+    fetchDiaryEvents();
+  }, [fetchDiaryEvents]);
+
   // Ação de adicionar obra à biblioteca
   const handleAddToLibrary = async () => {
     if (!isAuthenticated) return;
@@ -121,6 +152,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
       });
       setLibraryItem(created);
       showFeedback('Obra adicionada à sua biblioteca com sucesso!');
+      fetchDiaryEvents();
     } catch (err: any) {
       showFeedback(err?.message || 'Falha ao adicionar obra à biblioteca.');
     } finally {
@@ -142,6 +174,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     try {
       const updated = await libraryApi.updateItem(item.id, { progress: nextProg });
       setLibraryItem(updated);
+      fetchDiaryEvents();
     } catch {
       setLibraryItem(prev);
       showFeedback('Falha ao atualizar progresso.');
@@ -153,6 +186,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     const updated = await libraryApi.updateItem(item.id, update);
     setLibraryItem(updated);
     showFeedback('Status atualizado com sucesso.');
+    fetchDiaryEvents();
   };
 
   // Remover obra da biblioteca
@@ -160,6 +194,40 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     await libraryApi.removeItem(item.id);
     setLibraryItem(null);
     showFeedback('Obra removida da sua biblioteca.');
+    fetchDiaryEvents();
+  };
+
+  // Criação de anotação no diário
+  const handleCreateNote = async (data: {
+    mediaItemId: string;
+    note: string;
+    episodeNumber?: number | null;
+    chapterNumber?: number | null;
+    volumeNumber?: number | null;
+    containsSpoiler: boolean;
+    occurredAt?: string;
+  }) => {
+    try {
+      const created = await diaryApi.createEvent({
+        ...data,
+        type: 'NOTE',
+      });
+      setDiaryEvents((prev) => [created, ...prev]);
+      showFeedback('Anotação adicionada ao diário!');
+    } catch (err: any) {
+      showFeedback(err?.message || 'Falha ao salvar anotação.');
+    }
+  };
+
+  // Exclusão de evento do histórico (desacoplada)
+  const handleDeleteDiaryEvent = async (eventId: string) => {
+    try {
+      await diaryApi.deleteEvent(eventId);
+      setDiaryEvents((prev) => prev.filter((e) => e.id !== eventId));
+      showFeedback('Registro do histórico removido com sucesso.');
+    } catch {
+      showFeedback('Falha ao excluir registro.');
+    }
   };
 
   return (
@@ -437,6 +505,63 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
           </div>
         </div>
       </article>
+
+      {/* Seção de Diário Pessoal & Histórico da Obra */}
+      <section className="bg-[#121520] border border-[#262C3F] rounded-2xl p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#262C3F] pb-4">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-[#F3F4F6] flex items-center gap-2">
+              <span className="text-xl">📖</span>
+              <span>Diário &amp; Histórico da Obra</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-[#9CA3AF] mt-0.5">
+              Seus registros cronológicos, ciclos e anotações por episódio/capítulo com proteção contra spoilers.
+            </p>
+          </div>
+
+          {isAuthenticated && (
+            <button
+              type="button"
+              onClick={() => setIsNoteModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#06B6D4] hover:bg-[#22D3EE] text-[#0B0D13] font-bold text-xs sm:text-sm transition-all shadow-md shadow-[#06B6D4]/10 cursor-pointer self-start sm:self-auto"
+            >
+              <span>+</span>
+              <span>Nova Anotação</span>
+            </button>
+          )}
+        </div>
+
+        {!isAuthenticated ? (
+          <div className="py-8 text-center bg-[#0E111B] border border-[#262C3F]/60 rounded-xl space-y-2">
+            <p className="text-sm text-[#9CA3AF]">
+              Faça login para registrar anotações e visualizar seu histórico desta obra.
+            </p>
+            <a
+              href={`/login?redirect=${encodeURIComponent(`/items/${item.slug}`)}`}
+              className="inline-block text-xs font-semibold text-[#06B6D4] hover:underline"
+            >
+              Entrar na conta →
+            </a>
+          </div>
+        ) : (
+          <TimelineView
+            events={diaryEvents}
+            isLoading={isLoadingDiary}
+            onDeleteEvent={handleDeleteDiaryEvent}
+            onAddNoteClick={() => setIsNoteModalOpen(true)}
+          />
+        )}
+      </section>
+
+      {/* Modal de Criação de Anotação no Diário */}
+      <CreateNoteModal
+        isOpen={isNoteModalOpen}
+        mediaItemId={item.id}
+        mediaTitle={item.title}
+        category={item.category}
+        onClose={() => setIsNoteModalOpen(false)}
+        onSubmit={handleCreateNote}
+      />
 
       {/* Modal de Edição Detalhada */}
       {libraryItem && (

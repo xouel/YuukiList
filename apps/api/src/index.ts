@@ -26,6 +26,10 @@ export * from './library/library.repository.ts';
 export * from './library/library.service.ts';
 export * from './library/library.controller.ts';
 export * from './library/library.module.ts';
+export * from './diary/diary.repository.ts';
+export * from './diary/diary.service.ts';
+export * from './diary/diary.controller.ts';
+export * from './diary/diary.module.ts';
 export * from './app.module.ts';
 export * from '../../../packages/shared/src/index.ts';
 
