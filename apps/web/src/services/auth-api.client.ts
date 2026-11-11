@@ -116,6 +116,16 @@ export class AuthApiClient {
         throw new AuthApiError('Falha ao encerrar sessão', response.status, 'LOGOUT_ERROR');
       }
 
+      // Expurgo mandatório de caches privados no logout (TR-012)
+      if (typeof window !== 'undefined') {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage('PURGE_PRIVATE_CACHE');
+        }
+        if ('caches' in window) {
+          caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))).catch(() => {});
+        }
+      }
+
       return { success: true };
     } catch (err: any) {
       if (err instanceof AuthApiError) throw err;

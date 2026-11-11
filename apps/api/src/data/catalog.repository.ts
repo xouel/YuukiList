@@ -186,8 +186,44 @@ export class CatalogRepository implements ICatalogRepository {
     return [...this.items];
   }
 
+  async findSimilar(title: string, threshold: number = 0.35): Promise<Array<{
+    id: string;
+    title: string;
+    slug: string;
+    category: Category;
+    similarity: number;
+    releaseYear?: number | null;
+  }>> {
+    if (!title || !title.trim()) return [];
+    const normalizedInput = normalizeSearchText(title);
+    const results: Array<{
+      id: string;
+      title: string;
+      slug: string;
+      category: Category;
+      similarity: number;
+      releaseYear?: number | null;
+    }> = [];
+
+    for (const item of this.items) {
+      const sim = calculateTrigramSimilarity(normalizedInput, item.normalizedTitle);
+      if (sim >= threshold) {
+        results.push({
+          id: item.id,
+          title: item.title,
+          slug: item.slug,
+          category: item.category,
+          similarity: Math.round(sim * 100) / 100,
+          releaseYear: item.releaseYear,
+        });
+      }
+    }
+
+    return results.sort((a, b) => b.similarity - a.similarity);
+  }
+
   async findMany(query: CatalogQueryDto): Promise<PaginatedResponse<MediaItemSummaryDto>> {
-    let resultItems = [...this.items];
+    let resultItems = [...this.items].filter((item) => item.validationStatus !== 'PROVISIONAL');
 
     // 1. Filtro por Categoria
     if (query.category) {

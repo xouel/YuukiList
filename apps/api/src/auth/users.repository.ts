@@ -2,7 +2,9 @@ import crypto from 'node:crypto';
 import {
   normalizeEmail,
   normalizeUsername,
+  UserRole,
 } from '../../../../packages/shared/src/index.ts';
+import type { UserRole as UserRoleType } from '../../../../packages/shared/src/index.ts';
 
 export interface UserRecord {
   id: string;
@@ -11,16 +13,18 @@ export interface UserRecord {
   username: string;
   normalizedUsername: string;
   passwordHash: string;
+  role: UserRoleType;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface IUsersRepository {
-  create(data: { email: string; username: string; passwordHash: string }): Promise<UserRecord>;
+  create(data: { email: string; username: string; passwordHash: string; role?: UserRoleType }): Promise<UserRecord>;
   findById(id: string): Promise<UserRecord | null>;
   findByEmail(email: string): Promise<UserRecord | null>;
   findByUsername(username: string): Promise<UserRecord | null>;
   findByIdentifier(identifier: string): Promise<UserRecord | null>;
+  setRole(id: string, role: UserRoleType): Promise<UserRecord | null>;
   count(): Promise<number>;
   clear(): Promise<void>;
 }
@@ -32,6 +36,7 @@ export class UsersRepository implements IUsersRepository {
     email: string;
     username: string;
     passwordHash: string;
+    role?: UserRoleType;
   }): Promise<UserRecord> {
     const id = crypto.randomUUID();
     const now = new Date();
@@ -45,6 +50,7 @@ export class UsersRepository implements IUsersRepository {
       username: data.username.trim(),
       normalizedUsername,
       passwordHash: data.passwordHash,
+      role: data.role || UserRole.USER,
       createdAt: now,
       updatedAt: now,
     };
@@ -87,6 +93,15 @@ export class UsersRepository implements IUsersRepository {
       }
     }
     return null;
+  }
+
+  async setRole(id: string, role: UserRoleType): Promise<UserRecord | null> {
+    const user = this.users.get(id);
+    if (!user) return null;
+    user.role = role;
+    user.updatedAt = new Date();
+    this.users.set(id, user);
+    return { ...user };
   }
 
   async count(): Promise<number> {

@@ -32,6 +32,9 @@ export interface StoredMediaItem {
   totalEpisodes?: number | null;
   totalChapters?: number | null;
   totalVolumes?: number | null;
+  validationStatus?: 'PROVISIONAL' | 'VALIDATED';
+  isManuallyEdited?: boolean;
+  lockedFields?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

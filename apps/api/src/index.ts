@@ -42,6 +42,13 @@ export * from './profile/profile.repository.ts';
 export * from './profile/profile.service.ts';
 export * from './profile/profile.controller.ts';
 export * from './profile/profile.module.ts';
+export * from './provisional/provisional.repository.ts';
+export * from './provisional/provisional.service.ts';
+export * from './provisional/provisional.controller.ts';
+export * from './provisional/provisional.module.ts';
+export * from './admin/admin.service.ts';
+export * from './admin/admin.controller.ts';
+export * from './admin/admin.module.ts';
 export * from './app.module.ts';
 export * from '../../../packages/shared/src/index.ts';
 

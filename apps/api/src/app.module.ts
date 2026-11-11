@@ -10,11 +10,13 @@ import { DiaryModule } from './diary/diary.module.ts';
 import { RelationsModule } from './relations/relations.module.ts';
 import { CalendarModule } from './calendar/calendar.module.ts';
 import { ProfileModule } from './profile/profile.module.ts';
+import { ProvisionalModule } from './provisional/provisional.module.ts';
+import { AdminModule } from './admin/admin.module.ts';
 
 export class AppModule {
   static readonly moduleName = 'AppModule';
-  static readonly imports = [DataModule, CatalogModule, AuthModule, LibraryModule, DiaryModule, RelationsModule, CalendarModule, ProfileModule];
+  static readonly imports = [DataModule, CatalogModule, AuthModule, LibraryModule, DiaryModule, RelationsModule, CalendarModule, ProfileModule, ProvisionalModule, AdminModule];
 }
 
-export { DataModule, CatalogModule, AuthModule, LibraryModule, DiaryModule, RelationsModule, CalendarModule, ProfileModule };
+export { DataModule, CatalogModule, AuthModule, LibraryModule, DiaryModule, RelationsModule, CalendarModule, ProfileModule, ProvisionalModule, AdminModule };
 

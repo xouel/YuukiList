@@ -1,0 +1,17 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "016-provisional-works-and-admin"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "admin-management"
+  - "provisional-works"
+  - "pwa-offline"
+base_specs:
+  admin-management: "NEW"
+  provisional-works: "NEW"
+  pwa-offline: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-11T00:07:09.267Z"

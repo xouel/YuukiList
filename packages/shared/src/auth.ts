@@ -1,3 +1,5 @@
+import type { UserRole } from './provisional.ts';
+
 export interface RegisterDto {
   email: string;
   username: string;
@@ -13,6 +15,7 @@ export interface AuthUserResponse {
   id: string;
   email: string;
   username: string;
+  role?: UserRole;
   createdAt: string | Date;
 }
 
@@ -20,6 +23,7 @@ export interface SessionPayload {
   sub: string;
   email: string;
   username: string;
+  role?: UserRole;
   iat: number;
   exp: number;
 }

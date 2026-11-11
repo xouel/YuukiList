@@ -77,6 +77,7 @@ export class AuthService {
       id: userRecord.id,
       email: userRecord.email,
       username: userRecord.username,
+      role: userRecord.role,
       createdAt: userRecord.createdAt,
     };
 
@@ -84,6 +85,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       username: user.username,
+      role: user.role,
     });
 
     const cookie = this.tokenService.createSessionCookie(token);
@@ -129,6 +131,7 @@ export class AuthService {
       id: userRecord.id,
       email: userRecord.email,
       username: userRecord.username,
+      role: userRecord.role,
       createdAt: userRecord.createdAt,
     };
 
@@ -136,6 +139,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       username: user.username,
+      role: user.role,
     });
 
     const cookie = this.tokenService.createSessionCookie(token);
@@ -162,6 +166,7 @@ export class AuthService {
       id: userRecord.id,
       email: userRecord.email,
       username: userRecord.username,
+      role: userRecord.role,
       createdAt: userRecord.createdAt,
     };
   }
