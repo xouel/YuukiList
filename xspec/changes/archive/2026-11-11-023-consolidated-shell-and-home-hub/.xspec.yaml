@@ -2,7 +2,7 @@
 schema_version: 2
 id: "023-consolidated-shell-and-home-hub"
 type: "feature"
-status: "BUILT"
+status: "ARCHIVED"
 skip_specs: false
 touched_capabilities:
   - "catalog-browse"
@@ -16,4 +16,4 @@ base_specs:
   personal-library-ui: "sha256:3024f5c3c0cb4f2df78c68cade854f4ad4b44035f66b48504b984bc9e3d929d6"
 impacted_files: []
 depends_on: []
-updated_at: "2026-11-11T11:30:56.328Z"
+updated_at: "2026-11-11T12:02:33.500Z"

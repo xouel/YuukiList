@@ -7,7 +7,7 @@ Prover a interface gráfica web da biblioteca pessoal no YuukiList, permitindo a
 ## Requirements
 
 ### Requirement: Personal Library View and Layout Toggle
-O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida library perfeitamente integrada ao container global unificado, permitindo alternar fluidamente entre visualização em grade e lista e posicionando os selos de status pessoal no topo dos cards.
+O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida /library integrada ao container global, consumir e desserializar robustamente a lista de itens da API, permitir alternar entre grade e lista e posicionar os selos de status pessoal no topo dos cards.
 
 #### Scenario: Exibicao da biblioteca pessoal em modo grade
 - **GIVEN** um usuário autenticado com obras registradas em sua biblioteca
@@ -28,6 +28,11 @@ O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida li
 - **GIVEN** a tela de biblioteca renderizada para um usuário autenticado
 - **WHEN** os cards de obras são exibidos na interface
 - **THEN** a página integra-se ao container global sem fundos recortados dissonantes e os selos de status pessoal são posicionados no canto superior do card
+
+#### Scenario: Carregamento robusto e desserializacao de itens da biblioteca
+- **GIVEN** a resposta da API contendo as obras salvas do usuário
+- **WHEN** o cliente HTTP e a visão da biblioteca recebem os dados paginados
+- **THEN** o sistema SHALL normalizar e extrair a lista de itens garantindo a renderização correta de todas as obras salvas
 
 ### Requirement: Quick Progress Tracking and Detail Modal
 O sistema SHALL disponibilizar controle tátil de progresso com formatação relativa ao total conhecido, barra visual de progresso proporcional, botão de incremento rápido com área de toque mínima acessível de 44x44px e modal para edição detalhada.

@@ -1,6 +1,6 @@
 # Proposal: Consolidated Shell, Home Hub & Library Fix (R23)
 
-> **X-Spec** · ID: `023-consolidated-shell-and-home-hub` · Type: `feature` · Status: `BUILT` · Created: `2026-11-11`
+> **X-Spec** · ID: `023-consolidated-shell-and-home-hub` · Type: `feature` · Status: `ARCHIVED` · Created: `2026-11-11`
 
 ## Why
 
