@@ -1,7 +1,7 @@
 // apps/web/public/sw.js
-// YuukiList Service Worker — PWA & Safe Offline Cache
+// YuukiList Service Worker — PWA & Safe Offline Cache (v2 - Network First)
 
-const CACHE_NAME = 'yuukilist-v1';
+const CACHE_NAME = 'yuukilist-v2';
 const STATIC_ASSETS = [
   '/',
   '/library',
@@ -25,6 +25,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('[SW] Purgando cache legado:', key);
             return caches.delete(key);
           }
         })
@@ -42,31 +43,30 @@ self.addEventListener('fetch', (event) => {
   // Não faz cache de endpoints de autenticação ou mutação
   if (url.pathname.startsWith('/api/v1/auth')) return;
 
+  // Estratégia Network-First: Tenta a rede primeiro para garantir código e chunks sempre frescos.
+  // Em caso de falha de rede (modo offline), recorre com segurança ao cache recente.
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          // Em caso de falha de rede offline, retorna resposta em cache se houver
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          // Se for navegação de página, retorna fallback
-          if (event.request.mode === 'navigate') {
-            return caches.match('/');
-          }
-        });
-
-      return cachedResponse || fetchPromise;
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(async () => {
+        // Fallback offline a partir do cache seguro
+        const cached = await caches.match(event.request);
+        if (cached) {
+          return cached;
+        }
+        // Se for navegação de página em modo offline, retorna a raiz em cache
+        if (event.request.mode === 'navigate') {
+          return caches.match('/');
+        }
+      })
   );
 });
 
@@ -80,4 +80,3 @@ self.addEventListener('message', (event) => {
     });
   }
 });
-

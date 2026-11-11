@@ -11,6 +11,8 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
         .register('/sw.js')
         .then((reg) => {
           console.log('[PWA] Service Worker registrado com escopo:', reg.scope);
+          // Força verificação imediata de atualizações de versão
+          reg.update().catch(() => {});
         })
         .catch((err) => {
           console.warn('[PWA] Falha ao registrar Service Worker:', err);
@@ -46,4 +48,3 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
     </>
   );
 }
-
