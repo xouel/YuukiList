@@ -1,8 +1,9 @@
 'use client';
 
 /**
- * YuukiList — Visualização Principal da Biblioteca Pessoal
- * Conforme Requisitos: Personal Library View and Layout Toggle, Quick Progress Tracking e Library Filtering
+ * YuukiList — Visualização Principal da Biblioteca Pessoal (Ledger v2.4)
+ * Conforme Requisitos: Personal Library View and Layout Toggle, Quick Progress Tracking,
+ * Library Filtering and Asynchronous States e Consumption Cadence (R24)
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -23,9 +24,19 @@ import {
   calculateNextProgress,
   computeOptimisticItemUpdate,
 } from './library-helpers.ts';
+import {
+  calculateLedgerKpis,
+  calculateCadenceMetrics,
+  filterLibraryLocal,
+  generateLibraryCsv,
+  triggerFileDownload,
+} from './ledger-helpers.ts';
+import { LedgerHeader } from './ledger-header.tsx';
 import { LibraryFilters } from './library-filters.tsx';
 import { LibraryCard } from './library-card.tsx';
 import { LibraryRow } from './library-row.tsx';
+import { DashedRegisterCard } from './dashed-register-card.tsx';
+import { ConsumptionCadenceBanner } from './consumption-cadence-banner.tsx';
 import { EditItemModal } from './edit-item-modal.tsx';
 import { LibrarySkeleton } from './library-skeleton.tsx';
 import { TimelineView } from '../diary/timeline-view.tsx';
@@ -45,11 +56,12 @@ export function LibraryView() {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'ALL'>('ALL');
   const [sortBy, setSortBy] = useState<LibrarySortBy>('updatedAt');
   const [isFavoriteOnly, setIsFavoriteOnly] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [editingItem, setEditingItem] = useState<LibraryItemDto | null>(null);
   const [mutatingIds, setMutatingIds] = useState<Set<string>>(new Set());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Estados do Diário Pessoal e Linha do Tempo (R12)
+  // Estados do Diário Pessoal e Linha do Tempo
   const [viewMode, setViewMode] = useState<'COLLECTION' | 'DIARY'>('COLLECTION');
   const [diaryEvents, setDiaryEvents] = useState<HistoryEventDto[]>([]);
   const [isLoadingDiary, setIsLoadingDiary] = useState<boolean>(false);
@@ -70,10 +82,8 @@ export function LibraryView() {
   }, []);
 
   useEffect(() => {
-    if (viewMode === 'DIARY') {
-      fetchDiary();
-    }
-  }, [viewMode, fetchDiary]);
+    fetchDiary();
+  }, [fetchDiary]);
 
   const handleDeleteDiaryEvent = async (id: string) => {
     try {
@@ -158,7 +168,17 @@ export function LibraryView() {
     }
   };
 
-  // Contagem cumulativa por aba
+  // KPIs analíticos calculados do Ledger
+  const ledgerKpis = useMemo(() => {
+    return calculateLedgerKpis(items);
+  }, [items]);
+
+  // Cadência dos últimos 30 dias calculada para o banner
+  const cadenceData = useMemo(() => {
+    return calculateCadenceMetrics(items, diaryEvents);
+  }, [items, diaryEvents]);
+
+  // Contagem cumulativa por aba de status
   const countsByTab = useMemo(() => {
     const counts: Record<StatusTabKey, number> = {
       ALL: items.length,
@@ -195,10 +215,33 @@ export function LibraryView() {
     return counts;
   }, [items]);
 
-  // Itens filtrados por aba, categoria, favoritos e ordenação
+  // Contagem cumulativa por categoria
+  const countsByCategory = useMemo(() => {
+    const counts: Record<Category | 'ALL', number> = {
+      ALL: items.length,
+      ANIME: 0,
+      DORAMA: 0,
+      FILME: 0,
+      MANGA: 0,
+      MANHWA: 0,
+      MANHUA: 0,
+    };
+
+    for (const item of items) {
+      const cat = item.mediaItem?.category;
+      if (cat && cat in counts) {
+        counts[cat as Category]++;
+      }
+    }
+
+    return counts;
+  }, [items]);
+
+  // Itens filtrados por aba, categoria, favoritos, busca textual e ordenação
   const filteredItems = useMemo(() => {
     let result = [...items];
 
+    // Filtro por Aba de Status
     if (selectedTab !== 'ALL') {
       result = result.filter((item) => {
         switch (selectedTab) {
@@ -218,14 +261,22 @@ export function LibraryView() {
       });
     }
 
+    // Filtro por Categoria
     if (selectedCategory !== 'ALL') {
       result = result.filter((item) => item.mediaItem?.category === selectedCategory);
     }
 
+    // Filtro por Favoritos
     if (isFavoriteOnly) {
       result = result.filter((item) => item.isFavorite);
     }
 
+    // Busca Textual Local em tempo real
+    if (searchQuery.trim()) {
+      result = filterLibraryLocal(result, searchQuery);
+    }
+
+    // Ordenação
     result.sort((a, b) => {
       switch (sortBy) {
         case 'title': {
@@ -257,7 +308,7 @@ export function LibraryView() {
     });
 
     return result;
-  }, [items, selectedTab, selectedCategory, isFavoriteOnly, sortBy]);
+  }, [items, selectedTab, selectedCategory, isFavoriteOnly, searchQuery, sortBy]);
 
   // Incremento rápido (+1) com atualização otimista
   const handleQuickIncrement = async (item: LibraryItemDto) => {
@@ -305,7 +356,25 @@ export function LibraryView() {
     }
   };
 
-  // Alternância rápida de favorito (♥)
+  // Avaliação rápida inline (1 a 10 estrelas)
+  const handleRatingChange = async (item: LibraryItemDto, newRating: number) => {
+    const previousRating = item.rating;
+    setItems((prev) =>
+      prev.map((i) => (i.mediaItemId === item.mediaItemId ? { ...i, rating: newRating } : i))
+    );
+
+    try {
+      await libraryApi.updateItem(item.mediaItemId, { rating: newRating });
+      showToast(`Nota ${newRating.toFixed(1)} atribuída a "${item.mediaItem?.title}"!`);
+    } catch {
+      setItems((prev) =>
+        prev.map((i) => (i.mediaItemId === item.mediaItemId ? { ...i, rating: previousRating } : i))
+      );
+      showToast('Falha ao atualizar avaliação. Alteração desfeita.');
+    }
+  };
+
+  // Alternância rápida de favorito
   const handleToggleFavorite = async (item: LibraryItemDto) => {
     const nextFavorite = !item.isFavorite;
 
@@ -332,6 +401,17 @@ export function LibraryView() {
       );
       showToast('Falha ao atualizar favorito. Alteração desfeita.');
     }
+  };
+
+  // Exportação CSV do Acervo
+  const handleExportCsv = () => {
+    if (items.length === 0) {
+      showToast('Não há itens na biblioteca para exportar.');
+      return;
+    }
+    const csvContent = generateLibraryCsv(items);
+    triggerFileDownload(csvContent, 'yuukilist-minha-biblioteca.csv');
+    showToast('Download do arquivo CSV iniciado.');
   };
 
   // Salvar no Modal de Edição
@@ -383,19 +463,12 @@ export function LibraryView() {
         </div>
       )}
 
-      {/* Cabeçalho da Biblioteca */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#2B2735]">
-        <div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#F4EFEA] tracking-tight">
-            Minha Biblioteca
-          </h1>
-          <p className="text-xs sm:text-sm text-[#9C96A2] mt-1 font-light">
-            Acompanhe seu progresso de exibição, leitura e linha do tempo de doramas, animes e mangás.
-          </p>
-        </div>
+      {/* Cabeçalho do Ledger com 3 KPIs e Ação Adicionar */}
+      <LedgerHeader metrics={ledgerKpis} />
 
-        {/* Alternador de Visão Principal: Acervo vs Histórico & Diário */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#1A1820] border border-[#2B2735] self-start sm:self-auto">
+      {/* Alternador de Visão Principal: Acervo vs Histórico & Diário */}
+      <div className="flex items-center justify-between gap-4 pb-2">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#1A1820] border border-[#2B2735]">
           <button
             type="button"
             onClick={() => setViewMode('COLLECTION')}
@@ -431,7 +504,7 @@ export function LibraryView() {
       </div>
 
       {viewMode === 'DIARY' ? (
-        /* Seção do Diário e Linha do Tempo (R12) */
+        /* Seção do Diário e Linha do Tempo */
         <div className="space-y-6">
           <div className="flex items-center justify-between gap-4">
             <div>
@@ -469,7 +542,7 @@ export function LibraryView() {
       ) : (
         /* Seção do Acervo da Biblioteca */
         <>
-          {/* Filtros e Alternador de Layout */}
+          {/* Filtros, Busca Local e Alternador de Layout */}
           <LibraryFilters
             selectedTab={selectedTab}
             onTabChange={setSelectedTab}
@@ -478,10 +551,13 @@ export function LibraryView() {
             layout={layout}
             onLayoutChange={handleLayoutChange}
             countsByTab={countsByTab}
+            countsByCategory={countsByCategory}
             sortBy={sortBy}
             onSortByChange={handleSortChange}
             isFavoriteOnly={isFavoriteOnly}
             onToggleFavoriteOnly={() => setIsFavoriteOnly((prev) => !prev)}
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
           />
 
           {/* Estados Assíncronos */}
@@ -508,7 +584,7 @@ export function LibraryView() {
               </p>
               <div className="mt-6">
                 <a
-                  href="/"
+                  href="/explore"
                   className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#E05347] hover:bg-[#c94539] rounded-xl transition-all shadow-md shadow-[#E05347]/20 focus-visible:ring-2 focus-visible:ring-[#E05347]"
                 >
                   Explorar Catálogo
@@ -522,10 +598,11 @@ export function LibraryView() {
                 setSelectedTab('ALL');
                 setSelectedCategory('ALL');
                 setIsFavoriteOnly(false);
+                setSearchQuery('');
               }}
             />
           ) : layout === 'grid' ? (
-            /* Visualização em Grade */
+            /* Visualização em Grade com Card Pontilhado de Registro */
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
               {filteredItems.map((item) => (
                 <LibraryCard
@@ -534,9 +611,21 @@ export function LibraryView() {
                   onQuickIncrement={handleQuickIncrement}
                   onToggleFavorite={handleToggleFavorite}
                   onOpenEdit={setEditingItem}
+                  onRatingChange={handleRatingChange}
+                  onOpenNote={(target) => {
+                    setSelectedMediaForNote({
+                      id: target.mediaItemId,
+                      title: target.mediaItem?.title || '',
+                      category: target.mediaItem?.category,
+                    });
+                    setIsNoteModalOpen(true);
+                  }}
                   isMutating={mutatingIds.has(item.mediaItemId)}
                 />
               ))}
+
+              {/* Card Pontilhado: Registrar Nova Obra */}
+              <DashedRegisterCard />
             </div>
           ) : (
             /* Visualização em Lista */
@@ -552,6 +641,14 @@ export function LibraryView() {
                 />
               ))}
             </div>
+          )}
+
+          {/* Banner de Cadência de Consumo */}
+          {!isLoading && !error && items.length > 0 && (
+            <ConsumptionCadenceBanner
+              data={cadenceData}
+              onExportCsv={handleExportCsv}
+            />
           )}
         </>
       )}

@@ -1,8 +1,8 @@
 'use client';
 
 /**
- * YuukiList — Card de Obra na Biblioteca Pessoal (Modo Grade)
- * Conforme Requisitos: Personal Library View and Layout Toggle & Quick Progress Tracking & Favoritos
+ * YuukiList — Card de Obra na Biblioteca Pessoal (Modo Grade Ledger)
+ * Conforme Requisitos: Personal Library View and Layout Toggle & Quick Progress Tracking (R24)
  */
 
 import React from 'react';
@@ -11,12 +11,15 @@ import {
   formatProgressDisplay,
   calculateNextProgress,
 } from './library-helpers.ts';
+import { QuickRatingPopover } from './quick-rating-popover.tsx';
 
 export interface LibraryCardProps {
   item: LibraryItemDto;
   onQuickIncrement?: (item: LibraryItemDto) => void;
   onToggleFavorite?: (item: LibraryItemDto) => void;
   onOpenEdit?: (item: LibraryItemDto) => void;
+  onOpenNote?: (item: LibraryItemDto) => void;
+  onRatingChange?: (item: LibraryItemDto, rating: number) => void;
   isMutating?: boolean;
 }
 
@@ -29,25 +32,22 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   MANHUA: 'Manhuas',
 };
 
-// Paleta Editorial Bimodal / Categoria
 const CATEGORY_COLORS: Record<string, string> = {
-  // Audiovisual (Ocre #D4A373 e Lavanda #9D8DF1)
   DORAMA: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
   FILME: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
   ANIME: 'bg-[#9D8DF1]/15 text-[#9D8DF1] border-[#9D8DF1]/30',
-  // Impresso (Terracota #D97757)
   MANGA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
   MANHWA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
   MANHUA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  ASSISTINDO: 'Assistindo',
-  LENDO: 'Lendo',
-  QUERO_ASSISTIR: 'Quero Assistir',
-  QUERO_LER: 'Quero Ler',
+  ASSISTINDO: 'Em andamento',
+  LENDO: 'Em andamento',
+  QUERO_ASSISTIR: 'Planejado',
+  QUERO_LER: 'Planejado',
   CONCLUIDO: 'Concluído',
-  ASSISTIDO: 'Assistido',
+  ASSISTIDO: 'Concluído',
   PAUSADO: 'Pausado',
   DROPADO: 'Dropado',
 };
@@ -57,6 +57,8 @@ export function LibraryCard({
   onQuickIncrement,
   onToggleFavorite,
   onOpenEdit,
+  onOpenNote,
+  onRatingChange,
   isMutating = false,
 }: LibraryCardProps) {
   const media = item.mediaItem;
@@ -64,6 +66,7 @@ export function LibraryCard({
   const categoryName = category ? CATEGORY_DISPLAY_NAMES[category] || category : undefined;
   const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-[#1A1820] text-[#9C96A2] border-[#2B2735]';
   const statusLabel = STATUS_LABELS[item.status] || item.status;
+  const isCompleted = item.status === 'CONCLUIDO' || item.status === 'ASSISTIDO';
 
   const totalUnits =
     category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA'
@@ -71,6 +74,7 @@ export function LibraryCard({
       : (media as any)?.totalEpisodes || (media as any)?.totalUnits;
 
   const canIncrement =
+    !isCompleted &&
     category !== 'FILME' &&
     calculateNextProgress(item.progress, totalUnits, category) !== null;
 
@@ -83,6 +87,8 @@ export function LibraryCard({
   const progressPercentage =
     typeof totalUnits === 'number' && totalUnits > 0
       ? Math.min(100, Math.round((item.progress / totalUnits) * 100))
+      : isCompleted
+      ? 100
       : null;
 
   const handleCardClick = () => {
@@ -105,10 +111,19 @@ export function LibraryCard({
     }
   };
 
+  const handleNoteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onOpenNote) {
+      onOpenNote(item);
+    } else if (onOpenEdit) {
+      onOpenEdit(item);
+    }
+  };
+
   return (
     <article
       onClick={handleCardClick}
-      className="group relative bg-[#1A1820] rounded-xl overflow-hidden border border-[#2B2735] hover:border-[#E05347]/50 transition-all duration-300 hover:shadow-xl hover:shadow-black/40 flex flex-col h-full cursor-pointer"
+      className="group relative bg-[#1A1820] rounded-xl overflow-hidden border border-[#2B2735] hover:border-[#9D8DF1]/50 transition-all duration-300 hover:shadow-xl hover:shadow-black/50 flex flex-col h-full cursor-pointer"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -128,21 +143,25 @@ export function LibraryCard({
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Badges do Canto Superior Esquerdo: Categoria e Status do Usuário Reposicionado */}
+        {/* Canto Superior Esquerdo: Status Pessoal Reposicionado */}
         <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1 z-10 pointer-events-none">
-          {category && (
+          <span
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-md border backdrop-blur flex items-center gap-1.5 shadow-md ${
+              isCompleted
+                ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/40'
+                : 'bg-black/75 text-[#F4EFEA] border-white/10'
+            }`}
+          >
             <span
-              className={`text-[10px] font-medium tracking-wide px-2 py-0.5 rounded border backdrop-blur shadow-sm ${categoryClass}`}
-            >
-              {categoryName}
-            </span>
-          )}
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-black/75 text-[#F4EFEA] border border-white/10 backdrop-blur shadow-sm">
+              className={`w-1.5 h-1.5 rounded-full ${
+                isCompleted ? 'bg-emerald-400' : 'bg-[#9D8DF1]'
+              }`}
+            />
             {statusLabel}
           </span>
         </div>
 
-        {/* Badges do Canto Superior Direito: Em Dia e Favorito */}
+        {/* Canto Superior Direito: Em Dia, Favorito e Nota Oficial */}
         <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10">
           {item.isUpToDate && (
             <span
@@ -160,7 +179,7 @@ export function LibraryCard({
             </span>
           )}
 
-          {/* Botão Interativo de Favorito (♥) */}
+          {/* Botão Interativo de Favorito */}
           <button
             type="button"
             onClick={handleToggleFavorite}
@@ -187,21 +206,18 @@ export function LibraryCard({
           </button>
         </div>
 
-        {/* Base da Capa: Indicador de Reassistir e Avaliação */}
+        {/* Base da Capa: Categoria e Estúdios */}
         <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between z-10 pointer-events-none">
-          <div className="flex items-center gap-1.5">
-            {item.rewatchCount > 0 && (
-              <span
-                className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/75 text-[#F4EFEA] border border-white/10 backdrop-blur"
-                title={`Reassistido/Relido ${item.rewatchCount} vezes`}
-              >
-                ↻ {item.rewatchCount}x
-              </span>
-            )}
-          </div>
-          {typeof item.rating === 'number' && item.rating > 0 && (
+          {category && (
+            <span
+              className={`text-[9px] font-bold tracking-wider px-2 py-0.5 rounded border uppercase backdrop-blur shadow-sm ${categoryClass}`}
+            >
+              {categoryName}
+            </span>
+          )}
+          {typeof (media as any)?.score === 'number' && (media as any).score > 0 && (
             <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/75 text-amber-300 border border-white/10 flex items-center gap-1 backdrop-blur">
-              ★ {item.rating.toFixed(1)}
+              ★ {((media as any).score).toFixed(1)}
             </span>
           )}
         </div>
@@ -210,7 +226,7 @@ export function LibraryCard({
       {/* Detalhes e Controle Tátil de Progresso */}
       <div className="p-3.5 flex flex-col flex-1 justify-between gap-3">
         <div>
-          <h3 className="font-serif font-medium text-base text-[#F4EFEA] line-clamp-1 group-hover:text-[#E05347] transition-colors">
+          <h3 className="font-serif font-medium text-base text-[#F4EFEA] line-clamp-1 group-hover:text-[#9D8DF1] transition-colors">
             {media?.title || 'Obra sem título'}
           </h3>
           {media?.originalTitle && (
@@ -220,39 +236,70 @@ export function LibraryCard({
           )}
         </div>
 
-        {/* Componente Tátil de Progresso e Barra Visual */}
-        <div className="pt-2 border-t border-[#2B2735] flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <div className="text-xs text-[#9C96A2]">
-              <span className="font-medium text-[#F4EFEA]">{progressText}</span>
-            </div>
-
-            {canIncrement && (
-              <button
-                type="button"
-                onClick={handleIncrement}
-                disabled={isMutating}
-                aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
-                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl bg-[#E05347]/15 text-[#E05347] hover:bg-[#E05347] hover:text-white active:scale-95 border border-[#E05347]/30 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#E05347]"
-              >
-                {isMutating ? (
-                  <div className="w-4 h-4 rounded-full border border-current border-t-transparent animate-spin" />
-                ) : (
-                  <span>+1</span>
-                )}
-              </button>
-            )}
+        {/* Barra Visual Proporcional de Progresso */}
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between text-xs text-[#9C96A2]">
+            <span className="font-light text-[11px] uppercase tracking-wider">Progresso</span>
+            <span className="font-medium text-[#F4EFEA]">{progressText}</span>
           </div>
 
-          {/* Barra Visual Proporcional de Progresso */}
           {progressPercentage !== null && (
             <div className="w-full bg-[#2B2735] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#E05347] h-full rounded-full transition-all duration-300"
+                className={`h-full rounded-full transition-all duration-300 ${
+                  isCompleted ? 'bg-emerald-400' : 'bg-gradient-to-r from-[#9D8DF1] to-[#E05347]'
+                }`}
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
           )}
+        </div>
+
+        {/* Rodapé de Ações Rápidas (Nota Inline, Diário e +1) */}
+        <div className="pt-2.5 border-t border-[#2B2735] flex items-center justify-between gap-2">
+          {/* Seletor Popover de Avaliação Rápida */}
+          <QuickRatingPopover
+            currentRating={item.rating}
+            onSelectRating={(r) => onRatingChange && onRatingChange(item, r)}
+            disabled={isMutating}
+          />
+
+          {/* Atalho para Anotação do Diário */}
+          <button
+            type="button"
+            onClick={handleNoteClick}
+            aria-label={`Criar anotação no diário para ${media?.title || 'obra'}`}
+            title="Anotação no Diário"
+            className="min-w-[36px] min-h-[36px] p-2 rounded-lg bg-[#2B2735]/40 hover:bg-[#2B2735] text-[#9C96A2] hover:text-[#F4EFEA] border border-transparent hover:border-[#2B2735] transition-all flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#9D8DF1]"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </button>
+
+          {/* Ação Primária: +1 Ep / Cap ou Finalizado */}
+          {isCompleted ? (
+            <span className="min-h-[44px] px-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold inline-flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Finalizado</span>
+            </span>
+          ) : canIncrement ? (
+            <button
+              type="button"
+              onClick={handleIncrement}
+              disabled={isMutating}
+              aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
+              className="min-w-[44px] min-h-[44px] px-3 inline-flex items-center justify-center rounded-xl bg-[#9D8DF1]/20 hover:bg-[#9D8DF1] text-[#9D8DF1] hover:text-black active:scale-95 border border-[#9D8DF1]/40 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#9D8DF1]"
+            >
+              {isMutating ? (
+                <div className="w-4 h-4 rounded-full border border-current border-t-transparent animate-spin" />
+              ) : (
+                <span>+1 {category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'Cap' : 'Ep'}</span>
+              )}
+            </button>
+          ) : null}
         </div>
       </div>
     </article>
