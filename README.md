@@ -1,4 +1,5 @@
-# YuukiList — Catálogo e Rastreador de Entretenimento Asiático
+# YuukiList - Catálogo e Rastreador de Entretenimento Asiático
+Em fase final de desenvolvimento e integração.
 
 > Plataforma unificada, minimalista e de alta fidelidade para catalogar, acompanhar e registrar o consumo de doramas, filmes, animes, mangás, manhwas e manhuas em um único lugar — sem anúncios e com estética editorial asiática.
 
