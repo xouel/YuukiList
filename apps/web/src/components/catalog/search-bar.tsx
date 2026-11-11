@@ -39,13 +39,13 @@ export function SearchBar({
   };
 
   return (
-    <div className="relative w-full max-w-3xl">
+    <div className="relative w-full">
       <label htmlFor="catalog-search" className="sr-only">
         Buscar obras no catálogo
       </label>
 
       {/* Ícone de Busca */}
-      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6B7280]">
+      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#9C96A2]">
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
@@ -57,7 +57,7 @@ export function SearchBar({
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-10 pr-10 py-3 bg-[#121520] border border-[#262C3F] focus:border-[#06B6D4] rounded-xl text-[#F3F4F6] placeholder-[#6B7280] text-sm sm:text-base transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4] focus-visible:outline-none"
+        className="w-full pl-10 pr-10 py-3 bg-[#16151B] border border-[#2B2735] focus:border-[#E05347] rounded-xl text-[#F4EFEA] placeholder-[#9C96A2] text-sm sm:text-base transition-colors focus-visible:ring-2 focus-visible:ring-[#E05347] focus-visible:outline-none"
         autoComplete="off"
       />
 
@@ -66,7 +66,7 @@ export function SearchBar({
         <button
           type="button"
           onClick={handleClear}
-          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#9CA3AF] hover:text-[#F3F4F6] focus-visible:ring-2 focus-visible:ring-[#06B6D4] rounded outline-none"
+          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#9C96A2] hover:text-[#F4EFEA] focus-visible:ring-2 focus-visible:ring-[#E05347] rounded outline-none"
           aria-label="Limpar termo de busca"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -77,4 +77,3 @@ export function SearchBar({
     </div>
   );
 }
-

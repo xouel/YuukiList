@@ -10,6 +10,8 @@ import type {
   PaginationMeta,
 } from '../../../../../packages/shared/src/index.ts';
 import { CatalogApiClient } from '../../services/catalog-api.client.ts';
+import { LibraryApiClient } from '../../services/library-api.client.ts';
+import { useAuth } from '../../context/auth-context.tsx';
 import { SearchBar } from './search-bar.tsx';
 import { FilterBar } from './filter-bar.tsx';
 import { MediaCard } from './media-card.tsx';
@@ -27,11 +29,16 @@ export function CatalogView({
   initialQuery = {},
   apiClient = new CatalogApiClient(),
 }: CatalogViewProps) {
+  const { isAuthenticated } = useAuth();
+  const [libraryMediaIds, setLibraryMediaIds] = useState<Set<string>>(new Set());
+
   // Estado de Filtros e Busca
   const [query, setQuery] = useState<CatalogQueryDto>({
     q: initialQuery.q || '',
     category: initialQuery.category,
     status: initialQuery.status,
+    country: initialQuery.country,
+    theme: initialQuery.theme,
     sortBy: initialQuery.sortBy || 'relevance',
     page: 1,
     limit: 20,
@@ -55,49 +62,73 @@ export function CatalogView({
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const activeAbortController = useRef<AbortController | null>(null);
 
+  // Carrega IDs das obras já presentes na biblioteca do usuário autenticado
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setLibraryMediaIds(new Set());
+      return;
+    }
+    const libClient = new LibraryApiClient();
+    libClient
+      .listItems()
+      .then((res) => {
+        const ids = new Set(res.items.map((i) => i.mediaItemId));
+        setLibraryMediaIds(ids);
+      })
+      .catch(() => {
+        // Falha graciosa se API não responder
+      });
+  }, [isAuthenticated]);
+
   // Sincroniza query com a URL (browser history)
-  const syncUrlWithQuery = useCallback((q: CatalogQueryDto) => {
-    if (typeof window === 'undefined') return;
-    const qs = apiClient.buildQueryString(q);
-    const newUrl = `${window.location.pathname}${qs}`;
-    window.history.replaceState({ ...window.history.state, query: q }, '', newUrl);
-  }, [apiClient]);
+  const syncUrlWithQuery = useCallback(
+    (q: CatalogQueryDto) => {
+      if (typeof window === 'undefined') return;
+      const qs = apiClient.buildQueryString(q);
+      const newUrl = `${window.location.pathname}${qs}`;
+      window.history.replaceState({ ...window.history.state, query: q }, '', newUrl);
+    },
+    [apiClient]
+  );
 
   // Carrega a primeira página ou quando os filtros mudam
-  const loadInitialItems = useCallback(async (currentQuery: CatalogQueryDto) => {
-    if (activeAbortController.current) {
-      activeAbortController.current.abort();
-    }
-    const controller = new AbortController();
-    activeAbortController.current = controller;
+  const loadInitialItems = useCallback(
+    async (currentQuery: CatalogQueryDto) => {
+      if (activeAbortController.current) {
+        activeAbortController.current.abort();
+      }
+      const controller = new AbortController();
+      activeAbortController.current = controller;
 
-    setViewStatus('loading');
-    setErrorMessage('');
+      setViewStatus('loading');
+      setErrorMessage('');
 
-    try {
-      const response = await apiClient.listItems({ ...currentQuery, page: 1 }, controller.signal);
-      setItems(response.data);
-      setMeta(response.meta);
+      try {
+        const response = await apiClient.listItems({ ...currentQuery, page: 1 }, controller.signal);
+        setItems(response.data);
+        setMeta(response.meta);
 
-      if (response.meta.total === 0) {
-        if (currentQuery.q || currentQuery.category || currentQuery.status) {
-          setViewStatus('no-results');
+        if (response.meta.total === 0) {
+          if (currentQuery.q || currentQuery.category || currentQuery.status || currentQuery.country || currentQuery.theme) {
+            setViewStatus('no-results');
+          } else {
+            setViewStatus('empty');
+          }
         } else {
-          setViewStatus('empty');
+          setViewStatus('success');
         }
-      } else {
-        setViewStatus('success');
-      }
 
-      syncUrlWithQuery(currentQuery);
-    } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'name' in err && err.name === 'AbortError') {
-        return; // Requisição cancelada por nova digitação
+        syncUrlWithQuery(currentQuery);
+      } catch (err: unknown) {
+        if (err && typeof err === 'object' && 'name' in err && err.name === 'AbortError') {
+          return; // Requisição cancelada por nova digitação
+        }
+        setViewStatus('error');
+        setErrorMessage(err instanceof Error ? err.message : 'Falha ao conectar com o catálogo');
       }
-      setViewStatus('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Falha ao conectar com o catálogo');
-    }
-  }, [apiClient, syncUrlWithQuery]);
+    },
+    [apiClient, syncUrlWithQuery]
+  );
 
   // Carrega a próxima página cumulativa (Infinite Scroll)
   const loadNextPage = useCallback(async () => {
@@ -109,43 +140,41 @@ export function CatalogView({
     const nextPage = meta.page + 1;
 
     try {
-      const response = await apiClient.listItems({
-        ...query,
-        page: nextPage,
-      });
-
+      const response = await apiClient.listItems({ ...query, page: nextPage });
       setItems((prev) => [...prev, ...response.data]);
       setMeta(response.meta);
     } catch {
-      // Ignora erro no append para não quebrar a tela atual
+      // Ignora erro suavemente para permitir nova tentativa pelo scroll
     } finally {
       setIsLoadingMore(false);
     }
-  }, [apiClient, query, meta, isLoadingMore, viewStatus]);
+  }, [apiClient, isLoadingMore, meta.page, meta.totalPages, query, viewStatus]);
 
-  // Efeito de inicialização e restauração de scroll/estado prévio
+  // Restaura filtros e posição de rolagem caso o usuário venha de volta dos detalhes
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          sessionStorage.removeItem(STORAGE_KEY);
-          if (parsed.query) {
-            setQuery(parsed.query);
-            loadInitialItems(parsed.query).then(() => {
-              if (parsed.scrollPosition) {
-                window.scrollTo({ top: parsed.scrollPosition, behavior: 'instant' });
-              }
-            });
-            return;
-          }
-        } catch {
-          // Ignora falha de parse do sessionStorage
+    if (typeof window === 'undefined') return;
+
+    const savedStateStr = sessionStorage.getItem(STORAGE_KEY);
+    if (savedStateStr) {
+      try {
+        const savedState = JSON.parse(savedStateStr);
+        sessionStorage.removeItem(STORAGE_KEY);
+
+        if (savedState.query) {
+          setQuery(savedState.query);
+          loadInitialItems(savedState.query).then(() => {
+            if (savedState.scrollPosition) {
+              window.scrollTo(0, savedState.scrollPosition);
+            }
+          });
+          return;
         }
+      } catch {
+        sessionStorage.removeItem(STORAGE_KEY);
       }
     }
 
+    // Carregamento inicial padrão caso não haja estado restaurado
     loadInitialItems(query);
   }, []);
 
@@ -205,13 +234,13 @@ export function CatalogView({
   };
 
   const handleClearFilters = () => {
-    const reset = {
+    const reset: CatalogQueryDto = {
       q: '',
       category: undefined,
       status: undefined,
       country: undefined,
       theme: undefined,
-      sortBy: 'relevance' as CatalogSortBy,
+      sortBy: 'relevance',
       page: 1,
       limit: 20,
     };
@@ -232,15 +261,19 @@ export function CatalogView({
     }
   };
 
+  const handleQuickAddSuccess = (item: MediaItemSummaryDto) => {
+    setLibraryMediaIds((prev) => new Set([...prev, item.id]));
+  };
+
   return (
-    <div className="w-full space-y-8">
-      {/* Seção Superior: Hero Minimalista e Busca */}
+    <div className="w-full space-y-6">
+      {/* Seção Superior: Cabeçalho Editorial e Barra de Busca */}
       <section className="space-y-4">
         <div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#F3F4F6]">
+          <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#F4EFEA]">
             Explorar Catálogo
           </h1>
-          <p className="text-sm sm:text-base text-[#9CA3AF] mt-1 font-light">
+          <p className="text-sm sm:text-base text-[#9C96A2] mt-1 font-light">
             Doramas, filmes, animes, mangás, manhwas e manhuas em um só lugar.
           </p>
         </div>
@@ -252,7 +285,7 @@ export function CatalogView({
         />
       </section>
 
-      {/* Seção de Filtros */}
+      {/* Seção de Filtros com Barra Primária e Drawer */}
       <section>
         <FilterBar
           selectedCategory={query.category}
@@ -291,7 +324,9 @@ export function CatalogView({
                 <MediaCard
                   key={item.id}
                   item={item}
+                  isInLibrary={libraryMediaIds.has(item.id)}
                   onNavigate={handleNavigateToDetail}
+                  onQuickAdd={handleQuickAddSuccess}
                 />
               ))}
             </div>
@@ -299,13 +334,13 @@ export function CatalogView({
             {/* Sentinela de Rolagem Infinita */}
             <div ref={sentinelRef} className="py-6 text-center">
               {isLoadingMore && (
-                <div className="inline-flex items-center gap-2 text-xs text-[#06B6D4] animate-pulse">
-                  <div className="w-2 h-2 rounded-full bg-[#06B6D4]" />
+                <div className="inline-flex items-center gap-2 text-xs text-[#E05347] animate-pulse">
+                  <div className="w-2 h-2 rounded-full bg-[#E05347]" />
                   <span>Carregando mais obras...</span>
                 </div>
               )}
               {!isLoadingMore && meta.page >= meta.totalPages && meta.total > 0 && (
-                <p className="text-xs text-[#6B7280]">
+                <p className="text-xs text-[#9C96A2]">
                   Você chegou ao fim do catálogo ({meta.total} obras exibidas).
                 </p>
               )}
@@ -316,4 +351,3 @@ export function CatalogView({
     </div>
   );
 }
-
