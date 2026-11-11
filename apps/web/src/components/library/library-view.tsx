@@ -115,7 +115,8 @@ export function LibraryView() {
     setError(null);
     try {
       const response = await libraryApi.listItems();
-      setItems(response.items || []);
+      const rawList = response.items || response.data || [];
+      setItems(rawList);
     } catch (err: any) {
       if (err?.code === 'UNAUTHORIZED') {
         if (typeof window !== 'undefined') {

@@ -68,7 +68,7 @@ export class LibraryApiClient {
     return qs ? `?${qs}` : '';
   }
 
-  async list(filter: LibraryFilterDto = {}): Promise<PaginatedResponse<LibraryItemDto>> {
+  async list(filter: LibraryFilterDto = {}): Promise<PaginatedResponse<LibraryItemDto> & { items: LibraryItemDto[] }> {
     const qs = this.buildQueryString(filter);
     const url = `${this.baseUrl}/api/v1/library${qs}`;
 
@@ -89,7 +89,20 @@ export class LibraryApiClient {
       }
 
       const data = await response.json();
-      return data;
+      const rawItems: LibraryItemDto[] = Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.items)
+        ? data.items
+        : Array.isArray(data)
+        ? data
+        : [];
+
+      return {
+        ...data,
+        data: rawItems,
+        items: rawItems,
+        meta: data?.meta || { total: rawItems.length, page: 1, limit: 20, totalPages: 1 },
+      };
     } catch (err: any) {
       if (err instanceof LibraryApiError) throw err;
       throw new LibraryApiError(
@@ -103,7 +116,7 @@ export class LibraryApiClient {
   /**
    * Alias de conveniência para list(filter).
    */
-  async listItems(filter: LibraryFilterDto = {}): Promise<PaginatedResponse<LibraryItemDto>> {
+  async listItems(filter: LibraryFilterDto = {}): Promise<PaginatedResponse<LibraryItemDto> & { items: LibraryItemDto[] }> {
     return this.list(filter);
   }
 

@@ -1,0 +1,19 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "023-consolidated-shell-and-home-hub"
+type: "feature"
+status: "BUILT"
+skip_specs: false
+touched_capabilities:
+  - "catalog-browse"
+  - "home-hub"
+  - "navigation-shell"
+  - "personal-library-ui"
+base_specs:
+  catalog-browse: "sha256:f7267d89f768bf44975dc2d9cbfc51e8641823849afa81c2a400c6c8f98e0fd9"
+  home-hub: "NEW"
+  navigation-shell: "sha256:253ae3bd21835aab5f01320d76267354a5aac0060d8b35a46bff4adf6fd91869"
+  personal-library-ui: "sha256:3024f5c3c0cb4f2df78c68cade854f4ad4b44035f66b48504b984bc9e3d929d6"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-11T11:30:56.328Z"
