@@ -2,9 +2,9 @@ name: X-Spec Deterministic Engine CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   verify-engine:
@@ -25,8 +25,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Run Deterministic Engine Test Suite
-        run: node --test tests/*.test.mjs
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Test Suite
+        run: npm test
 
       - name: Run X-Spec Doctor Health Check
-        run: node ./bin/xspec.mjs doctor --json
+        run: node xspec/bin/xspec.mjs doctor --json
+
