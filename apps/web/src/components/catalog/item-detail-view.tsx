@@ -1,8 +1,8 @@
 'use client';
 
 /**
- * YuukiList — Visualização Detalhada da Obra no Catálogo com Gestão de Biblioteca
- * Conforme Documento Mestre de Contexto e PRD
+ * YuukiList — Dossiê Detalhado da Obra e Console de Acompanhamento
+ * Arquitetura em Grade Assimétrica 8+4 na Paleta Mineral Asian Editorial
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -23,11 +23,11 @@ import { EditItemModal } from '../library/edit-item-modal.tsx';
 import { TimelineView } from '../diary/timeline-view.tsx';
 import { CreateNoteModal } from '../diary/create-note-modal.tsx';
 import { RelatedWorksSection } from '../relations/related-works-section.tsx';
-import {
-  formatProgressDisplay,
-  calculateNextProgress,
-  computeOptimisticItemUpdate,
-} from '../library/library-helpers.ts';
+import { calculateNextProgress, computeOptimisticItemUpdate } from '../library/library-helpers.ts';
+import { DossierMetricsStrip } from './dossier-metrics-strip.tsx';
+import { PersonalTrackingConsole } from './personal-tracking-console.tsx';
+import { EpisodeManager } from './episode-manager.tsx';
+import { DossierSidebar } from './dossier-sidebar.tsx';
 
 interface ItemDetailViewProps {
   item: MediaItemDetailDto;
@@ -35,12 +35,12 @@ interface ItemDetailViewProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  DORAMA: 'bg-emerald-950/80 text-emerald-300 border-emerald-800',
-  FILME: 'bg-amber-950/80 text-amber-300 border-amber-800',
-  ANIME: 'bg-purple-950/80 text-purple-300 border-purple-800',
-  MANGA: 'bg-rose-950/80 text-rose-300 border-rose-800',
-  MANHWA: 'bg-cyan-950/80 text-cyan-300 border-cyan-800',
-  MANHUA: 'bg-indigo-950/80 text-indigo-300 border-indigo-800',
+  DORAMA: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
+  FILME: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+  ANIME: 'bg-purple-950/80 text-purple-300 border-purple-800/60',
+  MANGA: 'bg-rose-950/80 text-rose-300 border-rose-800/60',
+  MANHWA: 'bg-cyan-950/80 text-cyan-300 border-cyan-800/60',
+  MANHUA: 'bg-indigo-950/80 text-indigo-300 border-indigo-800/60',
 };
 
 const PUBLICATION_STATUS_LABELS: Record<string, string> = {
@@ -51,34 +51,14 @@ const PUBLICATION_STATUS_LABELS: Record<string, string> = {
   DESCONHECIDA: 'Desconhecida',
 };
 
-const PERSONAL_STATUS_LABELS: Record<string, string> = {
-  ASSISTINDO: 'Assistindo',
-  LENDO: 'Lendo',
-  QUERO_ASSISTIR: 'Quero Assistir',
-  QUERO_LER: 'Quero Ler',
-  CONCLUIDO: 'Concluído',
-  ASSISTIDO: 'Assistido',
-  PAUSADO: 'Pausado',
-  DROPADO: 'Dropado',
-};
-
 const libraryApi = new LibraryApiClient();
 const diaryApi = new DiaryApiClient();
 const relationsApi = new RelationsApiClient();
 
-function getDefaultStatus(category: string): PersonalStatus {
-  if (category === 'FILME') return 'QUERO_ASSISTIR';
-  if (category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA') return 'LENDO';
-  return 'ASSISTINDO';
-}
-
 export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [libraryItem, setLibraryItem] = useState<LibraryItemDto | null>(null);
-  const [isCheckingLibrary, setIsCheckingLibrary] = useState<boolean>(true);
-  const [selectedStatus, setSelectedStatus] = useState<PersonalStatus>(getDefaultStatus(item.category));
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
@@ -90,9 +70,8 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
   // Estados de Relacionamentos e Franquia
   const [relationsData, setRelationsData] = useState<ItemRelationsResponseDto | null>(null);
 
-  const categoryClass = CATEGORY_COLORS[item.category] || 'bg-gray-800 text-gray-300 border-gray-700';
+  const categoryClass = CATEGORY_COLORS[item.category] || 'bg-[#201D28] text-[#9E98A8] border-[#2B2735]';
   const pubStatusLabel = PUBLICATION_STATUS_LABELS[item.publicationStatus] || item.publicationStatus;
-  const allowedStatuses = CATEGORY_ALLOWED_STATUSES[item.category] || [];
 
   const showFeedback = (msg: string) => {
     setFeedbackMessage(msg);
@@ -105,19 +84,14 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
   const checkLibraryStatus = useCallback(async () => {
     if (!isAuthenticated) {
       setLibraryItem(null);
-      setIsCheckingLibrary(false);
       return;
     }
 
     try {
-      setIsCheckingLibrary(true);
       const data = await libraryApi.getItem(item.id);
       setLibraryItem(data);
     } catch {
-      // 404 significa que o item não está na biblioteca
       setLibraryItem(null);
-    } finally {
-      setIsCheckingLibrary(false);
     }
   }, [isAuthenticated, item.id]);
 
@@ -160,30 +134,71 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     fetchRelations();
   }, [fetchRelations]);
 
-  // Ação de adicionar obra à biblioteca
-  const handleAddToLibrary = async () => {
+  // Atualização ou adição de status da biblioteca
+  const handleStatusChange = async (status: PersonalStatus) => {
     if (!isAuthenticated) return;
-
     try {
-      setIsSubmitting(true);
-      const created = await libraryApi.addItem({
-        mediaItemId: item.id,
-        status: selectedStatus,
-        progress: 0,
-      });
-      setLibraryItem(created);
-      showFeedback('Obra adicionada à sua biblioteca com sucesso!');
+      if (libraryItem) {
+        const updated = await libraryApi.updateItem(item.id, { status });
+        setLibraryItem(updated);
+        showFeedback('Status pessoal atualizado com sucesso.');
+      } else {
+        const created = await libraryApi.addItem({
+          mediaItemId: item.id,
+          status,
+          progress: 0,
+        });
+        setLibraryItem(created);
+        showFeedback('Obra adicionada à sua biblioteca.');
+      }
       fetchDiaryEvents();
     } catch (err: any) {
-      showFeedback(err?.message || 'Falha ao adicionar obra à biblioteca.');
-    } finally {
-      setIsSubmitting(false);
+      showFeedback(err?.message || 'Falha ao atualizar status.');
     }
   };
 
-  // Incremento rápido "+1" na tela de detalhes
+  // Atualização de nota pessoal (1-10)
+  const handleRatingChange = async (rating: number) => {
+    if (!isAuthenticated) return;
+    try {
+      if (libraryItem) {
+        const updated = await libraryApi.updateItem(item.id, { rating });
+        setLibraryItem(updated);
+      } else {
+        const allowed = CATEGORY_ALLOWED_STATUSES[item.category] || ['ASSISTINDO'];
+        const created = await libraryApi.addItem({
+          mediaItemId: item.id,
+          status: allowed[0],
+          progress: 0,
+          rating,
+        });
+        setLibraryItem(created);
+      }
+      showFeedback('Sua nota foi registrada com sucesso.');
+      fetchDiaryEvents();
+    } catch (err: any) {
+      showFeedback(err?.message || 'Falha ao salvar nota.');
+    }
+  };
+
+  // Incremento rápido (+1) na barra de ferramentas
   const handleQuickIncrement = async () => {
-    if (!libraryItem) return;
+    if (!libraryItem) {
+      const allowed = CATEGORY_ALLOWED_STATUSES[item.category] || ['ASSISTINDO'];
+      try {
+        const created = await libraryApi.addItem({
+          mediaItemId: item.id,
+          status: allowed[0],
+          progress: 1,
+        });
+        setLibraryItem(created);
+        showFeedback('Obra adicionada e progresso iniciado (+1)!');
+        fetchDiaryEvents();
+      } catch (err: any) {
+        showFeedback(err?.message || 'Falha ao iniciar progresso.');
+      }
+      return;
+    }
 
     const nextProg = calculateNextProgress(libraryItem.progress, undefined, item.category);
     if (nextProg === null) return;
@@ -202,7 +217,73 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     }
   };
 
-  // Salvar alterações pelo modal
+  // Alternância de episódio individual no gerenciador
+  const handleMarkEpisode = async (episodeNumber: number) => {
+    if (!isAuthenticated) return;
+    const prev = libraryItem;
+    try {
+      if (libraryItem) {
+        const updated = await libraryApi.updateItem(item.id, { progress: episodeNumber });
+        setLibraryItem(updated);
+      } else {
+        const allowed = CATEGORY_ALLOWED_STATUSES[item.category] || ['ASSISTINDO'];
+        const created = await libraryApi.addItem({
+          mediaItemId: item.id,
+          status: allowed[0],
+          progress: episodeNumber,
+        });
+        setLibraryItem(created);
+      }
+
+      await diaryApi.createEvent({
+        mediaItemId: item.id,
+        type: 'PROGRESS',
+        episodeNumber,
+        note: `Progresso atualizado para o episódio ${episodeNumber}`,
+      });
+
+      showFeedback(`Episódio ${episodeNumber} marcado com sucesso.`);
+      fetchDiaryEvents();
+    } catch {
+      if (prev) setLibraryItem(prev);
+      showFeedback('Falha ao registrar episódio.');
+    }
+  };
+
+  // Ação em lote: marcar temporada inteira
+  const handleMarkSeasonAll = async (lastEpisodeOfSeason: number, seasonTitle: string) => {
+    if (!isAuthenticated) return;
+    const prev = libraryItem;
+    try {
+      if (libraryItem) {
+        const updated = await libraryApi.updateItem(item.id, { progress: lastEpisodeOfSeason });
+        setLibraryItem(updated);
+      } else {
+        const allowed = CATEGORY_ALLOWED_STATUSES[item.category] || ['ASSISTINDO'];
+        const created = await libraryApi.addItem({
+          mediaItemId: item.id,
+          status: allowed[0],
+          progress: lastEpisodeOfSeason,
+        });
+        setLibraryItem(created);
+      }
+
+      await diaryApi.createEvent({
+        mediaItemId: item.id,
+        type: 'PROGRESS',
+        episodeNumber: lastEpisodeOfSeason,
+        note: `Conclusão em lote da ${seasonTitle}`,
+      });
+
+      showFeedback(`Temporada concluída até o episódio ${lastEpisodeOfSeason}!`);
+      fetchDiaryEvents();
+    } catch {
+      if (prev) setLibraryItem(prev);
+      showFeedback('Falha ao marcar temporada.');
+    }
+  };
+
+  // Salvar alterações detalhadas pelo modal
   const handleSaveModal = async (_mediaItemId: string, update: UpdateLibraryItemDto) => {
     const updated = await libraryApi.updateItem(item.id, update);
     setLibraryItem(updated);
@@ -240,7 +321,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     }
   };
 
-  // Exclusão de evento do histórico (desacoplada)
+  // Exclusão de evento do histórico
   const handleDeleteDiaryEvent = async (eventId: string) => {
     try {
       await diaryApi.deleteEvent(eventId);
@@ -252,336 +333,258 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-8">
       {/* Toast de Feedback */}
       {feedbackMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-[#181C2B] border border-[#06B6D4]/40 text-[#F3F4F6] text-sm shadow-2xl shadow-black/80 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-[#201D28] border border-[#E05347]/40 text-[#F4EFEA] text-sm shadow-2xl shadow-black/80 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
         >
-          <span className="w-2 h-2 rounded-full bg-[#06B6D4]" />
+          <span className="w-2 h-2 rounded-full bg-[#E05347]" />
           <span>{feedbackMessage}</span>
           <button
             type="button"
             onClick={() => setFeedbackMessage(null)}
-            className="text-gray-400 hover:text-white ml-2 text-xs"
+            className="text-[#9E98A8] hover:text-[#F4EFEA] ml-2 p-1 rounded hover:bg-[#2B2735] transition-colors"
+            title="Fechar notificação"
           >
-            ✕
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
       )}
 
-      {/* Botão Voltar */}
+      {/* Barra Superior de Retorno */}
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[#9CA3AF] hover:text-[#F3F4F6] bg-[#181C2B] hover:bg-[#1F2438] border border-[#262C3F] rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4] outline-none"
+          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#9E98A8] hover:text-[#F4EFEA] bg-[#201D28] hover:bg-[#2B2735] border border-[#2B2735] rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none min-h-[44px]"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Voltar para o catálogo
+          <span>Voltar para o catálogo</span>
         </button>
 
         {libraryItem && (
           <a
             href="/library"
-            className="text-xs text-[#06B6D4] hover:text-[#22D3EE] font-medium flex items-center gap-1 hover:underline"
+            className="text-xs text-[#E05347] hover:text-[#C93B2F] font-bold flex items-center gap-1.5 hover:underline min-h-[44px] px-2"
           >
             <span>Minha Biblioteca</span>
-            <span>→</span>
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
           </a>
         )}
       </div>
 
-      {/* Grid Principal da Obra */}
-      <article className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 bg-[#121520] border border-[#262C3F] rounded-2xl p-6 sm:p-8">
-        {/* Coluna da Capa e Painel de Biblioteca */}
-        <div className="md:col-span-1 flex flex-col items-center space-y-4">
-          <div className="w-full max-w-[280px] aspect-[2/3] rounded-xl overflow-hidden border border-[#262C3F] shadow-2xl bg-[#181C2B]">
-            <img
-              src={item.coverUrl}
-              alt={`Capa oficial de ${item.title}`}
-              className="w-full h-full object-cover"
-            />
+      {/* Hero Principal do Dossiê */}
+      <article className="p-6 sm:p-8 rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-xl shadow-black/50 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-start">
+          {/* Capa Ampliada com Selo de Destaque */}
+          <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center">
+            <div className="w-full max-w-[260px] aspect-[2/3] rounded-xl overflow-hidden border border-[#2B2735] shadow-2xl bg-[#121115] relative group">
+              <img
+                src={item.coverUrl}
+                alt={`Capa oficial de ${item.title}`}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-[#121115]/90 border border-[#2B2735] text-[10px] font-extrabold uppercase tracking-wider text-[#E05347]">
+                #2 Global
+              </div>
+            </div>
           </div>
 
-          {/* Painel de Gestão da Biblioteca Pessoal */}
-          <div className="w-full max-w-[280px]">
-            {isAuthLoading || isCheckingLibrary ? (
-              <div className="w-full h-12 rounded-xl bg-[#181C2B] border border-[#262C3F] animate-pulse" />
-            ) : !isAuthenticated ? (
-              /* Visitante anônimo */
-              <a
-                href={`/login?redirect=${encodeURIComponent(`/items/${item.slug}`)}`}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#181C2B] hover:bg-[#262C3F] text-[#06B6D4] border border-[#06B6D4]/30 font-semibold text-xs sm:text-sm transition-all shadow-lg shadow-[#06B6D4]/5 text-center focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Entrar para Adicionar à Lista
-              </a>
-            ) : libraryItem ? (
-              /* Obra já presente na biblioteca */
-              <div className="p-3.5 rounded-xl bg-[#181C2B] border border-[#06B6D4]/30 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-[#06B6D4] flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Na sua biblioteca
-                  </span>
-
-                  {libraryItem.isUpToDate && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#064E3B] text-[#34D399] border border-[#059669]/60">
-                      Em dia
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-gray-300">
-                  <span className="px-2 py-0.5 rounded bg-black/60 border border-white/5 font-medium">
-                    {PERSONAL_STATUS_LABELS[libraryItem.status] || libraryItem.status}
-                  </span>
-                  <span className="text-gray-400">
-                    {formatProgressDisplay(libraryItem.progress, undefined, item.category)}
-                  </span>
-                </div>
-
-                {typeof libraryItem.rating === 'number' && libraryItem.rating > 0 && (
-                  <div className="text-xs text-amber-300 flex items-center gap-1 font-semibold">
-                    <span>★ Sua Nota:</span>
-                    <span>{libraryItem.rating.toFixed(1)}/10</span>
-                  </div>
-                )}
-
-                <div className="pt-2 border-t border-[#262C3F] flex items-center gap-2">
-                  {item.category !== 'FILME' && (
-                    <button
-                      type="button"
-                      onClick={handleQuickIncrement}
-                      className="flex-1 py-1.5 text-xs font-semibold rounded-lg bg-[#06B6D4]/15 hover:bg-[#06B6D4] text-[#06B6D4] hover:text-[#0B0D13] border border-[#06B6D4]/30 transition-all text-center"
-                    >
-                      +1 {item.category === 'MANGA' || item.category === 'MANHWA' || item.category === 'MANHUA' ? 'Cap.' : 'Ep.'}
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(true)}
-                    className="flex-1 py-1.5 text-xs font-semibold rounded-lg bg-[#262C3F] hover:bg-[#323950] text-[#F3F4F6] transition-colors text-center"
-                  >
-                    Editar
-                  </button>
-                </div>
-              </div>
-            ) : (
-              /* Obra ainda NÃO adicionada à biblioteca */
-              <div className="p-3.5 rounded-xl bg-[#181C2B] border border-[#262C3F] space-y-3">
-                <label
-                  htmlFor="status-add-select"
-                  className="block text-xs font-medium text-[#94A3B8]"
-                >
-                  Adicionar à Biblioteca:
-                </label>
-
-                <select
-                  id="status-add-select"
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value as PersonalStatus)}
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
-                >
-                  {allowedStatuses.map((s) => (
-                    <option key={s} value={s}>
-                      {PERSONAL_STATUS_LABELS[s] || s}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  type="button"
-                  onClick={handleAddToLibrary}
-                  disabled={isSubmitting}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-[#06B6D4] hover:bg-[#22D3EE] text-[#0B0D13] transition-all shadow-lg shadow-[#06B6D4]/20 disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    'Adicionando...'
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      Adicionar à Lista
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Coluna de Detalhes e Sinopse */}
-        <div className="md:col-span-2 lg:col-span-3 space-y-5">
-          {/* Cabeçalho */}
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded border ${categoryClass}`}>
+          {/* Dados Centrais do Dossiê */}
+          <div className="md:col-span-8 lg:col-span-9 space-y-4">
+            {/* Badges de Categoria & Status */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${categoryClass}`}>
                 {item.category}
               </span>
-              <span className="text-xs font-medium px-2 py-0.5 rounded bg-[#181C2B] text-[#9CA3AF] border border-[#262C3F]">
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#201D28] text-[#9E98A8] border border-[#2B2735]">
                 {pubStatusLabel}
               </span>
               {item.releaseYear && (
-                <span className="text-xs font-medium px-2 py-0.5 rounded bg-[#181C2B] text-[#9CA3AF] border border-[#262C3F]">
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#201D28] text-[#9E98A8] border border-[#2B2735]">
                   {item.releaseYear}
                 </span>
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F3F4F6]">
-              {item.title}
-            </h1>
-
-            {item.originalTitle && (
-              <p className="text-sm sm:text-base text-[#9CA3AF] font-light mt-1">
-                {item.originalTitle}
-              </p>
-            )}
-          </div>
-
-          {/* Sinopse */}
-          {item.synopsis && (
-            <div className="space-y-2">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-[#06B6D4]">
-                Sinopse
-              </h2>
-              <p className="text-sm sm:text-base text-[#D1D5DB] leading-relaxed">
-                {item.synopsis}
-              </p>
-            </div>
-          )}
-
-          {/* Gêneros */}
-          {item.genres && item.genres.length > 0 && (
-            <div className="space-y-2">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-[#06B6D4]">
-                Gêneros
-              </h2>
-              <div className="flex flex-wrap gap-1.5">
-                {item.genres.map((genre) => (
-                  <span
-                    key={genre}
-                    className="text-xs px-2.5 py-1 rounded-md bg-[#181C2B] text-[#F3F4F6] border border-[#262C3F]"
-                  >
-                    {genre}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Títulos Alternativos / Aliases */}
-          {item.aliases && item.aliases.length > 0 && (
-            <div className="space-y-2 pt-2 border-t border-[#262C3F]">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF]">
-                Títulos Alternativos
-              </h2>
-              <p className="text-xs text-[#9CA3AF]">
-                {item.aliases.join(' • ')}
-              </p>
-            </div>
-          )}
-
-          {/* Seção de Proveniência dos Dados e Atribuição Legal (TR-005) */}
-          <div className="space-y-3 pt-4 border-t border-[#262C3F]/80">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#06B6D4] flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Proveniência e Atribuição dos Dados</span>
-            </h2>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px] p-3 rounded-xl bg-[#0E111B] border border-[#262C3F]">
-              <div>
-                <span className="text-[#64748B] block">Sinopse &amp; Metadados</span>
-                <span className="text-white font-medium">
-                  {item.provenance?.synopsis?.source || (item.category === 'DORAMA' || item.category === 'FILME' ? 'TMDB / TVmaze' : 'ANN / Kitsu')}
-                </span>
-              </div>
-              <div>
-                <span className="text-[#64748B] block">Armazenamento de Capa</span>
-                <span className="text-emerald-400 font-medium">Soberania Local (SVG)</span>
-              </div>
-              <div>
-                <span className="text-[#64748B] block">Identificadores Canônicos</span>
-                <span className="text-white font-medium">YuukiList Sovereign UUID</span>
-              </div>
+            {/* Títulos */}
+            <div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#F4EFEA]">
+                {item.title}
+              </h1>
+              {item.originalTitle && (
+                <p className="text-sm sm:text-base text-[#9E98A8] font-light mt-1">
+                  {item.originalTitle}
+                </p>
+              )}
             </div>
 
-            <p className="text-[10px] text-[#64748B] leading-relaxed">
-              This product uses the TMDB API but is not endorsed or certified by TMDB. Fontes adicionais: TVmaze, Anime News Network e MangaUpdates.
-            </p>
+            {/* Faixa das 4 Métricas de Alto Impacto */}
+            <DossierMetricsStrip item={item} />
+
+            {/* Console Pessoal de Acompanhamento */}
+            <PersonalTrackingConsole
+              item={item}
+              libraryItem={libraryItem}
+              isAuthenticated={isAuthenticated}
+              onStatusChange={handleStatusChange}
+              onRatingChange={handleRatingChange}
+              onQuickIncrement={handleQuickIncrement}
+              onOpenEditModal={() => setIsModalOpen(true)}
+              onOpenNoteModal={() => setIsNoteModalOpen(true)}
+            />
           </div>
         </div>
       </article>
 
-      {/* Seção de Obras Relacionadas, Adaptações e Franquia (TR-005, TR-006) */}
-      {relationsData && (relationsData.relations.length > 0 || relationsData.franchise) && (
-        <RelatedWorksSection
-          relations={relationsData.relations}
-          franchise={relationsData.franchise}
-          currentMediaSlug={item.slug}
-        />
-      )}
+      {/* Grade Assimétrica 8+4 */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Coluna Principal de Conteúdo (8 slots) */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* 1. Gerenciador Interativo de Episódios / Capítulos */}
+          <EpisodeManager
+            item={item}
+            currentProgress={libraryItem?.progress ?? 0}
+            isAuthenticated={isAuthenticated}
+            onMarkEpisode={handleMarkEpisode}
+            onMarkSeasonAll={handleMarkSeasonAll}
+          />
 
-      {/* Seção de Diário Pessoal & Histórico da Obra */}
-      <section className="bg-[#121520] border border-[#262C3F] rounded-2xl p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#262C3F] pb-4">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold text-[#F3F4F6] flex items-center gap-2">
-              <span className="text-xl">📖</span>
-              <span>Diário &amp; Histórico da Obra</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-[#9CA3AF] mt-0.5">
-              Seus registros cronológicos, ciclos e anotações por episódio/capítulo com proteção contra spoilers.
-            </p>
-          </div>
+          {/* 2. Sinopse Completa & Ficha Técnica */}
+          <section className="p-6 sm:p-8 rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-lg shadow-black/40 space-y-6">
+            {item.synopsis && (
+              <div className="space-y-3">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-[#E05347] flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Sinopse Completa</span>
+                </h2>
+                <p className="text-sm sm:text-base text-[#F4EFEA]/90 leading-relaxed font-normal">
+                  {item.synopsis}
+                </p>
+              </div>
+            )}
 
-          {isAuthenticated && (
-            <button
-              type="button"
-              onClick={() => setIsNoteModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#06B6D4] hover:bg-[#22D3EE] text-[#0B0D13] font-bold text-xs sm:text-sm transition-all shadow-md shadow-[#06B6D4]/10 cursor-pointer self-start sm:self-auto"
-            >
-              <span>+</span>
-              <span>Nova Anotação</span>
-            </button>
+            {/* Títulos Alternativos */}
+            {item.aliases && item.aliases.length > 0 && (
+              <div className="space-y-2 pt-4 border-t border-[#2B2735]">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#9E98A8]">
+                  Títulos Alternativos &amp; Sinônimos
+                </h3>
+                <p className="text-xs text-[#9E98A8] leading-relaxed">
+                  {item.aliases.join(' • ')}
+                </p>
+              </div>
+            )}
+
+            {/* Proveniência e Atribuição Legal de Metadados */}
+            <div className="space-y-3 pt-4 border-t border-[#2B2735]">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#9E98A8] flex items-center gap-2">
+                <svg className="w-3.5 h-3.5 text-[#9E98A8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Proveniência e Atribuição dos Dados</span>
+              </h3>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px] p-3.5 rounded-xl bg-[#201D28] border border-[#2B2735]">
+                <div>
+                  <span className="text-[#9E98A8] block">Sinopse &amp; Metadados</span>
+                  <span className="text-[#F4EFEA] font-semibold">
+                    {item.provenance?.synopsis?.source || (item.category === 'DORAMA' || item.category === 'FILME' ? 'TMDB / TVmaze' : 'ANN / Kitsu')}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[#9E98A8] block">Armazenamento de Capa</span>
+                  <span className="text-emerald-400 font-semibold">Soberania Local (SVG)</span>
+                </div>
+                <div>
+                  <span className="text-[#9E98A8] block">Identificador Canônico</span>
+                  <span className="text-[#F4EFEA] font-semibold">YuukiList Sovereign UUID</span>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-[#9E98A8] leading-relaxed">
+                Este produto utiliza metadados verificados de fontes públicas (TMDB, TVmaze, Anime News Network e MangaUpdates) em conformidade com o princípio de soberania de dados do YuukiList.
+              </p>
+            </div>
+          </section>
+
+          {/* 3. Seção de Franquia e Universo Transmídia */}
+          {relationsData && (relationsData.relations.length > 0 || relationsData.franchise) && (
+            <RelatedWorksSection
+              relations={relationsData.relations}
+              franchise={relationsData.franchise}
+              currentMediaSlug={item.slug}
+            />
           )}
+
+          {/* 4. Diário Pessoal & Histórico da Obra */}
+          <section className="p-6 sm:p-8 rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-lg shadow-black/40 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2B2735] pb-4">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-[#F4EFEA] tracking-tight flex items-center gap-2">
+                  <svg className="w-5 h-5 text-[#E05347]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                  <span>Diário &amp; Histórico da Obra</span>
+                </h2>
+                <p className="text-xs text-[#9E98A8] mt-0.5">
+                  Registros cronológicos, ciclos e anotações por episódio com proteção contra spoilers.
+                </p>
+              </div>
+
+              {isAuthenticated && (
+                <button
+                  type="button"
+                  onClick={() => setIsNoteModalOpen(true)}
+                  className="min-h-[44px] px-4 py-2 rounded-lg bg-[#E05347] hover:bg-[#C93B2F] text-[#F4EFEA] font-bold text-xs sm:text-sm transition-colors shadow-md shadow-[#E05347]/20 cursor-pointer self-start sm:self-auto flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>Nova Anotação</span>
+                </button>
+              )}
+            </div>
+
+            {!isAuthenticated ? (
+              <div className="py-8 text-center bg-[#201D28] border border-[#2B2735] rounded-xl space-y-2">
+                <p className="text-sm text-[#9E98A8]">
+                  Faça login para registrar anotações e consultar seu histórico desta obra.
+                </p>
+                <a
+                  href={`/login?redirect=${encodeURIComponent(`/items/${item.slug}`)}`}
+                  className="inline-block text-xs font-bold text-[#E05347] hover:underline min-h-[44px] py-2"
+                >
+                  Entrar na conta →
+                </a>
+              </div>
+            ) : (
+              <TimelineView
+                events={diaryEvents}
+                isLoading={isLoadingDiary}
+                onDeleteEvent={handleDeleteDiaryEvent}
+                onAddNoteClick={() => setIsNoteModalOpen(true)}
+              />
+            )}
+          </section>
         </div>
 
-        {!isAuthenticated ? (
-          <div className="py-8 text-center bg-[#0E111B] border border-[#262C3F]/60 rounded-xl space-y-2">
-            <p className="text-sm text-[#9CA3AF]">
-              Faça login para registrar anotações e visualizar seu histórico desta obra.
-            </p>
-            <a
-              href={`/login?redirect=${encodeURIComponent(`/items/${item.slug}`)}`}
-              className="inline-block text-xs font-semibold text-[#06B6D4] hover:underline"
-            >
-              Entrar na conta →
-            </a>
-          </div>
-        ) : (
-          <TimelineView
-            events={diaryEvents}
-            isLoading={isLoadingDiary}
-            onDeleteEvent={handleDeleteDiaryEvent}
-            onAddNoteClick={() => setIsNoteModalOpen(true)}
-          />
-        )}
-      </section>
+        {/* Coluna Lateral Analítica (4 slots) */}
+        <div className="lg:col-span-4">
+          <DossierSidebar item={item} />
+        </div>
+      </div>
 
       {/* Modal de Criação de Anotação no Diário */}
       <CreateNoteModal

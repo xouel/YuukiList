@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * YuukiList — Rota de Detalhes da Obra (Dossiê)
+ * /items/[slug] com Paleta Mineral Asian Editorial e Retorno Fluido
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import type { MediaItemDetailDto } from '../../../../../../packages/shared/src/index.ts';
@@ -51,10 +56,10 @@ export default function ItemDetailPage() {
 
   if (loading) {
     return (
-      <div className="py-20 text-center animate-pulse">
-        <div className="inline-flex items-center gap-2 text-sm text-[#06B6D4]">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#06B6D4] animate-ping" />
-          <span>Carregando detalhes da obra...</span>
+      <div className="py-24 text-center animate-pulse">
+        <div className="inline-flex items-center gap-2.5 text-sm font-semibold text-[#E05347]">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#E05347] animate-ping" />
+          <span>Carregando dossiê da obra...</span>
         </div>
       </div>
     );
@@ -66,10 +71,13 @@ export default function ItemDetailPage() {
         <div>
           <button
             type="button"
-            onClick={() => router.push('/')}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[#9CA3AF] hover:text-[#F3F4F6] bg-[#181C2B] hover:bg-[#1F2438] border border-[#262C3F] rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4] outline-none"
+            onClick={handleBack}
+            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#9E98A8] hover:text-[#F4EFEA] bg-[#201D28] hover:bg-[#2B2735] border border-[#2B2735] rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none min-h-[44px]"
           >
-            ← Voltar para o catálogo
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Voltar para o catálogo</span>
           </button>
         </div>
         <ErrorState
@@ -82,4 +90,3 @@ export default function ItemDetailPage() {
 
   return <ItemDetailView item={item} onBack={handleBack} />;
 }
-

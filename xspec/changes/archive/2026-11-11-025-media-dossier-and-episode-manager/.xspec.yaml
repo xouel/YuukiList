@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "025-media-dossier-and-episode-manager"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "catalog-browse"
+base_specs:
+  catalog-browse: "sha256:8f8f4f1b07dfec80f874b1e841e8db7f2d86d1ed90c945e0b90f22a20c0739cd"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-11T13:12:01.837Z"
