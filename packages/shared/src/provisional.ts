@@ -75,3 +75,4 @@ export interface SimilarityCheckResponse {
 export interface LockFieldsDto {
   lockedFields: string[];
 }
+

@@ -23,3 +23,4 @@ export async function PATCH(
     return NextResponse.json({ message: error.message || 'Erro ao travar campos' }, { status: statusCode });
   }
 }
+

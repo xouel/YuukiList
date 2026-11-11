@@ -46,3 +46,4 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
     </>
   );
 }
+

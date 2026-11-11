@@ -17,3 +17,4 @@ export async function GET() {
     return NextResponse.json({ message: error.message || 'Erro ao listar solicitações' }, { status: 500 });
   }
 }
+

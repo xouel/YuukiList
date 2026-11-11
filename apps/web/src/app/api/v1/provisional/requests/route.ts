@@ -18,3 +18,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: error.message || 'Erro ao criar solicitação' }, { status: 400 });
   }
 }
+
