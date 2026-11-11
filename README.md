@@ -4,7 +4,7 @@
 
 ---
 
-## ⛩️ Visão Geral
+## Visão Geral
 
 O **YuukiList** resolve a fragmentação do consumo de mídia oriental, reunindo em uma experiência unificada e coesa o catálogo canônico, o rastreamento tátil de progresso, diário de impressões, calendário de lançamentos e perfil público editorial.
 
@@ -12,7 +12,7 @@ O projeto foi construído sob governança determinística **X-Spec v2.0.1**, cob
 
 ---
 
-## ✨ Funcionalidades Principais
+## Funcionalidades Principais
 
 - **Exploração e Catálogo Unificado**:
   - Filtros por categoria (Dorama, Filme, Anime, Mangá, Manhwa, Manhua), status de publicação, país de origem (JP, KR, CN, TW, TH), gênero e temática.
@@ -44,7 +44,7 @@ O projeto foi construído sob governança determinística **X-Spec v2.0.1**, cob
 
 ---
 
-## 🎨 Design System: Asian Editorial Foundation
+## Design System: Asian Editorial Foundation
 
 A identidade visual do YuukiList adota a estética minimalista e mineral inspirada na tradição oriental e publicações editoriais contemporâneas:
 
@@ -58,7 +58,7 @@ A identidade visual do YuukiList adota a estética minimalista e mineral inspira
 
 ---
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 O projeto é estruturado como um monorepo modular:
 
@@ -75,13 +75,15 @@ YuukiList/
 
 ---
 
-## 🚀 Como Executar
+## Como Executar
 
 ### Pré-requisitos
+
 - **Node.js**: v22.x ou superior
 - **npm**: v10.x ou superior
 
 ### Instalação
+
 ```bash
 # Clone o repositório
 git clone <URL_DO_REPOSITORIO>
@@ -92,16 +94,19 @@ npm install
 ```
 
 ### Executar os Testes
+
 ```bash
 npm test
 ```
 
 ### Compilar a Aplicação
+
 ```bash
 npm run build
 ```
 
 ### Iniciar em Desenvolvimento
+
 ```bash
 # Iniciar o frontend web
 npm --prefix apps/web run dev
@@ -109,19 +114,21 @@ npm --prefix apps/web run dev
 # Ou iniciar o build de produção
 npm --prefix apps/web run start
 ```
+
 Acesse a aplicação em [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 📜 Governança e Especificação
+## Governança e Especificação
 
 Este repositório é governado pelo framework **X-Spec**:
+
 - `xspec/constitution.md`: Princípios arquiteturais inegociáveis.
 - `xspec/specs/`: 23 Living Specs refletindo as capacidades em produção.
 - `xspec/bin/xspec.mjs doctor`: Verificação determinística de saúde do repositório.
 
 ---
 
-## 📄 Licença
+## Licença
 
 Distribuído sob a licença MIT. Consulte `LICENSE` para mais detalhes.
