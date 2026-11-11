@@ -20,13 +20,25 @@ export interface LibraryRowProps {
   isMutating?: boolean;
 }
 
+const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
+  DORAMA: 'Doramas',
+  FILME: 'Filmes',
+  ANIME: 'Animes',
+  MANGA: 'Mangás',
+  MANHWA: 'Manhwas',
+  MANHUA: 'Manhuas',
+};
+
+// Paleta Editorial Bimodal / Categoria
 const CATEGORY_COLORS: Record<string, string> = {
-  DORAMA: 'bg-emerald-950/80 text-emerald-300 border-emerald-800',
-  FILME: 'bg-amber-950/80 text-amber-300 border-amber-800',
-  ANIME: 'bg-purple-950/80 text-purple-300 border-purple-800',
-  MANGA: 'bg-rose-950/80 text-rose-300 border-rose-800',
-  MANHWA: 'bg-cyan-950/80 text-cyan-300 border-cyan-800',
-  MANHUA: 'bg-indigo-950/80 text-indigo-300 border-indigo-800',
+  // Audiovisual (Ocre #D4A373 e Lavanda #9D8DF1)
+  DORAMA: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
+  FILME: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
+  ANIME: 'bg-[#9D8DF1]/15 text-[#9D8DF1] border-[#9D8DF1]/30',
+  // Impresso (Terracota #D97757)
+  MANGA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
+  MANHWA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
+  MANHUA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -49,17 +61,29 @@ export function LibraryRow({
 }: LibraryRowProps) {
   const media = item.mediaItem;
   const category = media?.category as Category | undefined;
-  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-gray-800 text-gray-300 border-gray-700';
+  const categoryName = category ? CATEGORY_DISPLAY_NAMES[category] || category : undefined;
+  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-[#1A1820] text-[#9C96A2] border-[#2B2735]';
   const statusLabel = STATUS_LABELS[item.status] || item.status;
+
+  const totalUnits =
+    category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA'
+      ? (media as any)?.totalChapters || (media as any)?.totalUnits
+      : (media as any)?.totalEpisodes || (media as any)?.totalUnits;
 
   const canIncrement =
     category !== 'FILME' &&
-    calculateNextProgress(item.progress, undefined, category) !== null;
+    calculateNextProgress(item.progress, totalUnits, category) !== null;
 
-  const baseProgress = formatProgressDisplay(item.progress, undefined, category);
-  const progressText = item.progressVolumes != null && item.progressVolumes > 0
-    ? `${baseProgress} • Vol. ${item.progressVolumes}`
-    : baseProgress;
+  const baseProgress = formatProgressDisplay(item.progress, totalUnits, category);
+  const progressText =
+    item.progressVolumes != null && item.progressVolumes > 0
+      ? `${baseProgress} • Vol. ${item.progressVolumes}`
+      : baseProgress;
+
+  const progressPercentage =
+    typeof totalUnits === 'number' && totalUnits > 0
+      ? Math.min(100, Math.round((item.progress / totalUnits) * 100))
+      : null;
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -85,7 +109,7 @@ export function LibraryRow({
   return (
     <div
       onClick={handleEditClick}
-      className="group flex items-center justify-between gap-3 p-3 sm:p-4 rounded-xl bg-[#181C2B] border border-[#262C3F] hover:border-[#06B6D4]/50 transition-all duration-200 cursor-pointer"
+      className="group flex items-center justify-between gap-3 p-3 sm:p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] hover:border-[#E05347]/50 transition-all duration-200 cursor-pointer"
       role="row"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -98,7 +122,7 @@ export function LibraryRow({
     >
       {/* Miniatura da Capa e Título */}
       <div className="flex items-center gap-3.5 min-w-0 flex-1">
-        <div className="relative w-12 h-16 sm:w-14 sm:h-20 shrink-0 rounded-lg overflow-hidden bg-[#121520] border border-white/5">
+        <div className="w-11 sm:w-14 aspect-[2/3] shrink-0 rounded-lg overflow-hidden bg-[#121115] border border-[#2B2735]">
           <img
             src={media?.coverUrl || '/covers/fallback.svg'}
             alt={`Capa de ${media?.title || 'obra'}`}
@@ -108,106 +132,98 @@ export function LibraryRow({
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap mb-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-serif font-medium text-sm sm:text-base text-[#F4EFEA] truncate group-hover:text-[#E05347] transition-colors">
+              {media?.title || 'Obra sem título'}
+            </h3>
+
+            {/* Badges de Categoria e Em Dia */}
             {category && (
               <span
-                className={`text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded border ${categoryClass}`}
+                className={`text-[10px] font-medium tracking-wide px-1.5 py-0.5 rounded border ${categoryClass}`}
               >
-                {category}
+                {categoryName}
               </span>
             )}
 
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-black/60 text-gray-300 border border-white/5">
-              {statusLabel}
-            </span>
-
-            {/* Badge Reassistido / Relido */}
-            {item.rewatchCount > 0 && (
-              <span
-                className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#8B5CF6]/30 text-[#C4B5FD] border border-[#8B5CF6]/40"
-                title={`Reassistido/Relido ${item.rewatchCount} vezes`}
-              >
-                ↻ {item.rewatchCount}x
-              </span>
-            )}
-
-            {/* Badge Em dia */}
             {item.isUpToDate && (
               <span
                 data-testid="up-to-date-badge"
-                className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#064E3B] text-[#34D399] border border-[#059669]/60"
+                className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#064E3B] text-[#34D399] border border-[#059669]/60"
               >
-                <svg className="w-2.5 h-2.5 text-[#34D399]" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
                 Em dia
               </span>
             )}
           </div>
 
-          <h3 className="font-semibold text-sm sm:text-base text-[#F3F4F6] truncate group-hover:text-[#06B6D4] transition-colors">
-            {media?.title || 'Obra sem título'}
-          </h3>
+          <div className="flex items-center gap-2 mt-1 text-xs text-[#9C96A2] flex-wrap">
+            <span className="px-1.5 py-0.2 rounded bg-black/40 text-[#F4EFEA] border border-white/10 text-[10px]">
+              {statusLabel}
+            </span>
 
-          {media?.originalTitle && (
-            <p className="text-xs text-[#9CA3AF] truncate font-light hidden sm:block">
-              {media.originalTitle}
-            </p>
-          )}
+            {media?.originalTitle && (
+              <span className="truncate max-w-[200px] opacity-70 font-light hidden sm:inline" title={media.originalTitle}>
+                {media.originalTitle}
+              </span>
+            )}
+
+            {typeof item.rating === 'number' && item.rating > 0 && (
+              <span className="text-amber-300 font-bold flex items-center gap-0.5">
+                ★ {item.rating.toFixed(1)}
+              </span>
+            )}
+
+            {item.rewatchCount > 0 && (
+              <span className="text-[#F4EFEA] font-bold text-[10px]">
+                ↻ {item.rewatchCount}x
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Nota Pessoal, Progresso e Ações */}
-      <div className="flex items-center gap-3 sm:gap-6 shrink-0">
-        {/* Nota */}
-        {typeof item.rating === 'number' && item.rating > 0 ? (
-          <div className="hidden sm:flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
-            <span>★</span>
-            <span>{item.rating.toFixed(1)}</span>
-          </div>
-        ) : (
-          <div className="hidden sm:block text-xs text-gray-500 w-12 text-center">
-            —
-          </div>
-        )}
-
-        {/* Progresso Numérico */}
-        <div className="text-right">
-          <span className="text-xs font-medium text-gray-200 block">
+      {/* Progresso, Barra Visual e Ações Ágeis */}
+      <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-col items-end gap-1">
+          <span className="text-xs sm:text-sm font-medium text-[#F4EFEA]">
             {progressText}
           </span>
+          {progressPercentage !== null && (
+            <div className="w-20 sm:w-28 bg-[#2B2735] h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-[#E05347] h-full rounded-full transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+          )}
         </div>
 
-        {/* Botão de Incremento Rápido */}
+        {/* Botão de Incremento Rápido com Alvo 44px */}
         {canIncrement && (
           <button
             type="button"
             onClick={handleIncrement}
             disabled={isMutating}
-            aria-label={`Avançar uma unidade para ${media?.title || 'obra'}`}
-            className="inline-flex items-center justify-center text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-[#06B6D4]/15 text-[#06B6D4] hover:bg-[#06B6D4] hover:text-[#0B0D13] active:scale-95 border border-[#06B6D4]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
+            aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl bg-[#E05347]/15 text-[#E05347] hover:bg-[#E05347] hover:text-white active:scale-95 border border-[#E05347]/30 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#E05347]"
           >
             {isMutating ? (
-              <div className="w-3 h-3 rounded-full border border-current border-t-transparent animate-spin" />
+              <div className="w-4 h-4 rounded-full border border-current border-t-transparent animate-spin" />
             ) : (
               <span>+1</span>
             )}
           </button>
         )}
 
-        {/* Botão Interativo de Favorito (♥) */}
+        {/* Botão de Favorito (♥) */}
         <button
           type="button"
           onClick={handleToggleFavorite}
           aria-label={item.isFavorite ? 'Desmarcar favorito' : 'Marcar como favorito'}
-          className={`p-1.5 rounded-lg border transition-all ${
+          className={`p-2 rounded-xl transition-all ${
             item.isFavorite
-              ? 'bg-rose-500/25 text-rose-400 border-rose-500/50 hover:bg-rose-500/35'
-              : 'bg-[#121520] hover:bg-[#262C3F] text-gray-400 hover:text-rose-400 border-[#262C3F]'
+              ? 'bg-[#E05347]/25 text-[#E05347] border border-[#E05347]/50 hover:bg-[#E05347]/35'
+              : 'text-[#9C96A2] hover:text-[#E05347] hover:bg-white/5 border border-transparent'
           }`}
         >
           <svg
@@ -224,25 +240,7 @@ export function LibraryRow({
             />
           </svg>
         </button>
-
-        {/* Botão de Edição */}
-        <button
-          type="button"
-          onClick={handleEditClick}
-          aria-label={`Editar detalhes de ${media?.title || 'obra'}`}
-          className="p-1.5 rounded-lg bg-[#121520] hover:bg-[#262C3F] text-[#94A3B8] hover:text-[#F3F4F6] border border-[#262C3F] transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-            />
-          </svg>
-        </button>
       </div>
     </div>
   );
 }
-

@@ -98,41 +98,32 @@ export function LibraryView() {
     }
   };
 
-  // Carrega layout e ordenação salvos no localStorage após montagem
+  // Inicializa preferência de layout salva no cliente
   useEffect(() => {
     setLayout(loadSavedLayout());
-    try {
-      const savedSort = localStorage.getItem(SORT_STORAGE_KEY) as LibrarySortBy | null;
+    if (typeof window !== 'undefined') {
+      const savedSort = window.localStorage.getItem(SORT_STORAGE_KEY) as LibrarySortBy | null;
       if (savedSort) {
         setSortBy(savedSort);
       }
-    } catch {
-      // Ignora erro em ambientes sem localStorage
     }
   }, []);
 
-  const handleLayoutChange = (newLayout: LibraryLayoutMode) => {
-    setLayout(newLayout);
-    saveLayoutPreference(newLayout);
-  };
-
-  const handleSortChange = (newSort: LibrarySortBy) => {
-    setSortBy(newSort);
-    try {
-      localStorage.setItem(SORT_STORAGE_KEY, newSort);
-    } catch {
-      // Ignora erro em ambientes sem localStorage
-    }
-  };
-
-  // Carrega itens da biblioteca
+  // Busca lista de itens da biblioteca
   const fetchLibrary = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await libraryApi.list({ limit: 100 });
-      setItems(response.data || []);
+      const response = await libraryApi.listItems();
+      setItems(response.items || []);
     } catch (err: any) {
+      if (err?.code === 'UNAUTHORIZED') {
+        if (typeof window !== 'undefined') {
+          const returnTo = encodeURIComponent(window.location.pathname);
+          window.location.href = `/login?returnTo=${returnTo}`;
+        }
+        return;
+      }
       setError(err?.message || 'Falha ao carregar sua biblioteca pessoal.');
     } finally {
       setIsLoading(false);
@@ -143,152 +134,30 @@ export function LibraryView() {
     fetchLibrary();
   }, [fetchLibrary]);
 
-  // Toast temporário
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
+  const showToast = (message: string) => {
+    setToastMessage(message);
     setTimeout(() => {
-      setToastMessage((prev) => (prev === msg ? null : prev));
-    }, 4000);
+      setToastMessage((current) => (current === message ? null : current));
+    }, 3500);
   };
 
-  // Alternância de Favorito com atualização otimista (TR-004)
-  const handleToggleFavorite = async (item: LibraryItemDto) => {
-    const nextFavorite = !item.isFavorite;
-    const previousItems = items;
+  const handleLayoutChange = (newLayout: LibraryLayoutMode) => {
+    setLayout(newLayout);
+    saveLayoutPreference(newLayout);
+  };
 
-    // Atualização otimista imediata
-    setItems((prev) =>
-      prev.map((it) =>
-        it.mediaItemId === item.mediaItemId ? { ...it, isFavorite: nextFavorite } : it
-      )
-    );
-
-    try {
-      const updated = await libraryApi.updateItem(item.mediaItemId, { isFavorite: nextFavorite });
-      setItems((prev) =>
-        prev.map((it) => (it.mediaItemId === item.mediaItemId ? updated : it))
-      );
-    } catch (err: any) {
-      setItems(previousItems);
-      showToast(`Falha ao alterar favorito de ${item.mediaItem?.title || 'obra'}.`);
+  const handleSortChange = (newSort: LibrarySortBy) => {
+    setSortBy(newSort);
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(SORT_STORAGE_KEY, newSort);
+      } catch {
+        // Ignora erro de storage restrito
+      }
     }
   };
 
-  // Incremento rápido "+1" com atualização otimista
-  const handleQuickIncrement = async (item: LibraryItemDto) => {
-    const category = item.mediaItem?.category;
-    const nextProg = calculateNextProgress(item.progress, undefined, category);
-    if (nextProg === null) return;
-
-    // Guarda estado anterior para rollback
-    const previousItems = items;
-    const optimisticItem = computeOptimisticItemUpdate(item, nextProg, undefined);
-
-    // Atualização otimista imediata na interface
-    setItems((prev) =>
-      prev.map((it) => (it.mediaItemId === item.mediaItemId ? optimisticItem : it))
-    );
-    setMutatingIds((prev) => new Set(prev).add(item.mediaItemId));
-
-    try {
-      const updated = await libraryApi.updateItem(item.mediaItemId, { progress: nextProg });
-      setItems((prev) =>
-        prev.map((it) => (it.mediaItemId === item.mediaItemId ? updated : it))
-      );
-    } catch (err: any) {
-      // Reversão em caso de falha de rede
-      setItems(previousItems);
-      showToast(`Falha ao avançar unidade para ${item.mediaItem?.title || 'obra'}.`);
-    } finally {
-      setMutatingIds((prev) => {
-        const next = new Set(prev);
-        next.delete(item.mediaItemId);
-        return next;
-      });
-    }
-  };
-
-  // Salvar alterações vindas do modal
-  const handleSaveModal = async (mediaItemId: string, update: UpdateLibraryItemDto) => {
-    const updated = await libraryApi.updateItem(mediaItemId, update);
-    setItems((prev) =>
-      prev.map((it) => (it.mediaItemId === mediaItemId ? updated : it))
-    );
-    showToast('Alterações salvas com sucesso.');
-  };
-
-  // Remover item vindo do modal
-  const handleRemoveModal = async (mediaItemId: string) => {
-    await libraryApi.removeItem(mediaItemId);
-    setItems((prev) => prev.filter((it) => it.mediaItemId !== mediaItemId));
-    showToast('Obra removida da sua biblioteca.');
-  };
-
-  // Filtragem e Ordenação local inteligente (TR-003)
-  const filteredItems = useMemo(() => {
-    const filtered = items.filter((item) => {
-      // Filtro de Favoritos
-      if (isFavoriteOnly && !item.isFavorite) {
-        return false;
-      }
-
-      // Filtro de Categoria
-      if (selectedCategory !== 'ALL' && item.mediaItem?.category !== selectedCategory) {
-        return false;
-      }
-
-      // Filtro de Aba Inteligente
-      if (selectedTab === 'ALL') return true;
-
-      const s = item.status;
-      switch (selectedTab) {
-        case 'WATCHING_READING':
-          return s === 'ASSISTINDO' || s === 'LENDO';
-        case 'PLAN_TO':
-          return s === 'QUERO_ASSISTIR' || s === 'QUERO_LER';
-        case 'COMPLETED':
-          return s === 'CONCLUIDO' || s === 'ASSISTIDO';
-        case 'PAUSED':
-          return s === 'PAUSADO';
-        case 'DROPPED':
-          return s === 'DROPADO';
-        default:
-          return true;
-      }
-    });
-
-    return [...filtered].sort((a, b) => {
-      switch (sortBy) {
-        case 'title': {
-          const titleA = (a.mediaItem?.title || '').toLowerCase();
-          const titleB = (b.mediaItem?.title || '').toLowerCase();
-          return titleA.localeCompare(titleB, 'pt-BR');
-        }
-        case 'rating': {
-          const rA = a.rating ?? -1;
-          const rB = b.rating ?? -1;
-          return rB - rA;
-        }
-        case 'progress': {
-          return (b.progress || 0) - (a.progress || 0);
-        }
-        case 'releaseYear': {
-          const yA = a.mediaItem?.releaseYear ?? 0;
-          const yB = b.mediaItem?.releaseYear ?? 0;
-          return yB - yA;
-        }
-        case 'createdAt': {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        }
-        case 'updatedAt':
-        default: {
-          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-        }
-      }
-    });
-  }, [items, selectedTab, selectedCategory, isFavoriteOnly, sortBy]);
-
-  // Contagens por aba inteligente
+  // Contagem cumulativa por aba
   const countsByTab = useMemo(() => {
     const counts: Record<StatusTabKey, number> = {
       ALL: items.length,
@@ -300,32 +169,213 @@ export function LibraryView() {
     };
 
     for (const item of items) {
-      const s = item.status;
-      if (s === 'ASSISTINDO' || s === 'LENDO') counts.WATCHING_READING++;
-      else if (s === 'QUERO_ASSISTIR' || s === 'QUERO_LER') counts.PLAN_TO++;
-      else if (s === 'CONCLUIDO' || s === 'ASSISTIDO') counts.COMPLETED++;
-      else if (s === 'PAUSADO') counts.PAUSED++;
-      else if (s === 'DROPADO') counts.DROPPED++;
+      switch (item.status) {
+        case 'ASSISTINDO':
+        case 'LENDO':
+          counts.WATCHING_READING++;
+          break;
+        case 'QUERO_ASSISTIR':
+        case 'QUERO_LER':
+          counts.PLAN_TO++;
+          break;
+        case 'CONCLUIDO':
+        case 'ASSISTIDO':
+          counts.COMPLETED++;
+          break;
+        case 'PAUSADO':
+          counts.PAUSED++;
+          break;
+        case 'DROPADO':
+          counts.DROPPED++;
+          break;
+      }
     }
 
     return counts;
   }, [items]);
 
+  // Itens filtrados por aba, categoria, favoritos e ordenação
+  const filteredItems = useMemo(() => {
+    let result = [...items];
+
+    if (selectedTab !== 'ALL') {
+      result = result.filter((item) => {
+        switch (selectedTab) {
+          case 'WATCHING_READING':
+            return item.status === 'ASSISTINDO' || item.status === 'LENDO';
+          case 'PLAN_TO':
+            return item.status === 'QUERO_ASSISTIR' || item.status === 'QUERO_LER';
+          case 'COMPLETED':
+            return item.status === 'CONCLUIDO' || item.status === 'ASSISTIDO';
+          case 'PAUSED':
+            return item.status === 'PAUSADO';
+          case 'DROPPED':
+            return item.status === 'DROPADO';
+          default:
+            return true;
+        }
+      });
+    }
+
+    if (selectedCategory !== 'ALL') {
+      result = result.filter((item) => item.mediaItem?.category === selectedCategory);
+    }
+
+    if (isFavoriteOnly) {
+      result = result.filter((item) => item.isFavorite);
+    }
+
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'title': {
+          const titleA = a.mediaItem?.title || '';
+          const titleB = b.mediaItem?.title || '';
+          return titleA.localeCompare(titleB, 'pt-BR', { sensitivity: 'base' });
+        }
+        case 'progress':
+          return (b.progress || 0) - (a.progress || 0);
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'releaseYear': {
+          const yearA = a.mediaItem?.releaseYear || 0;
+          const yearB = b.mediaItem?.releaseYear || 0;
+          return yearB - yearA;
+        }
+        case 'createdAt': {
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateB - dateA;
+        }
+        case 'updatedAt':
+        default: {
+          const dateA = new Date(a.updatedAt).getTime();
+          const dateB = new Date(b.updatedAt).getTime();
+          return dateB - dateA;
+        }
+      }
+    });
+
+    return result;
+  }, [items, selectedTab, selectedCategory, isFavoriteOnly, sortBy]);
+
+  // Incremento rápido (+1) com atualização otimista
+  const handleQuickIncrement = async (item: LibraryItemDto) => {
+    const category = item.mediaItem?.category;
+    const totalUnits =
+      category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA'
+        ? (item.mediaItem as any)?.totalChapters || (item.mediaItem as any)?.totalUnits
+        : (item.mediaItem as any)?.totalEpisodes || (item.mediaItem as any)?.totalUnits;
+
+    const nextProgress = calculateNextProgress(item.progress, totalUnits, category);
+    if (nextProgress === null) return;
+
+    const optimisticItem = computeOptimisticItemUpdate(item, nextProgress, totalUnits);
+    setItems((prev) =>
+      prev.map((i) => (i.mediaItemId === item.mediaItemId ? optimisticItem : i))
+    );
+
+    setMutatingIds((prev) => new Set(prev).add(item.mediaItemId));
+
+    try {
+      const updated = await libraryApi.updateItem(item.mediaItemId, {
+        progress: nextProgress,
+      });
+
+      setItems((prev) =>
+        prev.map((i) => (i.mediaItemId === item.mediaItemId ? { ...i, ...updated } : i))
+      );
+
+      const unitName =
+        category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA'
+          ? 'Capítulo'
+          : 'Episódio';
+      showToast(`${unitName} ${nextProgress} registrado!`);
+    } catch (err: any) {
+      setItems((prev) =>
+        prev.map((i) => (i.mediaItemId === item.mediaItemId ? item : i))
+      );
+      showToast(err?.message || 'Falha ao atualizar progresso. Alteração desfeita.');
+    } finally {
+      setMutatingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(item.mediaItemId);
+        return next;
+      });
+    }
+  };
+
+  // Alternância rápida de favorito (♥)
+  const handleToggleFavorite = async (item: LibraryItemDto) => {
+    const nextFavorite = !item.isFavorite;
+
+    setItems((prev) =>
+      prev.map((i) =>
+        i.mediaItemId === item.mediaItemId ? { ...i, isFavorite: nextFavorite } : i
+      )
+    );
+
+    try {
+      await libraryApi.updateItem(item.mediaItemId, {
+        isFavorite: nextFavorite,
+      });
+      showToast(
+        nextFavorite
+          ? `"${item.mediaItem?.title}" adicionado aos favoritos!`
+          : `"${item.mediaItem?.title}" removido dos favoritos.`
+      );
+    } catch {
+      setItems((prev) =>
+        prev.map((i) =>
+          i.mediaItemId === item.mediaItemId ? { ...i, isFavorite: item.isFavorite } : i
+        )
+      );
+      showToast('Falha ao atualizar favorito. Alteração desfeita.');
+    }
+  };
+
+  // Salvar no Modal de Edição
+  const handleSaveModal = async (mediaItemId: string, dto: UpdateLibraryItemDto) => {
+    try {
+      const updated = await libraryApi.updateItem(mediaItemId, dto);
+      setItems((prev) =>
+        prev.map((i) => (i.mediaItemId === mediaItemId ? { ...i, ...updated } : i))
+      );
+      setEditingItem(null);
+      showToast('Item atualizado com sucesso!');
+    } catch (err: any) {
+      showToast(err?.message || 'Falha ao salvar alterações.');
+      throw err;
+    }
+  };
+
+  // Remover no Modal de Edição
+  const handleRemoveModal = async (mediaItemId: string) => {
+    try {
+      await libraryApi.removeItem(mediaItemId);
+      setItems((prev) => prev.filter((i) => i.mediaItemId !== mediaItemId));
+      setEditingItem(null);
+      showToast('Obra removida da sua biblioteca.');
+    } catch (err: any) {
+      showToast(err?.message || 'Falha ao remover item da biblioteca.');
+      throw err;
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Toast Notificação */}
+    <div className="w-full space-y-6">
+      {/* Toast Notifier */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-[#181C2B] border border-[#06B6D4]/40 text-[#F3F4F6] text-sm shadow-2xl shadow-black/80 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-[#1A1820] border border-[#E05347]/40 text-[#F4EFEA] text-sm shadow-2xl shadow-black/80 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
         >
-          <span className="w-2 h-2 rounded-full bg-[#06B6D4]" />
+          <span className="w-2 h-2 rounded-full bg-[#E05347]" />
           <span>{toastMessage}</span>
           <button
             type="button"
             onClick={() => setToastMessage(null)}
-            className="text-gray-400 hover:text-white ml-2 text-xs"
+            className="text-[#9C96A2] hover:text-[#F4EFEA] ml-2 text-xs"
           >
             ✕
           </button>
@@ -333,25 +383,25 @@ export function LibraryView() {
       )}
 
       {/* Cabeçalho da Biblioteca */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#262C3F]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#2B2735]">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F3F4F6] tracking-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#F4EFEA] tracking-tight">
             Minha Biblioteca
           </h1>
-          <p className="text-xs sm:text-sm text-[#94A3B8] mt-1">
+          <p className="text-xs sm:text-sm text-[#9C96A2] mt-1 font-light">
             Acompanhe seu progresso de exibição, leitura e linha do tempo de doramas, animes e mangás.
           </p>
         </div>
 
         {/* Alternador de Visão Principal: Acervo vs Histórico & Diário */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#181C2B] border border-[#262C3F] self-start sm:self-auto">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#1A1820] border border-[#2B2735] self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setViewMode('COLLECTION')}
             className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
               viewMode === 'COLLECTION'
-                ? 'bg-[#06B6D4] text-[#0B0D13] shadow-md shadow-[#06B6D4]/20'
-                : 'text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-white/5'
+                ? 'bg-[#E05347] text-white shadow-sm'
+                : 'text-[#9C96A2] hover:text-[#F4EFEA] hover:bg-white/5'
             }`}
           >
             Acervo
@@ -361,15 +411,15 @@ export function LibraryView() {
             onClick={() => setViewMode('DIARY')}
             className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
               viewMode === 'DIARY'
-                ? 'bg-[#06B6D4] text-[#0B0D13] shadow-md shadow-[#06B6D4]/20'
-                : 'text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-white/5'
+                ? 'bg-[#E05347] text-white shadow-sm'
+                : 'text-[#9C96A2] hover:text-[#F4EFEA] hover:bg-white/5'
             }`}
           >
             <span>Histórico & Diário</span>
             {diaryEvents.length > 0 && (
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                  viewMode === 'DIARY' ? 'bg-[#0B0D13]/30 text-[#0B0D13]' : 'bg-[#262C3F] text-gray-300'
+                  viewMode === 'DIARY' ? 'bg-black/30 text-white' : 'bg-[#2B2735] text-[#9C96A2]'
                 }`}
               >
                 {diaryEvents.length}
@@ -384,8 +434,8 @@ export function LibraryView() {
         <div className="space-y-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-[#F3F4F6]">Linha do Tempo Pessoal</h2>
-              <p className="text-xs text-[#94A3B8]">
+              <h2 className="font-serif text-xl font-normal text-[#F4EFEA]">Linha do Tempo Pessoal</h2>
+              <p className="text-xs text-[#9C96A2] font-light">
                 Registro cronológico independente das suas ações, reflexões e memórias de consumo.
               </p>
             </div>
@@ -397,7 +447,7 @@ export function LibraryView() {
                   setSelectedMediaForNote(null);
                   setIsNoteModalOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-[#06B6D4] text-[#0B0D13] hover:bg-[#22D3EE] transition-all shadow-md shadow-[#06B6D4]/20"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-[#E05347] text-white hover:bg-[#c94539] transition-all shadow-md shadow-[#E05347]/20"
               >
                 <span>+</span>
                 <span>Nova Anotação</span>
@@ -439,9 +489,9 @@ export function LibraryView() {
           ) : error ? (
             <ErrorState message={error} onRetry={fetchLibrary} />
           ) : items.length === 0 ? (
-            /* Estado Vazio Convidativo */
-            <div className="py-16 px-4 text-center border border-dashed border-[#262C3F] rounded-2xl bg-[#121520]/50 max-w-lg mx-auto my-8">
-              <div className="w-14 h-14 rounded-full bg-[#181C2B] border border-[#262C3F] flex items-center justify-center mx-auto mb-4 text-[#06B6D4]">
+            /* Estado Vazio Convidativo no Padrão Asian Editorial */
+            <div className="py-16 px-4 text-center max-w-lg mx-auto my-8">
+              <div className="w-14 h-14 rounded-full bg-[#1A1820] border border-[#2B2735] flex items-center justify-center mx-auto mb-4 text-[#E05347]">
                 <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
@@ -451,14 +501,14 @@ export function LibraryView() {
                   />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-[#F3F4F6]">Sua biblioteca ainda está vazia</h2>
-              <p className="text-sm text-[#94A3B8] mt-2 max-w-sm mx-auto">
+              <h2 className="font-serif text-2xl font-normal text-[#F4EFEA]">Sua biblioteca ainda está vazia</h2>
+              <p className="text-sm text-[#9C96A2] mt-2 max-w-sm mx-auto font-light">
                 Explore nosso catálogo completo com doramas, filmes, animes e mangás e adicione suas primeiras obras para começar a acompanhar!
               </p>
               <div className="mt-6">
                 <a
                   href="/"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-[#0B0D13] bg-[#06B6D4] hover:bg-[#22D3EE] rounded-xl transition-all shadow-lg shadow-[#06B6D4]/20 focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#E05347] hover:bg-[#c94539] rounded-xl transition-all shadow-md shadow-[#E05347]/20 focus-visible:ring-2 focus-visible:ring-[#E05347]"
                 >
                   Explorar Catálogo
                 </a>
@@ -526,4 +576,3 @@ export function LibraryView() {
     </div>
   );
 }
-

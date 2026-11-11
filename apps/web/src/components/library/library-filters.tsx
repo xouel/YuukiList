@@ -29,12 +29,12 @@ export interface LibraryFiltersProps {
 
 const CATEGORIES: Array<{ key: Category | 'ALL'; label: string }> = [
   { key: 'ALL', label: 'Todas as categorias' },
-  { key: 'DORAMA', label: 'Dorama' },
-  { key: 'FILME', label: 'Filme' },
-  { key: 'ANIME', label: 'Anime' },
-  { key: 'MANGA', label: 'Mangá' },
-  { key: 'MANHWA', label: 'Manhwa' },
-  { key: 'MANHUA', label: 'Manhua' },
+  { key: 'DORAMA', label: 'Doramas' },
+  { key: 'FILME', label: 'Filmes' },
+  { key: 'ANIME', label: 'Animes' },
+  { key: 'MANGA', label: 'Mangás' },
+  { key: 'MANHWA', label: 'Manhwas' },
+  { key: 'MANHUA', label: 'Manhuas' },
 ];
 
 export function LibraryFilters({
@@ -52,9 +52,9 @@ export function LibraryFilters({
 }: LibraryFiltersProps) {
   return (
     <div className="space-y-4 mb-6">
-      {/* Linha Superior: Abas Inteligentes de Status */}
-      <div className="flex items-center justify-between gap-4 border-b border-[#262C3F] pb-1 overflow-x-auto">
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+      {/* Linha Superior: Abas Inteligentes de Status em Estilo Pílula */}
+      <div className="flex items-center justify-between gap-4 border-b border-[#2B2735] pb-2 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {STATUS_TABS.map((tab) => {
             const isActive = selectedTab === tab.key;
             const count = countsByTab ? countsByTab[tab.key] : undefined;
@@ -64,26 +64,23 @@ export function LibraryFilters({
                 key={tab.key}
                 type="button"
                 onClick={() => onTabChange(tab.key)}
-                className={`relative px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#06B6D4] outline-none ${
+                className={`px-3.5 py-1.5 text-xs sm:text-sm font-medium rounded-full transition-all flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none ${
                   isActive
-                    ? 'text-[#06B6D4] font-semibold bg-[#181C2B]'
-                    : 'text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-[#181C2B]/50'
+                    ? 'bg-[#E05347] text-white shadow-sm font-semibold'
+                    : 'bg-[#1A1820] text-[#9C96A2] hover:text-[#F4EFEA] hover:bg-[#25222E] border border-[#2B2735]'
                 }`}
               >
                 <span>{tab.label}</span>
                 {typeof count === 'number' && (
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                       isActive
-                        ? 'bg-[#06B6D4]/20 text-[#06B6D4]'
-                        : 'bg-[#262C3F] text-gray-400'
+                        ? 'bg-black/30 text-white'
+                        : 'bg-[#2B2735] text-[#9C96A2]'
                     }`}
                   >
                     {count}
                   </span>
-                )}
-                {isActive && (
-                  <span className="absolute bottom-[-5px] left-2 right-2 h-0.5 bg-[#06B6D4] rounded-full" />
                 )}
               </button>
             );
@@ -91,16 +88,16 @@ export function LibraryFilters({
         </div>
 
         {/* Alternador de Layout (Grade / Lista) */}
-        <div className="flex items-center gap-1 shrink-0 p-1 rounded-lg bg-[#181C2B] border border-[#262C3F]">
+        <div className="flex items-center gap-1 shrink-0 p-1 rounded-xl bg-[#1A1820] border border-[#2B2735]">
           <button
             type="button"
             onClick={() => onLayoutChange('grid')}
             aria-label="Visualizar em modo grade"
             title="Modo Grade"
-            className={`p-1.5 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4] ${
+            className={`p-1.5 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#E05347] ${
               layout === 'grid'
-                ? 'bg-[#06B6D4] text-[#0B0D13]'
-                : 'text-[#94A3B8] hover:text-[#F3F4F6]'
+                ? 'bg-[#E05347] text-white'
+                : 'text-[#9C96A2] hover:text-[#F4EFEA]'
             }`}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -112,10 +109,10 @@ export function LibraryFilters({
             onClick={() => onLayoutChange('list')}
             aria-label="Visualizar em modo lista"
             title="Modo Lista"
-            className={`p-1.5 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4] ${
+            className={`p-1.5 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#E05347] ${
               layout === 'list'
-                ? 'bg-[#06B6D4] text-[#0B0D13]'
-                : 'text-[#94A3B8] hover:text-[#F3F4F6]'
+                ? 'bg-[#E05347] text-white'
+                : 'text-[#9C96A2] hover:text-[#F4EFEA]'
             }`}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -132,8 +129,8 @@ export function LibraryFilters({
       {/* Linha Secundária: Filtro por Categoria, Filtro de Favoritos e Ordenação */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         {/* Chips de Categoria */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          <span className="text-xs text-[#94A3B8] mr-1 hidden sm:inline">Categoria:</span>
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <span className="text-xs text-[#9C96A2] mr-1 hidden sm:inline">Categorias:</span>
           <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
             {CATEGORIES.map((cat) => {
               const isCatActive = selectedCategory === cat.key;
@@ -142,10 +139,10 @@ export function LibraryFilters({
                   key={cat.key}
                   type="button"
                   onClick={() => onCategoryChange(cat.key)}
-                  className={`text-xs px-2.5 py-1 rounded-md transition-colors border focus-visible:ring-2 focus-visible:ring-[#06B6D4] ${
+                  className={`text-xs px-2.5 py-1 rounded-lg transition-colors border focus-visible:ring-2 focus-visible:ring-[#E05347] ${
                     isCatActive
-                      ? 'bg-[#06B6D4]/15 text-[#06B6D4] border-[#06B6D4]/40 font-semibold'
-                      : 'bg-[#181C2B] text-[#94A3B8] border-[#262C3F] hover:text-[#F3F4F6] hover:border-[#38415c]'
+                      ? 'bg-[#E05347]/15 text-[#E05347] border-[#E05347]/40 font-semibold'
+                      : 'bg-[#1A1820] text-[#9C96A2] border-[#2B2735] hover:text-[#F4EFEA] hover:bg-[#25222E]'
                   }`}
                 >
                   {cat.label}
@@ -162,18 +159,18 @@ export function LibraryFilters({
             type="button"
             onClick={onToggleFavoriteOnly}
             aria-pressed={isFavoriteOnly}
-            className={`text-xs px-2.5 py-1 rounded-md transition-colors border flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#06B6D4] ${
+            className={`text-xs px-2.5 py-1 rounded-lg transition-colors border flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#E05347] ${
               isFavoriteOnly
-                ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 font-semibold shadow-sm'
-                : 'bg-[#181C2B] text-[#94A3B8] border-[#262C3F] hover:text-[#F3F4F6] hover:border-[#38415c]'
+                ? 'bg-[#E05347]/20 text-[#E05347] border-[#E05347]/50 font-semibold shadow-sm'
+                : 'bg-[#1A1820] text-[#9C96A2] border-[#2B2735] hover:text-[#F4EFEA] hover:bg-[#25222E]'
             }`}
           >
-            <span className={isFavoriteOnly ? 'text-rose-400' : 'text-gray-400'}>♥</span>
+            <span className={isFavoriteOnly ? 'text-[#E05347]' : 'text-[#9C96A2]'}>♥</span>
             <span>Favoritos</span>
           </button>
 
-          {/* Seletor Canônico de Ordenação (6 Opções) */}
-          <div className="flex items-center gap-1.5 text-xs text-[#94A3B8]">
+          {/* Seletor Canônico de Ordenação */}
+          <div className="flex items-center gap-1.5 text-xs text-[#9C96A2]">
             <label htmlFor="library-sort-select" className="sr-only sm:not-sr-only">
               Ordenar:
             </label>
@@ -181,7 +178,7 @@ export function LibraryFilters({
               id="library-sort-select"
               value={sortBy}
               onChange={(e) => onSortByChange(e.target.value as LibrarySortBy)}
-              className="px-2.5 py-1 text-xs rounded-md bg-[#181C2B] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none cursor-pointer"
+              className="px-2.5 py-1 text-xs rounded-lg bg-[#16151B] border border-[#2B2735] text-[#F4EFEA] focus:border-[#E05347] focus:ring-1 focus:ring-[#E05347] outline-none cursor-pointer"
             >
               <option value="updatedAt">Atualização recente</option>
               <option value="createdAt">Data de adição</option>
@@ -196,4 +193,3 @@ export function LibraryFilters({
     </div>
   );
 }
-

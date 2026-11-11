@@ -20,13 +20,25 @@ export interface LibraryCardProps {
   isMutating?: boolean;
 }
 
+const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
+  DORAMA: 'Doramas',
+  FILME: 'Filmes',
+  ANIME: 'Animes',
+  MANGA: 'Mangás',
+  MANHWA: 'Manhwas',
+  MANHUA: 'Manhuas',
+};
+
+// Paleta Editorial Bimodal / Categoria
 const CATEGORY_COLORS: Record<string, string> = {
-  DORAMA: 'bg-emerald-950/80 text-emerald-300 border-emerald-800',
-  FILME: 'bg-amber-950/80 text-amber-300 border-amber-800',
-  ANIME: 'bg-purple-950/80 text-purple-300 border-purple-800',
-  MANGA: 'bg-rose-950/80 text-rose-300 border-rose-800',
-  MANHWA: 'bg-cyan-950/80 text-cyan-300 border-cyan-800',
-  MANHUA: 'bg-indigo-950/80 text-indigo-300 border-indigo-800',
+  // Audiovisual (Ocre #D4A373 e Lavanda #9D8DF1)
+  DORAMA: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
+  FILME: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
+  ANIME: 'bg-[#9D8DF1]/15 text-[#9D8DF1] border-[#9D8DF1]/30',
+  // Impresso (Terracota #D97757)
+  MANGA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
+  MANHWA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
+  MANHUA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -49,17 +61,29 @@ export function LibraryCard({
 }: LibraryCardProps) {
   const media = item.mediaItem;
   const category = media?.category as Category | undefined;
-  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-gray-800 text-gray-300 border-gray-700';
+  const categoryName = category ? CATEGORY_DISPLAY_NAMES[category] || category : undefined;
+  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-[#1A1820] text-[#9C96A2] border-[#2B2735]';
   const statusLabel = STATUS_LABELS[item.status] || item.status;
+
+  const totalUnits =
+    category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA'
+      ? (media as any)?.totalChapters || (media as any)?.totalUnits
+      : (media as any)?.totalEpisodes || (media as any)?.totalUnits;
 
   const canIncrement =
     category !== 'FILME' &&
-    calculateNextProgress(item.progress, undefined, category) !== null;
+    calculateNextProgress(item.progress, totalUnits, category) !== null;
 
-  const baseProgress = formatProgressDisplay(item.progress, undefined, category);
-  const progressText = item.progressVolumes != null && item.progressVolumes > 0
-    ? `${baseProgress} • Vol. ${item.progressVolumes}`
-    : baseProgress;
+  const baseProgress = formatProgressDisplay(item.progress, totalUnits, category);
+  const progressText =
+    item.progressVolumes != null && item.progressVolumes > 0
+      ? `${baseProgress} • Vol. ${item.progressVolumes}`
+      : baseProgress;
+
+  const progressPercentage =
+    typeof totalUnits === 'number' && totalUnits > 0
+      ? Math.min(100, Math.round((item.progress / totalUnits) * 100))
+      : null;
 
   const handleCardClick = () => {
     if (onOpenEdit) {
@@ -84,7 +108,7 @@ export function LibraryCard({
   return (
     <article
       onClick={handleCardClick}
-      className="group relative bg-[#181C2B] rounded-xl overflow-hidden border border-[#262C3F] hover:border-[#06B6D4]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#06B6D4]/5 flex flex-col h-full cursor-pointer"
+      className="group relative bg-[#1A1820] rounded-xl overflow-hidden border border-[#2B2735] hover:border-[#E05347]/50 transition-all duration-300 hover:shadow-xl hover:shadow-black/40 flex flex-col h-full cursor-pointer"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -96,7 +120,7 @@ export function LibraryCard({
       aria-label={`Ver detalhes de ${media?.title || 'obra'}`}
     >
       {/* Capa com Proporção 2:3 */}
-      <div className="relative aspect-[2/3] w-full overflow-hidden bg-[#121520]">
+      <div className="relative aspect-[2/3] w-full overflow-hidden bg-[#121115]">
         <img
           src={media?.coverUrl || '/covers/fallback.svg'}
           alt={`Capa de ${media?.title || 'obra'}`}
@@ -104,23 +128,26 @@ export function LibraryCard({
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Badge de Categoria */}
-        {category && (
-          <div className="absolute top-2.5 left-2.5">
+        {/* Badges do Canto Superior Esquerdo: Categoria e Status do Usuário Reposicionado */}
+        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1 z-10 pointer-events-none">
+          {category && (
             <span
-              className={`text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded border backdrop-blur ${categoryClass}`}
+              className={`text-[10px] font-medium tracking-wide px-2 py-0.5 rounded border backdrop-blur shadow-sm ${categoryClass}`}
             >
-              {category}
+              {categoryName}
             </span>
-          </div>
-        )}
+          )}
+          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-black/75 text-[#F4EFEA] border border-white/10 backdrop-blur shadow-sm">
+            {statusLabel}
+          </span>
+        </div>
 
         {/* Badges do Canto Superior Direito: Em Dia e Favorito */}
         <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10">
           {item.isUpToDate && (
             <span
               data-testid="up-to-date-badge"
-              className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded bg-[#064E3B] text-[#34D399] border border-[#059669]/60 shadow-lg shadow-black/40 backdrop-blur"
+              className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-[#064E3B] text-[#34D399] border border-[#059669]/60 shadow-lg shadow-black/40 backdrop-blur"
             >
               <svg className="w-3 h-3 text-[#34D399]" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -140,8 +167,8 @@ export function LibraryCard({
             aria-label={item.isFavorite ? 'Desmarcar favorito' : 'Marcar como favorito'}
             className={`p-1.5 rounded-lg backdrop-blur transition-all shadow-md ${
               item.isFavorite
-                ? 'bg-rose-500/25 text-rose-400 border border-rose-500/50 hover:bg-rose-500/35'
-                : 'bg-black/60 text-gray-400 hover:text-rose-400 border border-white/10'
+                ? 'bg-[#E05347]/25 text-[#E05347] border border-[#E05347]/50 hover:bg-[#E05347]/35'
+                : 'bg-black/60 text-[#9C96A2] hover:text-[#E05347] border border-white/10'
             }`}
           >
             <svg
@@ -160,59 +187,71 @@ export function LibraryCard({
           </button>
         </div>
 
-        {/* Badge de Status Pessoal Sobreposto na Base da Capa */}
-        <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between">
+        {/* Base da Capa: Indicador de Reassistir e Avaliação */}
+        <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between z-10 pointer-events-none">
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-black/75 text-gray-200 border border-white/10 backdrop-blur">
-              {statusLabel}
-            </span>
             {item.rewatchCount > 0 && (
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#8B5CF6]/30 text-[#C4B5FD] border border-[#8B5CF6]/40 backdrop-blur" title={`Reassistido/Relido ${item.rewatchCount} vezes`}>
+              <span
+                className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/75 text-[#F4EFEA] border border-white/10 backdrop-blur"
+                title={`Reassistido/Relido ${item.rewatchCount} vezes`}
+              >
                 ↻ {item.rewatchCount}x
               </span>
             )}
           </div>
           {typeof item.rating === 'number' && item.rating > 0 && (
-            <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1 backdrop-blur">
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/75 text-amber-300 border border-white/10 flex items-center gap-1 backdrop-blur">
               ★ {item.rating.toFixed(1)}
             </span>
           )}
         </div>
       </div>
 
-      {/* Detalhes e Ações */}
+      {/* Detalhes e Controle Tátil de Progresso */}
       <div className="p-3.5 flex flex-col flex-1 justify-between gap-3">
         <div>
-          <h3 className="font-semibold text-base text-[#F3F4F6] line-clamp-1 group-hover:text-[#06B6D4] transition-colors">
+          <h3 className="font-serif font-medium text-base text-[#F4EFEA] line-clamp-1 group-hover:text-[#E05347] transition-colors">
             {media?.title || 'Obra sem título'}
           </h3>
           {media?.originalTitle && (
-            <p className="text-xs text-[#9CA3AF] line-clamp-1 mt-0.5 font-light">
+            <p className="text-xs text-[#9C96A2] line-clamp-1 mt-0.5 opacity-70 font-light">
               {media.originalTitle}
             </p>
           )}
         </div>
 
-        {/* Barra de Progresso e Ação Ágil */}
-        <div className="pt-2 border-t border-[#262C3F]/60 flex items-center justify-between">
-          <div className="text-xs text-[#9CA3AF]">
-            <span className="font-medium text-gray-300">{progressText}</span>
+        {/* Componente Tátil de Progresso e Barra Visual */}
+        <div className="pt-2 border-t border-[#2B2735] flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-[#9C96A2]">
+              <span className="font-medium text-[#F4EFEA]">{progressText}</span>
+            </div>
+
+            {canIncrement && (
+              <button
+                type="button"
+                onClick={handleIncrement}
+                disabled={isMutating}
+                aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
+                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl bg-[#E05347]/15 text-[#E05347] hover:bg-[#E05347] hover:text-white active:scale-95 border border-[#E05347]/30 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#E05347]"
+              >
+                {isMutating ? (
+                  <div className="w-4 h-4 rounded-full border border-current border-t-transparent animate-spin" />
+                ) : (
+                  <span>+1</span>
+                )}
+              </button>
+            )}
           </div>
 
-          {canIncrement && (
-            <button
-              type="button"
-              onClick={handleIncrement}
-              disabled={isMutating}
-              aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
-              className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded bg-[#06B6D4]/15 text-[#06B6D4] hover:bg-[#06B6D4] hover:text-[#0B0D13] active:scale-95 border border-[#06B6D4]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
-            >
-              {isMutating ? (
-                <div className="w-3 h-3 rounded-full border border-current border-t-transparent animate-spin" />
-              ) : (
-                <span>+1</span>
-              )}
-            </button>
+          {/* Barra Visual Proporcional de Progresso */}
+          {progressPercentage !== null && (
+            <div className="w-full bg-[#2B2735] h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-[#E05347] h-full rounded-full transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
           )}
         </div>
       </div>

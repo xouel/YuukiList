@@ -7,7 +7,7 @@ Prover a interface gráfica web da biblioteca pessoal no YuukiList, permitindo a
 ## Requirements
 
 ### Requirement: Personal Library View and Layout Toggle
-O sistema SHALL renderizar a biblioteca pessoal privada do usuário na rota protegida library, permitindo alternar fluidamente entre visualização em grade e lista com persistência da preferência no cliente.
+O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida library perfeitamente integrada ao container global unificado, permitindo alternar fluidamente entre visualização em grade e lista e posicionando os selos de status pessoal no topo dos cards.
 
 #### Scenario: Exibicao da biblioteca pessoal em modo grade
 - **GIVEN** um usuário autenticado com obras registradas em sua biblioteca
@@ -24,8 +24,13 @@ O sistema SHALL renderizar a biblioteca pessoal privada do usuário na rota prot
 - **WHEN** o visitante tenta acessar diretamente a página de biblioteca pessoal
 - **THEN** o sistema SHALL bloquear a visualização e redirecionar para a tela de login preservando a rota de destino
 
+#### Scenario: Harmonizacao de layout e posicionamento superior do status pessoal
+- **GIVEN** a tela de biblioteca renderizada para um usuário autenticado
+- **WHEN** os cards de obras são exibidos na interface
+- **THEN** a página integra-se ao container global sem fundos recortados dissonantes e os selos de status pessoal são posicionados no canto superior do card
+
 ### Requirement: Quick Progress Tracking and Detail Modal
-O sistema SHALL disponibilizar controle ágil de progresso com botão de incremento rápido no card ou linha e modal para edição detalhada de status, nota e anotações.
+O sistema SHALL disponibilizar controle tátil de progresso com formatação relativa ao total conhecido, barra visual de progresso proporcional, botão de incremento rápido com área de toque mínima acessível de 44x44px e modal para edição detalhada.
 
 #### Scenario: Incremento rapido de unidade com atualizacao otimista
 - **GIVEN** uma série com episódios disponíveis e botão de incremento visível
@@ -42,8 +47,13 @@ O sistema SHALL disponibilizar controle ágil de progresso com botão de increme
 - **WHEN** o usuário aciona a opção de editar detalhes da obra
 - **THEN** o sistema SHALL abrir o modal permitindo ajustar status, nota de zero a dez, progresso e notas privadas
 
+#### Scenario: Controle tatil com barra de progresso visual e alvo minimo de toque de 44px
+- **GIVEN** uma obra em andamento com total de episódios ou capítulos conhecido
+- **WHEN** o card da obra é visualizado pelo usuário
+- **THEN** a interface exibe o progresso no formato Ep. X/Y com barra visual proporcional de preenchimento e provê botão de avanço com área tátil mínima de 44x44px
+
 ### Requirement: Library Filtering and Asynchronous States
-O sistema SHALL filtrar itens por abas inteligentes de status e categorias e apresentar estados dedicados de carregamento, acervo vazio, busca sem resultados e erro com recuperacao.
+O sistema SHALL filtrar itens por abas inteligentes em estilo pílula com taxonomia desambiguada de status do usuário, categorias no plural e contadores integrados, provendo estados dedicados de carregamento, acervo vazio, busca sem resultados e recuperação de erro.
 
 #### Scenario: Filtragem combinada por aba de status e categoria
 - **GIVEN** um usuário com múltiplas obras de diferentes formatos e status
@@ -59,6 +69,11 @@ O sistema SHALL filtrar itens por abas inteligentes de status e categorias e apr
 - **GIVEN** uma falha de conexão na comunicação com a API da biblioteca
 - **WHEN** o carregamento da lista ou a mutação é interrompido por erro de rede
 - **THEN** o sistema SHALL exibir um alerta visual informativo com um botão de nova tentativa
+
+#### Scenario: Abas inteligentes em estilo pilula com taxonomia desambiguada e contadores integrados
+- **GIVEN** a barra de filtros da biblioteca pessoal
+- **WHEN** as abas de navegação de status são renderizadas
+- **THEN** as opções utilizam taxonomia de usuário como Assistindo / Lendo e Planejados em botões pílula com contadores numéricos discretos
 
 ### Requirement: Interactive Favorites Rewatch Actions and Inconsistency Warnings
 A interface da biblioteca pessoal SHALL disponibilizar alternância ágil de favoritos com um clique, modal interativo para registrar novo ciclo ou contador de reassistir, controle de volumes e alertas não-bloqueantes de inconsistência.

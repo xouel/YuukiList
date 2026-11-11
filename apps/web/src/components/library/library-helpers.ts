@@ -29,7 +29,7 @@ export const STORAGE_LAYOUT_KEY = 'yuukilist_library_layout';
 
 export const STATUS_TABS: readonly StatusTabOption[] = Object.freeze([
   { key: 'ALL', label: 'Todos' },
-  { key: 'WATCHING_READING', label: 'Em Andamento' },
+  { key: 'WATCHING_READING', label: 'Assistindo / Lendo' },
   { key: 'PLAN_TO', label: 'Planejados' },
   { key: 'COMPLETED', label: 'Concluídos' },
   { key: 'PAUSED', label: 'Pausados' },

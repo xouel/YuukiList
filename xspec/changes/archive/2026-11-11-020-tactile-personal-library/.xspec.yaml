@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "020-tactile-personal-library"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "personal-library-ui"
+base_specs:
+  personal-library-ui: "sha256:72a74f10554bfcf290daa58275c132020b1d6b15a9f9725f6883cc34de5ad681"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-11T02:14:08.242Z"
