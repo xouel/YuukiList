@@ -9,49 +9,61 @@ interface ProfileStatsProps {
 
 export function ProfileStats({ stats }: ProfileStatsProps) {
   const categoryColors: Record<string, string> = {
-    DORAMA: 'bg-rose-500',
-    ANIME: 'bg-cyan-500',
-    MANGA: 'bg-amber-500',
-    MANHWA: 'bg-violet-500',
-    MANHUA: 'bg-emerald-500',
-    FILME: 'bg-blue-500',
-    OUTROS: 'bg-zinc-500',
+    DORAMA: 'bg-[#E05347]',
+    ANIME: 'bg-[#C9A227]',
+    MANGA: 'bg-[#9A5B4F]',
+    MANHWA: 'bg-[#6B5B95]',
+    MANHUA: 'bg-[#4E796B]',
+    FILME: 'bg-[#5A6377]',
+    OUTROS: 'bg-zinc-600',
   };
 
   return (
-    <div className="space-y-6">
-      {/* 1. Cards de Métricas-Chave */}
+    <div className="space-y-6" aria-labelledby="profile-stats-heading">
+      <div className="pb-2 border-b border-[#2B2735]">
+        <h2
+          id="profile-stats-heading"
+          className="text-lg sm:text-xl font-serif font-bold text-[#F4EFEA] tracking-tight"
+        >
+          Estatísticas & Métricas de Consumo
+        </h2>
+        <p className="text-xs text-zinc-400 mt-0.5">
+          Resumo consolidado do tempo investido e distribuição cultural do seu acervo.
+        </p>
+      </div>
+
+      {/* 1. Cards de Métricas-Chave Compactos */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 shadow-sm flex flex-col justify-between">
-          <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
             Obras Concluídas
           </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-zinc-100 font-mono">
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-[#F4EFEA]">
               {stats.totalCompleted}
             </span>
             <span className="text-xs text-zinc-500">títulos</span>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 shadow-sm flex flex-col justify-between">
-          <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-[#E05347] uppercase tracking-wider">
             Tempo Estimado
           </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-cyan-300 font-mono">
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-[#E05347]">
               {stats.totalEstimatedHours}h
             </span>
             <span className="text-xs text-zinc-500">investidas</span>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 shadow-sm flex flex-col justify-between">
-          <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-amber-400/90 uppercase tracking-wider">
             Capítulos & Volumes
           </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-amber-300 font-mono">
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-amber-300">
               {stats.totalChaptersRead}
             </span>
             <span className="text-xs text-zinc-500">
@@ -60,12 +72,12 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 shadow-sm flex flex-col justify-between">
-          <span className="text-xs font-semibold text-violet-400 uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-purple-300 uppercase tracking-wider">
             Média de Avaliações
           </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-violet-300 font-mono">
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-purple-300">
               {stats.averageRating ? `★ ${stats.averageRating}` : '—'}
             </span>
             <span className="text-xs text-zinc-500">/ 10</span>
@@ -73,20 +85,20 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
         </div>
       </div>
 
-      {/* 2. Distribuição por Categoria e Metadados */}
+      {/* 2. Distribuição por Categoria e Metadados Compactos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Distribuição por Categoria */}
-        <div className="p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800 space-y-4">
-          <h2 className="text-sm font-bold text-zinc-200 tracking-wide uppercase">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#1A1820] border border-[#2B2735] space-y-3.5">
+          <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
             Distribuição por Categoria
-          </h2>
+          </h3>
 
           {Object.keys(stats.categoryDistribution).length === 0 ? (
             <p className="text-xs text-zinc-500 py-4 text-center">
               Nenhuma obra catalogada na biblioteca ainda.
             </p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {Object.entries(stats.categoryDistribution).map(([category, data]) => (
                 <div key={category} className="space-y-1">
                   <div className="flex items-center justify-between text-xs font-medium">
@@ -95,9 +107,9 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
                       {data.count} ({data.percentage}%)
                     </span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-[#24202C] overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${categoryColors[category] || 'bg-cyan-500'}`}
+                      className={`h-full rounded-full ${categoryColors[category] || 'bg-[#E05347]'}`}
                       style={{ width: `${Math.min(100, data.percentage)}%` }}
                     />
                   </div>
@@ -108,41 +120,41 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
         </div>
 
         {/* Top Gêneros e Países */}
-        <div className="p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800 space-y-4">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#1A1820] border border-[#2B2735] space-y-4">
           <div>
-            <h2 className="text-sm font-bold text-zinc-200 tracking-wide uppercase mb-2.5">
+            <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
               Gêneros Mais Consumidos
-            </h2>
+            </h3>
             {stats.topGenres.length === 0 ? (
               <p className="text-xs text-zinc-500">Nenhum gênero registrado.</p>
             ) : (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {stats.topGenres.map((g) => (
                   <span
                     key={g.genre}
-                    className="px-2.5 py-1 rounded-lg text-xs font-medium bg-zinc-800/80 text-zinc-300 border border-zinc-700/60"
+                    className="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-[#24202C] text-zinc-300 border border-[#2B2735]"
                   >
-                    {g.genre} <strong className="text-cyan-400 font-mono ml-1">{g.count}</strong>
+                    {g.genre} <strong className="text-[#E05347] font-mono ml-1">{g.count}</strong>
                   </span>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="pt-3 border-t border-zinc-800/60">
-            <h2 className="text-sm font-bold text-zinc-200 tracking-wide uppercase mb-2.5">
+          <div className="pt-3 border-t border-[#2B2735]">
+            <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
               Países de Origem
-            </h2>
+            </h3>
             {stats.topCountries.length === 0 ? (
               <p className="text-xs text-zinc-500">Nenhum país registrado.</p>
             ) : (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {stats.topCountries.map((c) => (
                   <span
                     key={c.country}
-                    className="px-2.5 py-1 rounded-lg text-xs font-medium bg-zinc-800/80 text-zinc-300 border border-zinc-700/60"
+                    className="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-[#24202C] text-zinc-300 border border-[#2B2735]"
                   >
-                    {c.country} <strong className="text-violet-400 font-mono ml-1">{c.count}</strong>
+                    {c.country} <strong className="text-[#F4EFEA] font-mono ml-1">{c.count}</strong>
                   </span>
                 ))}
               </div>
@@ -153,4 +165,3 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
     </div>
   );
 }
-

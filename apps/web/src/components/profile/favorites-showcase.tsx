@@ -10,25 +10,38 @@ interface FavoritesShowcaseProps {
 
 export function FavoritesShowcase({ favorites }: FavoritesShowcaseProps) {
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
-        <h2 className="text-base font-bold text-zinc-100 flex items-center gap-2">
-          <span className="text-rose-500">♥</span> Vitrine de Favoritos
+    <section className="space-y-4" aria-labelledby="favorites-showcase-heading">
+      {/* Cabeçalho da Vitrine */}
+      <div className="flex items-center justify-between pb-2 border-b border-[#2B2735]">
+        <h2
+          id="favorites-showcase-heading"
+          className="text-lg sm:text-xl font-serif font-bold text-[#F4EFEA] flex items-center gap-2.5 tracking-tight"
+        >
+          <span className="text-[#E05347] text-xl" aria-hidden="true">♥</span>
+          Vitrine de Favoritos
         </h2>
-        <span className="text-xs text-zinc-500 font-medium">
-          {favorites.length} {favorites.length === 1 ? 'título' : 'títulos'}
+        <span className="text-xs font-mono text-zinc-400 font-medium">
+          {favorites.length} {favorites.length === 1 ? 'título selecionado' : 'títulos selecionados'}
         </span>
       </div>
 
       {favorites.length === 0 ? (
-        <div className="p-8 rounded-2xl bg-zinc-900/30 border border-zinc-800/80 text-center space-y-2">
-          <span className="text-3xl block text-zinc-600">♥</span>
-          <p className="text-sm font-semibold text-zinc-300">
+        <div className="p-8 sm:p-10 rounded-2xl bg-[#1A1820] border border-[#2B2735] text-center space-y-3">
+          <span className="text-3xl block text-[#E05347]/60" aria-hidden="true">♥</span>
+          <p className="text-base font-serif font-bold text-[#F4EFEA]">
             Você ainda não favoritou nenhuma obra
           </p>
-          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-            Clique no ícone de coração nos cards do catálogo ou na biblioteca para destacar suas obras prediletas aqui no seu perfil.
+          <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+            Clique no ícone de coração nos cards do catálogo ou na biblioteca para destacar seus doramas, animes e mangás prediletos no topo do seu perfil.
           </p>
+          <div className="pt-2">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-[#E05347] text-white hover:bg-[#E05347]/90 transition-colors shadow-sm cursor-pointer"
+            >
+              Explorar Catálogo
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
@@ -36,16 +49,17 @@ export function FavoritesShowcase({ favorites }: FavoritesShowcaseProps) {
             <Link
               key={item.mediaItemId}
               href={`/items/${item.slug}`}
-              className="group relative rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 overflow-hidden flex flex-col transition-all hover:scale-[1.02]"
+              className="group relative rounded-xl bg-[#1A1820] border border-[#2B2735] hover:border-[#3B3647] overflow-hidden flex flex-col transition-all hover:scale-[1.02] shadow-sm"
             >
-              <div className="aspect-[3/4] w-full bg-zinc-800 overflow-hidden relative">
+              {/* Capa Editorial 2:3 */}
+              <div className="aspect-[2/3] w-full bg-[#24202C] overflow-hidden relative">
                 <img
                   src={item.coverUrl}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   loading="lazy"
                 />
-                <span className="absolute top-1.5 right-1.5 text-rose-500 drop-shadow">
+                <span className="absolute top-1.5 right-1.5 text-[#E05347] drop-shadow-md text-sm">
                   ♥
                 </span>
                 {item.rating && (
@@ -55,11 +69,12 @@ export function FavoritesShowcase({ favorites }: FavoritesShowcaseProps) {
                 )}
               </div>
 
+              {/* Informações da Obra */}
               <div className="p-2.5 space-y-1">
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-zinc-800 text-zinc-300 uppercase tracking-wider">
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#24202C] text-zinc-300 uppercase tracking-wider border border-[#2B2735]">
                   {item.category}
                 </span>
-                <h3 className="text-xs font-semibold text-zinc-200 truncate group-hover:text-cyan-400 transition-colors">
+                <h3 className="text-xs font-serif font-bold text-[#F4EFEA] truncate group-hover:text-[#E05347] transition-colors">
                   {item.title}
                 </h3>
               </div>
@@ -70,4 +85,3 @@ export function FavoritesShowcase({ favorites }: FavoritesShowcaseProps) {
     </section>
   );
 }
-

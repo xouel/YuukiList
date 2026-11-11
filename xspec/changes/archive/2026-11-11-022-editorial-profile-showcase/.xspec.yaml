@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "022-editorial-profile-showcase"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "user-profile-stats"
+base_specs:
+  user-profile-stats: "sha256:c31b3e5c5b1244db45082eb02597e366ddc335ee955b3404b0a76114b1f8c50a"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-11T03:04:26.149Z"
