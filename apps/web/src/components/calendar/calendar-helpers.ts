@@ -18,6 +18,160 @@ export interface ShiftGroup {
   events: CalendarEvent[];
 }
 
+export interface CalendarKpis {
+  todayCount: number;
+  queueCount: number;
+  weekTotalCount: number;
+  seasonTag: string;
+}
+
+export interface DualTimezones {
+  localTime: string;
+  jstTime: string;
+  localLabel: string;
+  jstLabel: string;
+}
+
+export interface WeeklyHighlightItem {
+  id: string;
+  mediaItemId: string;
+  mediaTitle: string;
+  mediaSlug: string;
+  subtitle: string;
+  coverImage?: string;
+  scheduledAt: string;
+  hasTime: boolean;
+  formattedTime: string;
+  isUserTracking: boolean;
+}
+
+export function computeCalendarKpis(events: CalendarEvent[], todayDateStr?: string): CalendarKpis {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const fallbackTodayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const targetToday = todayDateStr || fallbackTodayStr;
+
+  const todayCount = events.filter((e) => e.scheduledAt?.startsWith(targetToday)).length;
+  const queueCount = events.filter((e) => Boolean(e.isUserTracking)).length;
+  const weekTotalCount = events.length;
+
+  const month = now.getMonth();
+  const year = now.getFullYear();
+  let season = 'OUTONO';
+  if (month >= 0 && month <= 2) {
+    season = 'INVERNO';
+  } else if (month >= 3 && month <= 5) {
+    season = 'PRIMAVERA';
+  } else if (month >= 6 && month <= 8) {
+    season = 'VERÃO';
+  } else {
+    season = 'OUTONO';
+  }
+  const seasonTag = `TEMPORADA DE ${season} ${year}`;
+
+  return {
+    todayCount,
+    queueCount,
+    weekTotalCount,
+    seasonTag,
+  };
+}
+
+export function formatDualTimezones(date: Date = new Date()): DualTimezones {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const localTime = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+
+  const jstFormatter = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'Asia/Tokyo',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  const jstTime = jstFormatter.format(date);
+
+  return {
+    localTime,
+    jstTime,
+    localLabel: 'Horário Local',
+    jstLabel: 'Tóquio (JST, UTC+9)',
+  };
+}
+
+export function extractWeeklyHighlights(events: CalendarEvent[], limit = 4): WeeklyHighlightItem[] {
+  const sorted = [...events].sort((a, b) => {
+    if (a.isUserTracking && !b.isUserTracking) return -1;
+    if (!a.isUserTracking && b.isUserTracking) return 1;
+    return a.scheduledAt.localeCompare(b.scheduledAt);
+  });
+
+  return sorted.slice(0, limit).map((ev) => ({
+    id: ev.id,
+    mediaItemId: ev.mediaItemId,
+    mediaTitle: ev.mediaTitle,
+    mediaSlug: ev.mediaSlug,
+    subtitle: formatEventSubtitle(ev),
+    coverImage: ev.coverImage,
+    scheduledAt: ev.scheduledAt,
+    hasTime: ev.hasTime,
+    formattedTime: formatEventTime(ev.scheduledAt, ev.hasTime),
+    isUserTracking: Boolean(ev.isUserTracking),
+  }));
+}
+
+export function generateIcsCalendarContent(
+  events: CalendarEvent[],
+  calendarTitle = 'YuukiList - Programação Semanal'
+): string {
+  const formatIcsUtcDate = (d: Date): string => {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return (
+      `${d.getUTCFullYear()}` +
+      `${pad(d.getUTCMonth() + 1)}` +
+      `${pad(d.getUTCDate())}T` +
+      `${pad(d.getUTCHours())}` +
+      `${pad(d.getUTCMinutes())}` +
+      `${pad(d.getUTCSeconds())}Z`
+    );
+  };
+
+  const nowStamp = formatIcsUtcDate(new Date());
+
+  const lines: string[] = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//YuukiList//Calendario//PT',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    `X-WR-CALNAME:${calendarTitle}`,
+  ];
+
+  for (const ev of events) {
+    const startObj = new Date(ev.scheduledAt);
+    const endObj = new Date(startObj.getTime() + 30 * 60 * 1000);
+
+    const dtStart = formatIcsUtcDate(startObj);
+    const dtEnd = formatIcsUtcDate(endObj);
+    const summary = `${ev.mediaTitle} - ${formatEventSubtitle(ev)}`;
+    const description = `Lançamento catalogado no YuukiList.\\nOrigem: ${ev.originRegion || 'N/A'}`;
+
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:${ev.id || Math.random().toString(36).slice(2)}@yuukilist.local`,
+      `DTSTAMP:${nowStamp}`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
+      `SUMMARY:${summary}`,
+      `DESCRIPTION:${description}`,
+      'STATUS:CONFIRMED',
+      'END:VEVENT'
+    );
+  }
+
+  lines.push('END:VCALENDAR');
+
+  return lines.join('\r\n') + '\r\n';
+}
+
 export function getWeeklyStripDays(mondayDate: Date, events: CalendarEvent[]): WeeklyStripDay[] {
   const days: WeeklyStripDay[] = [];
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -147,4 +301,3 @@ export function formatEventSubtitle(event: Partial<CalendarEvent>): string {
   if (event.originRegion) parts.push(event.originRegion);
   return parts.join(' • ');
 }
-

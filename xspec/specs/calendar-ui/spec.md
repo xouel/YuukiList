@@ -7,7 +7,7 @@ Fornecer a interface da rota `/calendar` no padrao Dark Editorial, permitindo na
 ## Requirements
 
 ### Requirement: Responsive Calendar Timeline with Day Grouping
-A interface SHALL renderizar a pagina `/calendar` com uma Weekly Strip horizontal no topo com selecao interativa de dias, agrupamento cronologico dos lancamentos por turnos do dia (Manha, Tarde e Noite) e alternancia direta entre as tres abas de visualizacao.
+A interface SHALL renderizar a página /calendar com cabeçalho ao vivo de três KPIs, Weekly Strip horizontal no topo com selo textual HOJE, agrupamento por turnos em grade assimétrica e barra lateral de widgets analíticos, sem emojis.
 
 #### Scenario: Alternancia entre as tres abas de visualizacao
 - **GIVEN** a pagina de calendario carregada na visao de Lancamentos Gerais
@@ -29,8 +29,18 @@ A interface SHALL renderizar a pagina `/calendar` com uma Weekly Strip horizonta
 - **WHEN** o grupo diario e renderizado na interface
 - **THEN** o sistema SHALL organizar os cards em secoes de turnos: Manha (06:00 as 11:59), Tarde (12:00 as 17:59) e Noite (18:00 as 05:59)
 
+#### Scenario: Cabecalho ao vivo com faixa de tres KPIs e selo textual HOJE
+- **GIVEN** a tela /calendar carregada no navegador
+- **WHEN** o cabeçalho ao vivo e a Weekly Strip são exibidos
+- **THEN** a aplicação SHALL renderizar três KPIs consolidados (Hoje, Na Sua Fila, Eventos da Semana) e destacar a data atual com o selo visual textual HOJE
+
+#### Scenario: Barra lateral com relogio de fuso duplo mais esperados e exportacao iCal
+- **GIVEN** a exibição do calendário em tela ampla
+- **WHEN** a coluna lateral de quatro slots é carregada
+- **THEN** a interface SHALL apresentar relógio comparativo de fuso local e JST Tóquio, vitrine dos mais esperados e botão de download client-side de arquivo .ics para calendários externos
+
 ### Requirement: Local Timezone Conversion and Reliability Badges
-A interface SHALL converter os horarios originais dos eventos para o fuso local com destaque ao horario de transmissao, apresentar badges sutis de honestidade de data e disponibilizar acao rapida de lembrar ou seguir diretamente nos cards despoluidos.
+A interface SHALL converter os horários originais para o fuso local com coluna dedicada, exibir badges de confiabilidade, disponibilizar ação rápida de lembrar e botão tátil mais um visto integrado à biblioteca e ao diário nos cards despoluídos.
 
 #### Scenario: Formatacao automatica para o fuso local do usuario
 - **GIVEN** um evento registrado com horario definido em UTC ou fuso da regiao de origem
@@ -51,3 +61,8 @@ A interface SHALL converter os horarios originais dos eventos para o fuso local 
 - **GIVEN** um evento de lancamento futuro exibido no calendario
 - **WHEN** o usuario clica no botao rapido de lembrar ou seguir a obra
 - **THEN** o sistema SHALL alternar o estado de acompanhamento da obra e fornecer feedback visual imediato
+
+#### Scenario: Acao rapida de mais um visto no card de lancamento integrada a biblioteca
+- **GIVEN** um evento de lançamento de obra que o usuário possui em acompanhamento na biblioteca
+- **WHEN** o usuário aciona o botão de incremento rápido no card
+- **THEN** o sistema SHALL atualizar o progresso na biblioteca, registrar o evento no diário e alterar o estado do botão para visto com alvo tátil de pelo menos 44x44px
