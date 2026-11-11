@@ -72,7 +72,8 @@ export function CatalogView({
     libClient
       .listItems()
       .then((res) => {
-        const ids = new Set(res.items.map((i) => i.mediaItemId));
+        const items = res?.items || [];
+        const ids = new Set(items.map((i) => i.mediaItemId));
         setLibraryMediaIds(ids);
       })
       .catch(() => {

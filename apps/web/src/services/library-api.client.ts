@@ -100,6 +100,13 @@ export class LibraryApiClient {
     }
   }
 
+  /**
+   * Alias de conveniência para list(filter).
+   */
+  async listItems(filter: LibraryFilterDto = {}): Promise<PaginatedResponse<LibraryItemDto>> {
+    return this.list(filter);
+  }
+
   async getItem(mediaItemId: string): Promise<LibraryItemDto> {
     const url = `${this.baseUrl}/api/v1/library/items/${encodeURIComponent(mediaItemId)}`;
 
