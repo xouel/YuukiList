@@ -1,70 +1,44 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import type { CalendarEvent } from '@yuukilist/shared';
-import { DateReliability, CalendarEventType } from '@yuukilist/shared';
+import { DateReliability } from '@yuukilist/shared';
+import { formatEventTime, formatEventSubtitle } from './calendar-helpers';
 
 interface EventCardProps {
   event: CalendarEvent;
 }
 
 export function EventCard({ event }: EventCardProps) {
+  const [isPlanned, setIsPlanned] = useState<boolean>(Boolean(event.isUserPlanned));
+
   const formattedTime = useMemo(() => {
-    if (!event.scheduledAt) return '';
-    try {
-      if (!event.hasTime) {
-        return 'Data confirmada';
-      }
-      const date = new Date(event.scheduledAt);
-      return new Intl.DateTimeFormat('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(date);
-    } catch {
-      return '';
-    }
+    return formatEventTime(event.scheduledAt, event.hasTime);
   }, [event.scheduledAt, event.hasTime]);
 
-  const eventTypeLabel = useMemo(() => {
-    switch (event.type) {
-      case CalendarEventType.SERIES_PREMIERE:
-        return 'Estreia de Série';
-      case CalendarEventType.SEASON_PREMIERE:
-        return event.season ? `Estreia T${event.season}` : 'Nova Temporada';
-      case CalendarEventType.EPISODE_RELEASE:
-        return event.number ? `Episódio ${event.number}` : 'Novo Episódio';
-      case CalendarEventType.CHAPTER_RELEASE:
-        return event.number ? `Capítulo ${event.number}` : 'Novo Capítulo';
-      case CalendarEventType.VOLUME_RELEASE:
-        return event.number ? `Volume ${event.number}` : 'Novo Volume';
-      case CalendarEventType.MOVIE_RELEASE:
-        return 'Lançamento de Filme';
-      case CalendarEventType.SPECIAL_RELEASE:
-        return 'Especial / OVA';
-      default:
-        return 'Lançamento';
-    }
-  }, [event.type, event.number, event.season]);
+  const subtitle = useMemo(() => {
+    return formatEventSubtitle(event);
+  }, [event]);
 
   const reliabilityBadge = useMemo(() => {
     switch (event.reliability) {
       case DateReliability.CONFIRMED:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-950/70 text-emerald-400 border border-emerald-800/60">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-950/60 text-emerald-400/90 border border-emerald-800/40">
             Confirmada
           </span>
         );
       case DateReliability.ESTIMATED:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-950/70 text-amber-400 border border-amber-800/60">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-950/60 text-amber-400/90 border border-amber-800/40">
             Data Estimada
           </span>
         );
       case DateReliability.UNCONFIRMED:
       default:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-zinc-800/80 text-zinc-400 border border-zinc-700/60">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#1F1C27] text-zinc-400 border border-[#2B2735]">
             Não Confirmada
           </span>
         );
@@ -74,10 +48,14 @@ export function EventCard({ event }: EventCardProps) {
   return (
     <article
       data-testid={`calendar-event-${event.id}`}
-      className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 hover:border-zinc-700/90 transition-all hover:bg-zinc-900/90 gap-4"
+      className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 sm:p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] hover:border-[#3B3647] transition-all hover:bg-[#1E1B25] gap-4"
     >
-      <div className="flex items-center gap-3.5 min-w-0">
-        <div className="w-12 h-16 sm:w-14 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-800 border border-zinc-750 flex items-center justify-center text-xs text-zinc-500 font-semibold shadow-inner">
+      <div className="flex items-center gap-3.5 min-w-0 flex-1">
+        {/* Capa */}
+        <Link
+          href={`/items/${event.mediaSlug}`}
+          className="w-12 h-16 sm:w-14 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-[#24202C] border border-[#2B2735] flex items-center justify-center text-xs text-zinc-500 font-semibold shadow-inner"
+        >
           {event.coverImage ? (
             <img
               src={event.coverImage}
@@ -86,57 +64,58 @@ export function EventCard({ event }: EventCardProps) {
               loading="lazy"
             />
           ) : (
-            <span>YUUKI</span>
+            <span className="text-[10px] tracking-wider text-zinc-500">YUUKI</span>
           )}
-        </div>
+        </Link>
 
+        {/* Dados Principais Despoluídos */}
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider bg-cyan-950/80 text-cyan-300 border border-cyan-800/60">
-              {event.mediaType}
+          {/* Linha de Horário e Honestidade */}
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-mono font-semibold text-[#E05347] bg-[#E05347]/10 px-2 py-0.5 rounded border border-[#E05347]/20">
+              {formattedTime}
             </span>
-            <span className="px-1.5 py-0.5 rounded text-[11px] font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
-              {event.originRegion}
-            </span>
-            <span className="text-xs text-zinc-400 font-medium">
-              {eventTypeLabel}
-            </span>
+            {reliabilityBadge}
             {event.isUserTracking && (
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-800/60">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#262135] text-purple-300 border border-purple-800/40">
                 Acompanhando
-              </span>
-            )}
-            {event.isUserPlanned && (
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-violet-950/80 text-violet-300 border border-violet-800/60">
-                Na Agenda
               </span>
             )}
           </div>
 
+          {/* Título Editorial */}
           <Link
             href={`/items/${event.mediaSlug}`}
-            className="block text-base font-semibold text-zinc-100 hover:text-cyan-400 transition-colors truncate"
+            className="block text-base font-serif font-bold text-[#F4EFEA] hover:text-[#E05347] transition-colors truncate"
           >
             {event.mediaTitle}
           </Link>
 
-          {event.sourceName && (
-            <p className="text-xs text-zinc-500 truncate mt-0.5">
-              Fonte: {event.sourceName}
-            </p>
-          )}
+          {/* Subtítulo Despoluído */}
+          <p className="text-xs text-zinc-400 mt-0.5 truncate">
+            {subtitle}
+            {event.sourceName && (
+              <span className="text-zinc-500 ml-2">Fonte: {event.sourceName}</span>
+            )}
+          </p>
         </div>
       </div>
 
-      <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-zinc-800/60">
-        {reliabilityBadge}
-        {event.hasTime && formattedTime && (
-          <span className="text-sm font-mono font-medium text-zinc-300 bg-zinc-800/60 px-2 py-0.5 rounded border border-zinc-700/50">
-            {formattedTime}
-          </span>
-        )}
+      {/* Bloco Lateral: Ação Rápida de Lembrar/Seguir */}
+      <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-2 border-t sm:border-t-0 pt-2.5 sm:pt-0 border-[#2B2735]">
+        <button
+          type="button"
+          aria-label={isPlanned ? 'Remover da agenda' : 'Lembrar lançamento na agenda'}
+          onClick={() => setIsPlanned(!isPlanned)}
+          className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+            isPlanned
+              ? 'bg-[#E05347]/20 text-[#E05347] border border-[#E05347]/40 hover:bg-[#E05347]/30'
+              : 'bg-[#24202C] text-zinc-300 border border-[#2B2735] hover:border-[#3B3647] hover:text-[#F4EFEA]'
+          }`}
+        >
+          <span>{isPlanned ? '✓ Na Agenda' : '🔔 Lembrar'}</span>
+        </button>
       </div>
     </article>
   );
 }
-

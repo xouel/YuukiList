@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import type { CalendarEvent } from '@yuukilist/shared';
 import { EventCard } from './event-card';
+import { groupEventsByShift } from './calendar-helpers';
 
 interface DayGroupProps {
   dateString: string; // "YYYY-MM-DD"
@@ -39,27 +40,54 @@ export function DayGroup({ dateString, events }: DayGroupProps) {
     }
   }, [dateString]);
 
+  const shiftGroups = useMemo(() => {
+    return groupEventsByShift(events);
+  }, [events]);
+
   return (
-    <section className="space-y-3" aria-labelledby={`day-heading-${dateString}`}>
-      <div className="flex items-center justify-between pb-1.5 border-b border-zinc-800">
+    <section className="space-y-4" aria-labelledby={`day-heading-${dateString}`}>
+      {/* Cabeçalho do Dia */}
+      <div className="flex items-center justify-between pb-2 border-b border-[#2B2735]">
         <h3
           id={`day-heading-${dateString}`}
-          className="text-sm font-semibold text-zinc-300 tracking-wide flex items-center gap-2"
+          className="text-base font-serif font-bold text-[#F4EFEA] tracking-tight flex items-center gap-2.5"
         >
-          <span className="w-2 h-2 rounded-full bg-cyan-500" />
+          <span className="w-2 h-2 rounded-full bg-[#E05347]" />
           {formattedHeader}
         </h3>
-        <span className="text-xs text-zinc-500 font-medium">
+        <span className="text-xs font-mono text-zinc-400 font-medium">
           {events.length} {events.length === 1 ? 'lançamento' : 'lançamentos'}
         </span>
       </div>
 
-      <div className="grid grid-cols-1 gap-3">
-        {events.map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
+      {/* Agrupamento por Turnos do Dia (Manhã, Tarde, Noite) */}
+      <div className="space-y-5">
+        {shiftGroups.length > 0 ? (
+          shiftGroups.map((group) => (
+            <div key={group.shift} className="space-y-2.5">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                <span className="w-1.5 h-1.5 rounded-sm bg-zinc-600" />
+                <span>{group.label}</span>
+                <span className="text-zinc-600 font-normal">({group.timeRange})</span>
+                <span className="text-zinc-500 font-mono text-[11px] ml-auto">
+                  {group.events.length} {group.events.length === 1 ? 'obra' : 'obras'}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-2.5">
+                {group.events.map((event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="grid grid-cols-1 gap-2.5">
+            {events.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
-

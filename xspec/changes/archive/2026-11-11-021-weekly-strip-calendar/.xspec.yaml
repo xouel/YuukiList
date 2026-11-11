@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "021-weekly-strip-calendar"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "calendar-ui"
+base_specs:
+  calendar-ui: "sha256:b3e657fdcf018b93ca31e1675104892d2d442707d1c96d85d47b0151a8c2ec90"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-11T02:41:59.685Z"
