@@ -2,7 +2,7 @@
 schema_version: 2
 id: "024-ledger-library-and-cadence"
 type: "feature"
-status: "BUILT"
+status: "ARCHIVED"
 skip_specs: false
 touched_capabilities:
   - "personal-library-ui"
@@ -10,4 +10,4 @@ base_specs:
   personal-library-ui: "sha256:ef168ae433dd344507660b330b5695ad175a1559e8f5b7132b2bd3e225124e70"
 impacted_files: []
 depends_on: []
-updated_at: "2026-11-11T12:09:37.506Z"
+updated_at: "2026-11-11T12:29:04.048Z"

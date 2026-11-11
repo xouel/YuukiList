@@ -7,7 +7,7 @@ Prover a interface gráfica web da biblioteca pessoal no YuukiList, permitindo a
 ## Requirements
 
 ### Requirement: Personal Library View and Layout Toggle
-O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida /library integrada ao container global, consumir e desserializar robustamente a lista de itens da API, permitir alternar entre grade e lista e posicionar os selos de status pessoal no topo dos cards.
+O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida /library integrada ao container global, consumir e desserializar robustamente a lista de itens da API, exibir o cabeçalho analítico do Ledger com KPIs consolidados, permitir alternar entre grade e lista, exibir card pontilhado para registro e posicionar os selos de status pessoal no topo dos cards.
 
 #### Scenario: Exibicao da biblioteca pessoal em modo grade
 - **GIVEN** um usuário autenticado com obras registradas em sua biblioteca
@@ -34,8 +34,18 @@ O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida /l
 - **WHEN** o cliente HTTP e a visão da biblioteca recebem os dados paginados
 - **THEN** o sistema SHALL normalizar e extrair a lista de itens garantindo a renderização correta de todas as obras salvas
 
+#### Scenario: Cabecalho do Ledger Pessoal com KPIs consolidados e acao de adicionar obra
+- **GIVEN** um usuário com obras registradas em sua biblioteca
+- **WHEN** a tela do Ledger Pessoal é renderizada
+- **THEN** o sistema SHALL exibir badge editorial de versão, indicador de sincronização, contadores de Concluídos e Em Andamento, cálculo de Tempo Total e botão de Adicionar Obra
+
+#### Scenario: Card pontilhado de registrar nova obra na grade da biblioteca
+- **GIVEN** a visualização da biblioteca pessoal em modo grade
+- **WHEN** a lista de cards é montada
+- **THEN** a interface SHALL incluir ao final um card com borda tracejada de Registrar Nova Obra com botão de Pesquisa Global direcionando para exploração
+
 ### Requirement: Quick Progress Tracking and Detail Modal
-O sistema SHALL disponibilizar controle tátil de progresso com formatação relativa ao total conhecido, barra visual de progresso proporcional, botão de incremento rápido com área de toque mínima acessível de 44x44px e modal para edição detalhada.
+O sistema SHALL disponibilizar controle tátil de progresso com formatação relativa ao total conhecido, barra visual de progresso proporcional, botão de incremento rápido com área de toque mínima de 44x44px, popover inline para avaliação rápida por estrelas, atalho para notas do diário e modal para edição detalhada.
 
 #### Scenario: Incremento rapido de unidade com atualizacao otimista
 - **GIVEN** uma série com episódios disponíveis e botão de incremento visível
@@ -57,8 +67,13 @@ O sistema SHALL disponibilizar controle tátil de progresso com formatação rel
 - **WHEN** o card da obra é visualizado pelo usuário
 - **THEN** a interface exibe o progresso no formato Ep. X/Y com barra visual proporcional de preenchimento e provê botão de avanço com área tátil mínima de 44x44px
 
+#### Scenario: Avaliacao rapida inline com popover de estrelas e atalho para diario
+- **GIVEN** um card de obra exibido na biblioteca
+- **WHEN** o usuário interage com o seletor de estrelas no rodapé do card
+- **THEN** o sistema SHALL abrir um popover flutuante para escolha de nota de 1 a 10 com persistência imediata e prover botão de atalho para notas do diário
+
 ### Requirement: Library Filtering and Asynchronous States
-O sistema SHALL filtrar itens por abas inteligentes em estilo pílula com taxonomia desambiguada de status do usuário, categorias no plural e contadores integrados, provendo estados dedicados de carregamento, acervo vazio, busca sem resultados e recuperação de erro.
+O sistema SHALL filtrar itens por abas inteligentes em estilo pílula com taxonomia desambiguada de status do usuário, categorias no plural e contadores integrados, busca local instantânea em tempo real por título, opções de ordenação e estados dedicados de carregamento, acervo vazio, busca sem resultados e erro.
 
 #### Scenario: Filtragem combinada por aba de status e categoria
 - **GIVEN** um usuário com múltiplas obras de diferentes formatos e status
@@ -80,6 +95,11 @@ O sistema SHALL filtrar itens por abas inteligentes em estilo pílula com taxono
 - **WHEN** as abas de navegação de status são renderizadas
 - **THEN** as opções utilizam taxonomia de usuário como Assistindo / Lendo e Planejados em botões pílula com contadores numéricos discretos
 
+#### Scenario: Busca local instantanea por texto com ordenacao dinamica
+- **GIVEN** uma lista de obras carregadas na biblioteca
+- **WHEN** o usuário digita no campo de busca local ou altera a ordenação
+- **THEN** a interface SHALL filtrar e reordenar os itens instantaneamente no cliente sem requisição adicional à API
+
 ### Requirement: Interactive Favorites Rewatch Actions and Inconsistency Warnings
 A interface da biblioteca pessoal SHALL disponibilizar alternância ágil de favoritos com um clique, modal interativo para registrar novo ciclo ou contador de reassistir, controle de volumes e alertas não-bloqueantes de inconsistência.
 
@@ -97,3 +117,16 @@ A interface da biblioteca pessoal SHALL disponibilizar alternância ágil de fav
 - **GIVEN** o modal de edição de obra aberto na biblioteca
 - **WHEN** o usuário altera o status para Concluído mantendo o progresso inferior ao total conhecido de episódios ou capítulos
 - **THEN** a interface SHALL renderizar um aviso informativo não-bloqueante alertando sobre a disparidade sem impedir a gravação
+
+### Requirement: Consumption Cadence and Activity Sparkline
+O sistema SHALL calcular e renderizar no rodapé da biblioteca o banner de cadência de consumo dos últimos 30 dias com total de unidades registradas, média diária calculada, gráfico de sparkline em SVG fluido e botão de exportação em formato CSV.
+
+#### Scenario: Renderizacao do banner de cadencia de consumo com sparkline SVG
+- **GIVEN** um usuário autenticado acessando a biblioteca pessoal
+- **WHEN** a tela é carregada com os dados de consumo
+- **THEN** o sistema SHALL exibir no rodapé a cadência dos últimos 30 dias com média diária calculada e curva visual em sparkline SVG
+
+#### Scenario: Exportacao de dados da biblioteca para arquivo CSV
+- **GIVEN** o banner de cadência de consumo visível na interface
+- **WHEN** o usuário aciona o botão de exportar CSV
+- **THEN** a aplicação SHALL gerar e disparar o download imediato de um arquivo CSV contendo as obras e registros da biblioteca

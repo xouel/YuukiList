@@ -1,6 +1,6 @@
 # Proposal: Ledger Library & Consumption Cadence (R24)
 
-> **X-Spec** · ID: `024-ledger-library-and-cadence` · Type: `feature` · Status: `BUILT` · Created: `2026-11-11`
+> **X-Spec** · ID: `024-ledger-library-and-cadence` · Type: `feature` · Status: `ARCHIVED` · Created: `2026-11-11`
 
 ## Why
 
