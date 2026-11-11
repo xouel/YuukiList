@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --color-bg-base: #0b0d13;
-  --color-bg-surface: #121520;
+  --color-bg-base: #080a11;
+  --color-bg-surface: #0e111b;
   --color-bg-card: #181c2b;
   --color-bg-card-hover: #1f2438;
-  --color-border: #262c3f;
+  --color-border: #1e2337;
   --color-border-focus: #06b6d4;
   --color-text-primary: #f3f4f6;
-  --color-text-secondary: #9ca3af;
-  --color-text-muted: #6b7280;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
   --color-accent-cyan: #06b6d4;
   --color-accent-violet: #8b5cf6;
 }
@@ -58,4 +58,3 @@ body {
     scroll-behavior: auto !important;
   }
 }
-

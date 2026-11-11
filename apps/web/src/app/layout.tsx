@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className="dark">
-      <body className="bg-[#080A11] text-[#F3F4F6] min-h-screen antialiased selection:bg-[#06B6D4] selection:text-black">
+      <body className="bg-[var(--color-bg-base)] text-[var(--color-text-primary)] min-h-screen antialiased selection:bg-[#06B6D4] selection:text-black transition-colors duration-200">
         <AuthProvider>
           <PwaProvider>
             {/* WCAG 2.2 AA: Link de salto para o conteúdo principal para navegadores por teclado */}

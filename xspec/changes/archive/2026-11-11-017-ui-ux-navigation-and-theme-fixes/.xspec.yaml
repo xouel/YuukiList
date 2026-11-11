@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "017-ui-ux-navigation-and-theme-fixes"
+type: "bugfix"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "navigation-shell"
+base_specs:
+  navigation-shell: "sha256:1e77d3fd77ac9553252350ce4c20b1c4436e9715c39b071a3ed8eac09652c738"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-11T00:57:46.570Z"
