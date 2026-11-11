@@ -1,19 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Shippori+Mincho:wght@400;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-bg-base: #080a11;
-  --color-bg-surface: #0e111b;
-  --color-bg-card: #181c2b;
-  --color-bg-card-hover: #1f2438;
-  --color-border: #1e2337;
-  --color-border-focus: #06b6d4;
-  --color-text-primary: #f3f4f6;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
-  --color-accent-cyan: #06b6d4;
-  --color-accent-violet: #8b5cf6;
+  /* Asian Editorial Design System — Paleta Nanquim / Papel / Carmim */
+  --color-bg-base: #121115;
+  --color-bg-surface: #1A1820;
+  --color-bg-card: #201D28;
+  --color-bg-card-hover: #2B2735;
+  --color-border: #2B2735;
+  --color-border-focus: #E05347;
+  --color-text-primary: #F4EFEA;
+  --color-text-secondary: #9C96A2;
+  --color-text-muted: #726C78;
+  --color-accent: #E05347;
+  --color-accent-subtle: #2D1A19;
+  --color-accent-cyan: #E05347;
+  --color-accent-violet: #8B5CF6;
+
+  /* Fontes Semânticas em Três Níveis */
+  --font-serif-editorial: 'Shippori Mincho', 'Playfair Display', 'Cinzel', 'Times New Roman', serif;
+  --font-sans-ui: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-cjk: 'Noto Sans CJK KR', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
 }
 
 [data-theme="light"] {
@@ -22,27 +32,46 @@
   --color-bg-card: #f1f5f9;
   --color-bg-card-hover: #e2e8f0;
   --color-border: #cbd5e1;
-  --color-border-focus: #0284c7;
+  --color-border-focus: #c8453b;
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
-  --color-accent-cyan: #0891b2;
-  --color-accent-violet: #7c3aed;
+  --color-text-muted: #64748B;
+  --color-accent: #C8453B;
+  --color-accent-subtle: #FEE2E2;
+  --color-accent-cyan: #C8453B;
+  --color-accent-violet: #7C3AED;
 }
 
 body {
   background-color: var(--color-bg-base);
   color: var(--color-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans-ui);
   min-height: 100vh;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
 }
 
-/* WCAG 2.2 AA: Anel de foco visível e destacado para teclado */
+/* Utilitários Tipográficos da Escala Editorial */
+.font-serif-editorial {
+  font-family: var(--font-serif-editorial);
+  letter-spacing: -0.015em;
+}
+
+.font-sans-ui {
+  font-family: var(--font-sans-ui);
+}
+
+.cjk-title {
+  font-family: var(--font-cjk);
+  opacity: 0.70;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+/* WCAG 2.2 AA: Anel de foco visível com acento carmim */
 :focus-visible {
-  outline: 2px solid var(--color-accent-cyan);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 4px;
 }

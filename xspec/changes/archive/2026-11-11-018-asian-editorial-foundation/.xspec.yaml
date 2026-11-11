@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "018-asian-editorial-foundation"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "navigation-shell"
+base_specs:
+  navigation-shell: "sha256:e04f78e6c6b82a38cba1b82e15a436dc43bec166964d619861665423d1ecbf32"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-11T01:42:57.123Z"

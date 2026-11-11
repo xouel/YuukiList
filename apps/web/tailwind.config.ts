@@ -8,14 +8,24 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'serif-editorial': ['var(--font-serif-editorial)', 'Shippori Mincho', 'Playfair Display', 'Cinzel', 'serif'],
+        'sans-ui': ['var(--font-sans-ui)', 'Plus Jakarta Sans', 'Inter', 'sans-serif'],
+        'cjk': ['var(--font-cjk)', 'Noto Sans KR', 'Noto Sans JP', 'sans-serif'],
+      },
       colors: {
-        background: '#0B0D13',
-        surface: '#121520',
-        card: '#181C2B',
-        border: '#262C3F',
+        nanquim: '#121115',
+        estante: '#1A1820',
+        papel: '#F4EFEA',
+        carmim: '#E05347',
+        background: 'var(--color-bg-base)',
+        surface: 'var(--color-bg-surface)',
+        card: 'var(--color-bg-card)',
+        border: 'var(--color-border)',
+        accent: 'var(--color-accent)',
         cyan: {
-          400: '#22D3EE',
-          500: '#06B6D4',
+          400: '#E05347',
+          500: '#E05347',
         },
       },
     },
@@ -24,4 +34,3 @@ const config: Config = {
 };
 
 export default config;
-

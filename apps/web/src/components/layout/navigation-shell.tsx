@@ -2,7 +2,7 @@
 
 /**
  * YuukiList — Casca de Navegação Responsiva (Sidebar Desktop + Bottom Nav Mobile)
- * Conforme Seções 3.2, 3.3 e 11.1 do Documento Mestre de Contexto e Slice 017
+ * Conforme Seções 3.2, 3.3 e 11.1 do Documento Mestre de Contexto e Slice 018 (Asian Editorial)
  */
 
 import React from 'react';
@@ -73,11 +73,11 @@ export function NavigationShell({ children }: NavigationShellProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-[var(--color-bg-base)] text-[var(--color-text-primary)] transition-colors duration-200">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[var(--color-bg-base)] text-[var(--color-text-primary)] transition-colors duration-200 font-sans-ui">
       {/* 1. TOP HEADER MOBILE (< 1024px) */}
       <header className="lg:hidden h-14 border-b border-[var(--color-border)] bg-[var(--color-bg-surface)]/90 backdrop-blur px-4 flex items-center justify-between sticky top-0 z-40 transition-colors">
         <Link href="/" className="flex items-center gap-2">
-          <span className="font-extrabold text-base tracking-wider bg-gradient-to-r from-[#06B6D4] to-[#8B5CF6] bg-clip-text text-transparent">
+          <span className="font-serif-editorial font-bold text-xl tracking-wide text-[var(--color-text-primary)]">
             YUUKILIST
           </span>
         </Link>
@@ -94,14 +94,14 @@ export function NavigationShell({ children }: NavigationShellProps) {
           ) : isLogin ? (
             <Link
               href="/register"
-              className="text-xs px-3 py-1 rounded bg-[#06B6D4] hover:bg-[#22D3EE] text-black font-semibold shadow-sm transition-colors"
+              className="text-xs px-3 py-1.5 rounded-lg bg-[#E05347] hover:bg-[#C8453B] text-white font-semibold shadow-sm transition-colors"
             >
               Cadastrar
             </Link>
           ) : (
             <Link
               href="/login"
-              className="text-xs px-3 py-1 rounded bg-[#06B6D4] hover:bg-[#22D3EE] text-black font-semibold shadow-sm transition-colors"
+              className="text-xs px-3 py-1.5 rounded-lg bg-[#E05347] hover:bg-[#C8453B] text-white font-semibold shadow-sm transition-colors"
             >
               Entrar
             </Link>
@@ -111,13 +111,13 @@ export function NavigationShell({ children }: NavigationShellProps) {
 
       {/* 2. SIDEBAR DESKTOP (>= 1024px) */}
       <aside className="hidden lg:flex flex-col w-64 border-r border-[var(--color-border)] bg-[var(--color-bg-surface)] shrink-0 sticky top-0 h-screen z-30 transition-colors">
-        {/* Logo / Marca */}
+        {/* Wordmark Tipográfico Minimalista (Asian Editorial) */}
         <div className="p-6 border-b border-[var(--color-border)]">
-          <Link href="/" className="block">
-            <span className="font-black text-xl tracking-wider bg-gradient-to-r from-[#06B6D4] via-[#38BDF8] to-[#8B5CF6] bg-clip-text text-transparent">
+          <Link href="/" className="block group">
+            <span className="font-serif-editorial font-bold text-2xl tracking-wide text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
               YUUKILIST
             </span>
-            <span className="block text-[11px] font-medium tracking-widest text-[var(--color-text-secondary)] mt-0.5 uppercase">
+            <span className="block text-xs font-medium tracking-wider text-[var(--color-text-secondary)] mt-0.5">
               Catálogo Asiático
             </span>
           </Link>
@@ -131,7 +131,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
               href={item.href}
               className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 item.isActive
-                  ? 'bg-gradient-to-r from-[#06B6D4]/15 to-[#8B5CF6]/15 text-[#06B6D4] font-semibold border border-[#06B6D4]/30 shadow-sm'
+                  ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)] font-semibold border border-[var(--color-accent)]/30 shadow-sm'
                   : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-card)]'
               }`}
             >
@@ -141,10 +141,10 @@ export function NavigationShell({ children }: NavigationShellProps) {
           ))}
         </nav>
 
-        {/* Rodapé da Sidebar: Sessão do Usuário & ThemeToggle */}
+        {/* Rodapé da Sidebar: Sessão do Usuário, Notificações & Aparência */}
         <div className="p-4 border-t border-[var(--color-border)] space-y-3 bg-[var(--color-bg-surface)] transition-colors">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[var(--color-text-muted)]">Central & Tema</span>
+            <span className="text-xs text-[var(--color-text-muted)]">Notificações & Aparência</span>
             <div className="flex items-center gap-1.5">
               {isAuthenticated && <NotificationBell />}
               <ThemeToggle />
@@ -154,11 +154,11 @@ export function NavigationShell({ children }: NavigationShellProps) {
           {isAuthenticated && user ? (
             <div className="pt-2 border-t border-[var(--color-border)]/60 flex items-center justify-between">
               <Link href="/profile" className="flex items-center gap-2.5 overflow-hidden group">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#06B6D4] to-[#8B5CF6] flex items-center justify-center text-xs font-bold text-black shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-xs font-bold text-white shrink-0">
                   {user.username.charAt(0).toUpperCase()}
                 </div>
                 <div className="truncate">
-                  <p className="text-xs font-semibold text-[var(--color-text-primary)] group-hover:text-[#06B6D4] transition-colors truncate">
+                  <p className="text-xs font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors truncate">
                     {user.username}
                   </p>
                   <p className="text-[10px] text-[var(--color-text-muted)] truncate">{user.email}</p>
@@ -180,7 +180,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
                 href="/login"
                 className={`text-center text-xs py-2 rounded-lg font-medium transition-colors ${
                   isLogin
-                    ? 'bg-[#06B6D4] hover:bg-[#22D3EE] text-black font-semibold shadow-sm'
+                    ? 'bg-[#E05347] hover:bg-[#C8453B] text-white font-semibold shadow-sm'
                     : 'bg-[var(--color-bg-card)] hover:bg-[var(--color-bg-card-hover)] text-[var(--color-text-primary)] border border-[var(--color-border)]'
                 }`}
               >
@@ -190,7 +190,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
                 href="/register"
                 className={`text-center text-xs py-2 rounded-lg font-medium transition-colors ${
                   isRegister || !isLogin
-                    ? 'bg-[#06B6D4] hover:bg-[#22D3EE] text-black font-semibold shadow-sm'
+                    ? 'bg-[#E05347] hover:bg-[#C8453B] text-white font-semibold shadow-sm'
                     : 'bg-[var(--color-bg-card)] hover:bg-[var(--color-bg-card-hover)] text-[var(--color-text-primary)] border border-[var(--color-border)]'
                 }`}
               >
@@ -201,7 +201,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
         </div>
       </aside>
 
-      {/* 3. CONTEÚDO PRINCIPAL (Main Area) */}
+      {/* 3. CONTEÚDO PRINCIPAL (Main Area — Container max-w-7xl Uniforme) */}
       <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
         <main id="main-content" role="main" className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {children}
@@ -221,7 +221,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
             href={item.href}
             className={`flex flex-col items-center justify-center w-16 py-1 rounded-lg transition-colors ${
               item.isActive
-                ? 'text-[#06B6D4] font-semibold'
+                ? 'text-[var(--color-accent)] font-semibold'
                 : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]'
             }`}
           >
