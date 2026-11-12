@@ -5,6 +5,9 @@
  * 20 títulos por categoria: DORAMA, FILME, ANIME, MANGA, MANHWA, MANHUA.
  */
 
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import { PrismaClient } from '@prisma/client';
 import {
   generateSlug,
@@ -1939,80 +1942,1048 @@ export const REAL_CATALOG_120 = [
   },
 ];
 
-async function main() {
-  console.log('[YuukiList Seed] Iniciando carga de 120 obras consagradas no Supabase...');
-  const prisma = new PrismaClient();
+export const EXTRA_CATALOG_EXPANDED = [
+  // Doramas Adicionais
+  {
+    title: 'Alchemy of Souls',
+    originalTitle: '환혼',
+    romanizedTitle: 'Hwanhon',
+    category: Category.DORAMA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2022,
+    originCountry: 'KR',
+    rating: 8.9,
+    totalEpisodes: 30,
+    synopsis: 'Uma feiticeira poderosa presa no corpo de uma mulher cega cruza o caminho do jovem herdeiro de uma família nobre e se torna sua mestra secreta.',
+    genres: ['Fantasia', 'Romance', 'Ação'],
+    aliases: ['Alquimia das Almas'],
+    coverUrl: 'https://static.tvmaze.com/uploads/images/medium_portrait/413/1034455.jpg',
+    provenance: { source: 'TVMAZE', externalId: '59779' },
+  },
+  {
+    title: 'Kingdom (Dorama)',
+    originalTitle: '킹덤',
+    romanizedTitle: 'Kingdeom',
+    category: Category.DORAMA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2019,
+    originCountry: 'KR',
+    rating: 8.8,
+    totalEpisodes: 12,
+    synopsis: 'Em uma Coreia feudal devastada por corrupção e fome, um príncipe herdeiro investiga uma misteriosa praga que transforma os mortos em feras sanguinárias.',
+    genres: ['Terror', 'Ação', 'Drama'],
+    aliases: ['Reino'],
+    coverUrl: 'https://static.tvmaze.com/uploads/images/medium_portrait/180/451368.jpg',
+    provenance: { source: 'TVMAZE', externalId: '34484' },
+  },
+  {
+    title: 'Sweet Home (Dorama)',
+    originalTitle: '스위트홈',
+    romanizedTitle: 'Seuwiteuhom',
+    category: Category.DORAMA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2020,
+    originCountry: 'KR',
+    rating: 8.5,
+    totalEpisodes: 26,
+    synopsis: 'Um estudante recluso e seus vizinhos de condomínio enfrentam uma praga apocalíptica onde desejos humanos transformam pessoas em monstros bizarros.',
+    genres: ['Terror', 'Ação', 'Ficção Científica'],
+    aliases: ['Sweet Home'],
+    coverUrl: 'https://static.tvmaze.com/uploads/images/medium_portrait/286/715494.jpg',
+    provenance: { source: 'TVMAZE', externalId: '45404' },
+  },
+  {
+    title: "It's Okay to Not Be Okay",
+    originalTitle: '사이코지만 괜찮아',
+    romanizedTitle: 'Saikojiman Gwaenchana',
+    category: Category.DORAMA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2020,
+    originCountry: 'KR',
+    rating: 8.9,
+    totalEpisodes: 16,
+    synopsis: 'Um cuidador de ala psiquiátrica e uma autora de livros infantis com transtorno de personalidade antissocial ajudam um ao outro a curar feridas emocionais profundas.',
+    genres: ['Romance', 'Drama', 'Psicológico'],
+    aliases: ['Tudo Bem Não Ser Normal'],
+    coverUrl: 'https://static.tvmaze.com/uploads/images/medium_portrait/260/650961.jpg',
+    provenance: { source: 'TVMAZE', externalId: '46387' },
+  },
+  {
+    title: 'Reply 1988',
+    originalTitle: '응답하라 1988',
+    romanizedTitle: 'Eungdaphara 1988',
+    category: Category.DORAMA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2015,
+    originCountry: 'KR',
+    rating: 9.2,
+    totalEpisodes: 20,
+    synopsis: 'Cinco famílias e seus filhos adolescentes crescem juntos em um simpático bairro de Seul no ano histórico de 1988.',
+    genres: ['Cotidiano', 'Comédia', 'Drama'],
+    aliases: ['Responda 1988'],
+    coverUrl: 'https://static.tvmaze.com/uploads/images/medium_portrait/34/86616.jpg',
+    provenance: { source: 'TVMAZE', externalId: '5731' },
+  },
+  {
+    title: 'Hospital Playlist',
+    originalTitle: '슬기로운 의사생활',
+    romanizedTitle: 'Seulgiroun Uisasaenghwal',
+    category: Category.DORAMA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2020,
+    originCountry: 'KR',
+    rating: 9.0,
+    totalEpisodes: 24,
+    synopsis: 'Cinco médicos amigos desde a faculdade compartilham as alegrias, dores e melodias de suas vidas dentro e fora de um hospital universitário.',
+    genres: ['Cotidiano', 'Drama', 'Comédia'],
+    aliases: ['Vida Hospitalar'],
+    coverUrl: 'https://static.tvmaze.com/uploads/images/medium_portrait/245/614562.jpg',
+    provenance: { source: 'TVMAZE', externalId: '46386' },
+  },
+  {
+    title: 'Moving',
+    originalTitle: '무빙',
+    romanizedTitle: 'Mubing',
+    category: Category.DORAMA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2023,
+    originCountry: 'KR',
+    rating: 9.1,
+    totalEpisodes: 20,
+    synopsis: 'Adolescentes com poderes sobrenaturais herdados de seus pais espiões tentam viver vidas comuns enquanto ameaças do passado ressurgem.',
+    genres: ['Ação', 'Ficção Científica', 'Drama'],
+    aliases: ['Em Movimento'],
+    coverUrl: 'https://static.tvmaze.com/uploads/images/medium_portrait/472/1181827.jpg',
+    provenance: { source: 'TVMAZE', externalId: '63385' },
+  },
+  {
+    title: 'Queen of Tears',
+    originalTitle: '눈물의 여왕',
+    romanizedTitle: 'Nunmul-ui Yeowang',
+    category: Category.DORAMA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2024,
+    originCountry: 'KR',
+    rating: 8.8,
+    totalEpisodes: 16,
+    synopsis: 'A rainha de uma dinastia de lojas de departamentos e seu marido advogado enfrentam uma crise conjugal intensa antes de redescobrirem o amor.',
+    genres: ['Romance', 'Drama', 'Comédia'],
+    aliases: ['Rainha das Lágrimas'],
+    coverUrl: 'https://static.tvmaze.com/uploads/images/medium_portrait/501/1253012.jpg',
+    provenance: { source: 'TVMAZE', externalId: '74175' },
+  },
+  // Filmes Adicionais
+  {
+    title: 'Suzume',
+    originalTitle: 'すずめの戸締まり',
+    romanizedTitle: 'Suzume no Tojimari',
+    category: Category.FILME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2022,
+    originCountry: 'JP',
+    rating: 8.7,
+    totalEpisodes: 1,
+    synopsis: 'Uma jovem de dezessete anos e um misterioso viajante viajam pelo Japão fechando portais ancestrais que liberam calamidades e desastres naturais.',
+    genres: ['Fantasia', 'Aventura', 'Drama'],
+    aliases: ['Suzume no Tojimari'],
+    coverUrl: 'https://image.tmdb.org/t/p/w500/vIewn0T9392e92c2535f2f5.jpg',
+    provenance: { source: 'TMDB', externalId: '916224' },
+  },
+  {
+    title: 'Weathering With You',
+    originalTitle: '天気の子',
+    romanizedTitle: 'Tenki no Ko',
+    category: Category.FILME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2019,
+    originCountry: 'JP',
+    rating: 8.5,
+    totalEpisodes: 1,
+    synopsis: 'Em uma Tóquio sob chuvas perpétuas, um garoto fugitivo conhece uma menina com o dom sagrado de parar a chuva e abrir o céu ensolarado.',
+    genres: ['Fantasia', 'Romance', 'Drama'],
+    aliases: ['O Tempo com Você'],
+    coverUrl: 'https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6q2P9gKM2JwQ.jpg',
+    provenance: { source: 'TMDB', externalId: '568160' },
+  },
+  {
+    title: 'A Silent Voice',
+    originalTitle: '聲の形',
+    romanizedTitle: 'Koe no Katachi',
+    category: Category.FILME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2016,
+    originCountry: 'JP',
+    rating: 9.0,
+    totalEpisodes: 1,
+    synopsis: 'Um ex-valentão do ensino fundamental reencontra a garota surda que ele costumava atormentar, buscando desesperadamente o perdão e a redenção.',
+    genres: ['Drama', 'Cotidiano', 'Romance'],
+    aliases: ['Koe no Katachi', 'A Voz do Silêncio'],
+    coverUrl: 'https://image.tmdb.org/t/p/w500/tuFaWiqX0TXRgah1iyUH4v0.jpg',
+    provenance: { source: 'TMDB', externalId: '378064' },
+  },
+  {
+    title: 'Akira',
+    originalTitle: 'アキラ',
+    romanizedTitle: 'Akira',
+    category: Category.FILME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 1988,
+    originCountry: 'JP',
+    rating: 8.8,
+    totalEpisodes: 1,
+    synopsis: 'Na caótica Neo-Tóquio pós-Terceira Guerra Mundial, um jovem motoqueiro ganha poderes telecinéticos devastadores e ameaça a ordem planetária.',
+    genres: ['Ficção Científica', 'Ação', 'Cyberpunk'],
+    aliases: ['Akira'],
+    coverUrl: 'https://image.tmdb.org/t/p/w500/5nz75R6y1998f5a2f5.jpg',
+    provenance: { source: 'TMDB', externalId: '149' },
+  },
+  {
+    title: 'Godzilla Minus One',
+    originalTitle: 'ゴジラ-1.0',
+    romanizedTitle: 'Gojira Mainasu Wan',
+    category: Category.FILME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2023,
+    originCountry: 'JP',
+    rating: 8.9,
+    totalEpisodes: 1,
+    synopsis: 'No Japão pós-guerra em ruínas absolutas, um monstro atômico gigante surge do oceano, empurrando o país destruído de zero para menos um.',
+    genres: ['Ação', 'Ficção Científica', 'Drama'],
+    aliases: ['Godzilla -1.0'],
+    coverUrl: 'https://image.tmdb.org/t/p/w500/hkxxMIGaiCTmrEArK7J9M.jpg',
+    provenance: { source: 'TMDB', externalId: '940721' },
+  },
+  // Animes Adicionais
+  {
+    title: 'Death Note',
+    originalTitle: 'デスノート',
+    romanizedTitle: 'Desu Noto',
+    category: Category.ANIME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2006,
+    originCountry: 'JP',
+    rating: 9.0,
+    totalEpisodes: 37,
+    synopsis: 'Um estudante prodígio encontra um caderno sobrenatural capaz de matar qualquer um cujo nome for escrito nele e inicia uma cruzada para expurgar criminosos.',
+    genres: ['Suspense', 'Mistério', 'Sobrenatural'],
+    aliases: ['Death Note'],
+    coverUrl: 'https://media.kitsu.app/anime/1376/poster_image/medium-f7e91.jpeg',
+    provenance: { source: 'KITSU', externalId: '1376' },
+  },
+  {
+    title: 'Attack on Titan',
+    originalTitle: '進撃の巨人',
+    romanizedTitle: 'Shingeki no Kyojin',
+    category: Category.ANIME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2013,
+    originCountry: 'JP',
+    rating: 9.2,
+    totalEpisodes: 89,
+    synopsis: 'A humanidade vive cercada por muralhas monumentais para se proteger de gigantes canibais até que uma brecha mortal muda a história para sempre.',
+    genres: ['Ação', 'Fantasia', 'Drama'],
+    aliases: ['Shingeki no Kyojin'],
+    coverUrl: 'https://media.kitsu.app/anime/7442/poster_image/medium-a2b8.jpeg',
+    provenance: { source: 'KITSU', externalId: '7442' },
+  },
+  {
+    title: 'Fullmetal Alchemist: Brotherhood',
+    originalTitle: '鋼の錬金術師 FULLMETAL ALCHEMIST',
+    romanizedTitle: 'Hagane no Renkinjutsushi',
+    category: Category.ANIME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2009,
+    originCountry: 'JP',
+    rating: 9.5,
+    totalEpisodes: 64,
+    synopsis: 'Dois irmãos alquimistas buscam a lendária Pedra Filosofal para restaurar seus corpos após uma tentativa desastrosa de ressuscitar a mãe.',
+    genres: ['Ação', 'Aventura', 'Fantasia'],
+    aliases: ['Hagane no Renkinjutsushi'],
+    coverUrl: 'https://media.kitsu.app/anime/3936/poster_image/medium-99c.jpeg',
+    provenance: { source: 'KITSU', externalId: '3936' },
+  },
+  {
+    title: 'Steins;Gate',
+    originalTitle: 'シュタインズ・ゲート',
+    romanizedTitle: 'Shutainzu Geto',
+    category: Category.ANIME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2011,
+    originCountry: 'JP',
+    rating: 9.3,
+    totalEpisodes: 24,
+    synopsis: 'Um cientista excêntrico descobre acidentalmente como enviar mensagens de texto para o passado através de um micro-ondas modificado.',
+    genres: ['Ficção Científica', 'Suspense', 'Drama'],
+    aliases: ['Steins Gate'],
+    coverUrl: 'https://media.kitsu.app/anime/5611/poster_image/medium-5611.jpeg',
+    provenance: { source: 'KITSU', externalId: '5611' },
+  },
+  {
+    title: 'Hunter x Hunter (2011)',
+    originalTitle: 'ハンター×ハンター',
+    romanizedTitle: 'Hanta Hanta',
+    category: Category.ANIME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2011,
+    originCountry: 'JP',
+    rating: 9.3,
+    totalEpisodes: 148,
+    synopsis: 'Gon Freecss descobre que seu pai ausente é um caçador de elite e decide fazer o impiedoso Exame Hunter para encontrá-lo.',
+    genres: ['Ação', 'Aventura', 'Fantasia'],
+    aliases: ['Hunter x Hunter'],
+    coverUrl: 'https://media.kitsu.app/anime/6448/poster_image/medium-6448.jpeg',
+    provenance: { source: 'KITSU', externalId: '6448' },
+  },
+  {
+    title: 'Chainsaw Man',
+    originalTitle: 'チェンソーマン',
+    romanizedTitle: 'Cheonso Man',
+    category: Category.ANIME,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2022,
+    originCountry: 'JP',
+    rating: 8.8,
+    totalEpisodes: 12,
+    synopsis: 'Denji é assassinado pela máfia, renasce como o híbrido Homem-Motosserra através do pacto com seu cão-demônio Pochita e ingressa nos Caçadores de Demônios da Segurança Pública.',
+    genres: ['Ação', 'Sobrenatural', 'Terror'],
+    aliases: ['Chainsaw Man'],
+    coverUrl: 'https://media.kitsu.app/anime/43806/poster_image/medium-43806.jpeg',
+    provenance: { source: 'KITSU', externalId: '43806' },
+  },
+  // Mangás Adicionais
+  {
+    title: 'Berserk',
+    originalTitle: 'ベルセルク',
+    romanizedTitle: 'Beruseruku',
+    category: Category.MANGA,
+    publicationStatus: PublicationStatus.EM_ANDAMENTO,
+    releaseYear: 1989,
+    originCountry: 'JP',
+    rating: 9.6,
+    totalChapters: 376,
+    synopsis: 'Marcado para a morte por forças demoníacas ancestrais, o espadachim negro Guts empunha uma colossal espada contra o destino e monstros aterrorizantes.',
+    genres: ['Fantasia', 'Ação', 'Drama'],
+    aliases: ['Berserk'],
+    coverUrl: 'https://media.kitsu.app/manga/1376/poster_image/medium-1376.jpeg',
+    provenance: { source: 'KITSU', externalId: '1376' },
+  },
+  {
+    title: 'Vagabond',
+    originalTitle: 'バガボンド',
+    romanizedTitle: 'Bagabondo',
+    category: Category.MANGA,
+    publicationStatus: PublicationStatus.HIATO,
+    releaseYear: 1998,
+    originCountry: 'JP',
+    rating: 9.5,
+    totalChapters: 327,
+    synopsis: 'A trajetória lendária e espiritual do samurai errante Miyamoto Musashi na busca pela iluminação através do caminho da espada.',
+    genres: ['Histórico', 'Ação', 'Drama'],
+    aliases: ['Vagabond'],
+    coverUrl: 'https://media.kitsu.app/manga/1580/poster_image/medium-1580.jpeg',
+    provenance: { source: 'KITSU', externalId: '1580' },
+  },
+  {
+    title: 'Oyasumi Punpun',
+    originalTitle: 'おやすみプンプン',
+    romanizedTitle: 'Oyasumi Punpun',
+    category: Category.MANGA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2007,
+    originCountry: 'JP',
+    rating: 9.2,
+    totalChapters: 147,
+    synopsis: 'A dramática e crua jornada de amadurecimento de Punpun, retratado como um pássaro estilizado, enfrentando traumas e as dores da vida adulta.',
+    genres: ['Psicológico', 'Drama', 'Cotidiano'],
+    aliases: ['Boa Noite Punpun'],
+    coverUrl: 'https://media.kitsu.app/manga/7245/poster_image/medium-7245.jpeg',
+    provenance: { source: 'KITSU', externalId: '7245' },
+  },
+  {
+    title: '20th Century Boys',
+    originalTitle: '20世紀少年',
+    romanizedTitle: '20 Seiki Shounen',
+    category: Category.MANGA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 1999,
+    originCountry: 'JP',
+    rating: 9.1,
+    totalChapters: 249,
+    synopsis: 'Amigos de infância percebem que uma seita apocalíptica liderada por uma figura misteriosa chamada Amigo está executando suas brincadeiras de criança como planos de destruição global.',
+    genres: ['Mistério', 'Ficção Científica', 'Drama'],
+    aliases: ['20th Century Boys'],
+    coverUrl: 'https://media.kitsu.app/manga/4932/poster_image/medium-4932.jpeg',
+    provenance: { source: 'KITSU', externalId: '4932' },
+  },
+  // Manhwas Adicionais
+  {
+    title: 'The Boxer',
+    originalTitle: '더 복서',
+    romanizedTitle: 'Deo Bokseo',
+    category: Category.MANHWA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2019,
+    originCountry: 'KR',
+    rating: 9.2,
+    totalChapters: 142,
+    synopsis: 'Um lendário treinador descobre Yu, um garoto apático dotado de reflexos desumanos e capacidade sobrenatural para o boxe profissional.',
+    genres: ['Esporte', 'Drama', 'Ação'],
+    aliases: ['The Boxer'],
+    coverUrl: 'https://media.kitsu.app/manga/44123/poster_image/medium-44123.jpeg',
+    provenance: { source: 'KITSU', externalId: '44123' },
+  },
+  {
+    title: 'The Beginning After The End',
+    originalTitle: '끝이 아닌 시작',
+    romanizedTitle: 'Kkeut-i Anin Sijak',
+    category: Category.MANHWA,
+    publicationStatus: PublicationStatus.EM_ANDAMENTO,
+    releaseYear: 2018,
+    originCountry: 'KR',
+    rating: 9.0,
+    totalChapters: 185,
+    synopsis: 'O rei Grey reencarna em um novo mundo repleto de magia e monstros, determinado a corrigir os arrependimentos de sua vida anterior.',
+    genres: ['Fantasia', 'Ação', 'Aventura'],
+    aliases: ['TBATE'],
+    coverUrl: 'https://media.kitsu.app/manga/42155/poster_image/medium-42155.jpeg',
+    provenance: { source: 'KITSU', externalId: '42155' },
+  },
+  {
+    title: 'Bastard (Manhwa)',
+    originalTitle: '후레자식',
+    romanizedTitle: 'Hurejasik',
+    category: Category.MANHWA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2014,
+    originCountry: 'KR',
+    rating: 9.1,
+    totalChapters: 93,
+    synopsis: 'Um estudante frágil é cúmplice relutante de seu próprio pai, um influente empresário que é secretamente um assassino em série implacável.',
+    genres: ['Suspense', 'Psicológico', 'Terror'],
+    aliases: ['Bastard'],
+    coverUrl: 'https://media.kitsu.app/manga/31245/poster_image/medium-31245.jpeg',
+    provenance: { source: 'KITSU', externalId: '31245' },
+  },
+  // Manhuas Adicionais
+  {
+    title: 'Soul Land',
+    originalTitle: '斗罗大陆',
+    romanizedTitle: 'Douluo Dalu',
+    category: Category.MANHUA,
+    publicationStatus: PublicationStatus.FINALIZADA,
+    releaseYear: 2011,
+    originCountry: 'CN',
+    rating: 8.8,
+    totalChapters: 340,
+    synopsis: 'Tang San reencarna no continente Douluo Dalu carregando conhecimentos arcanos de venenos e forjas, despertando espíritos marciais lendários.',
+    genres: ['Fantasia', 'Ação', 'Aventura'],
+    aliases: ['Combat Continent'],
+    coverUrl: 'https://media.kitsu.app/manga/12455/poster_image/medium-12455.jpeg',
+    provenance: { source: 'MANGAUPDATES', externalId: '82345' },
+  },
+  {
+    title: 'Battle Through the Heavens',
+    originalTitle: '斗破苍穹',
+    romanizedTitle: 'Doupo Cangqiong',
+    category: Category.MANHUA,
+    publicationStatus: PublicationStatus.EM_ANDAMENTO,
+    releaseYear: 2012,
+    originCountry: 'CN',
+    rating: 8.7,
+    totalChapters: 420,
+    synopsis: 'Após perder seus poderes prodigiosos de cultivo, Xiao Yan desperta o espírito de um mestre ancestral residente no anel de sua mãe.',
+    genres: ['Fantasia', 'Ação', 'Cultivo'],
+    aliases: ['BTTH'],
+    coverUrl: 'https://media.kitsu.app/manga/13455/poster_image/medium-13455.jpeg',
+    provenance: { source: 'MANGAUPDATES', externalId: '76543' },
+  },
+];
 
-  let insertedCount = 0;
-  let updatedCount = 0;
+export const REAL_CATALOG_ALL = [...REAL_CATALOG_120, ...EXTRA_CATALOG_EXPANDED];
 
+function loadEnvIfMissing() {
   try {
-    for (const item of REAL_CATALOG_120) {
-      const slug = generateSlug(item.title);
-      const normalizedTitle = normalizeSearchText(item.title);
+    const envPath = path.resolve(process.cwd(), '.env');
+    if (!fs.existsSync(envPath)) return;
+    const raw = fs.readFileSync(envPath, 'utf-8');
+    for (const line of raw.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eqIdx = trimmed.indexOf('=');
+      if (eqIdx === -1) continue;
+      const key = trimmed.slice(0, eqIdx).trim();
+      let val = trimmed.slice(eqIdx + 1).trim();
+      if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+        val = val.slice(1, -1);
+      }
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  } catch {
+    // Segue sem erro se .env não existir
+  }
+}
 
-      const existing = await prisma.mediaItem.findUnique({
-        where: { slug },
-      });
+function hashScryptPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const derived = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `scrypt:${salt}:${derived}`;
+}
 
-      if (existing) {
-        await prisma.mediaItem.update({
-          where: { slug },
-          data: {
-            title: item.title,
-            originalTitle: item.originalTitle,
-            romanizedTitle: item.romanizedTitle,
-            normalizedTitle,
-            synopsis: item.synopsis,
-            category: item.category,
-            publicationStatus: item.publicationStatus,
-            releaseYear: item.releaseYear,
-            originCountry: item.originCountry,
-            rating: item.rating,
-            coverPath: item.coverUrl,
-            totalEpisodes: item.totalEpisodes || null,
-            totalChapters: item.totalChapters || null,
-            provenance: item.provenance || {},
-          },
-        });
-        updatedCount++;
-      } else {
-        await prisma.mediaItem.create({
-          data: {
-            slug,
-            title: item.title,
-            originalTitle: item.originalTitle,
-            romanizedTitle: item.romanizedTitle,
-            normalizedTitle,
-            synopsis: item.synopsis,
-            category: item.category,
-            publicationStatus: item.publicationStatus,
-            releaseYear: item.releaseYear,
-            originCountry: item.originCountry,
-            rating: item.rating,
-            coverPath: item.coverUrl,
-            totalEpisodes: item.totalEpisodes || null,
-            totalChapters: item.totalChapters || null,
-            provenance: item.provenance || {},
-            genres: {
-              create: item.genres.map((name) => ({ name })),
-            },
-            aliases: {
-              create: item.aliases.map((alias) => ({
-                alias,
-                normalizedAlias: normalizeSearchText(alias),
-                languageCode: item.originCountry.toLowerCase(),
-              })),
-            },
-          },
-        });
-        insertedCount++;
+const GENRE_TRANSLATION_MAP = {
+  action: 'Ação',
+  'action & adventure': 'Ação',
+  'martial arts': 'Ação',
+  adventure: 'Aventura',
+  comedy: 'Comédia',
+  'slice of life': 'Cotidiano',
+  crime: 'Crime',
+  drama: 'Drama',
+  sports: 'Esporte',
+  sport: 'Esporte',
+  fantasy: 'Fantasia',
+  'sci-fi & fantasy': 'Fantasia',
+  'sci-fi': 'Ficção Científica',
+  'science fiction': 'Ficção Científica',
+  mystery: 'Mistério',
+  psychological: 'Psicológico',
+  romance: 'Romance',
+  supernatural: 'Sobrenatural',
+  thriller: 'Suspense',
+  suspense: 'Suspense',
+  horror: 'Terror',
+  animation: 'Animação',
+  family: 'Família',
+  war: 'Guerra',
+  'war & politics': 'Política',
+  history: 'Histórico',
+  historical: 'Histórico',
+  music: 'Música',
+  documentary: 'Documentário',
+  'ação e aventura': 'Ação',
+  'ficção científica e fantasia': 'Fantasia',
+};
+
+function mapGenresToPt(rawGenres) {
+  const mapped = new Set();
+  for (const g of rawGenres || []) {
+    if (!g || typeof g !== 'string') continue;
+    const clean = g.trim();
+    const key = clean.toLowerCase();
+    mapped.add(GENRE_TRANSLATION_MAP[key] || clean);
+  }
+  return Array.from(mapped).slice(0, 5);
+}
+
+function isBrokenCoverUrl(url) {
+  if (!url || typeof url !== 'string') return true;
+  if (!url.startsWith('http')) return true;
+  if (url.includes('1234567890')) return true;
+  if (url.includes('media.kitsu.io')) return true;
+  if (/\/poster_image\/medium-\d+\.jpe?g$/i.test(url)) return true;
+  if (/image\.tmdb\.org\/t\/p\/w\d+\/9rDuT7h9|opMEH9JL|85801/i.test(url)) return true;
+  return false;
+}
+
+async function resolveOfficialCover(item, apiKey) {
+  try {
+    if ((item.category === Category.DORAMA || item.category === Category.FILME) && apiKey) {
+      const endpoint = item.category === Category.FILME ? 'movie' : 'tv';
+      const externalId = item.provenance?.externalId;
+
+      if (externalId && /^\d+$/.test(String(externalId))) {
+        const res = await fetch(`https://api.themoviedb.org/3/${endpoint}/${externalId}?api_key=${apiKey}&language=pt-BR`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.poster_path && data?.title === item.title || data?.name === item.title || data?.original_name === item.originalTitle || data?.original_title === item.originalTitle) {
+            return `https://image.tmdb.org/t/p/w500${data.poster_path}`;
+          }
+        }
+      }
+
+      const q = encodeURIComponent(item.title);
+      const searchRes = await fetch(`https://api.themoviedb.org/3/search/${endpoint}?api_key=${apiKey}&query=${q}&language=pt-BR`);
+      if (searchRes.ok) {
+        const searchData = await searchRes.json();
+        const results = Array.isArray(searchData?.results) ? searchData.results : [];
+        const preferred = results.find((r) => {
+          const countries = r.origin_country || [];
+          return r.poster_path && (!item.originCountry || countries.length === 0 || countries.includes(item.originCountry));
+        }) || results.find((r) => Boolean(r.poster_path));
+        if (preferred?.poster_path) {
+          return `https://image.tmdb.org/t/p/w500${preferred.poster_path}`;
+        }
       }
     }
 
-    const totalInDb = await prisma.mediaItem.count();
-    console.log(`[YuukiList Seed] Carga concluída com sucesso!`);
-    console.log(`Inseridas: ${insertedCount} | Atualizadas: ${updatedCount} | Total no Supabase: ${totalInDb}`);
+    const isAnime = item.category === Category.ANIME;
+    const kitsuType = isAnime ? 'anime' : 'manga';
+    const q = encodeURIComponent(item.title);
+    const res = await fetch(`https://kitsu.io/api/edge/${kitsuType}?filter[text]=${q}&page[limit]=5`, {
+      headers: { Accept: 'application/vnd.api+json' },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      const entries = Array.isArray(json?.data) ? json.data : [];
+      const hit = entries.find((e) => e?.attributes?.posterImage?.large || e?.attributes?.posterImage?.medium);
+      if (hit) {
+        return hit.attributes.posterImage.large || hit.attributes.posterImage.medium;
+      }
+    }
+  } catch {
+    // Silencioso em caso de timeout
+  }
+  return null;
+}
+
+async function fetchTmdbGenreMap(apiKey) {
+  const map = new Map();
+  if (!apiKey) return map;
+  for (const kind of ['tv', 'movie']) {
+    try {
+      const res = await fetch(`https://api.themoviedb.org/3/genre/${kind}/list?api_key=${apiKey}&language=pt-BR`);
+      if (res.ok) {
+        const json = await res.json();
+        for (const g of json.genres || []) {
+          map.set(g.id, g.name);
+        }
+      }
+    } catch {
+      // Ignora erro de rede em gênero
+    }
+  }
+  return map;
+}
+
+async function fetchTmdbDiscoverBatch(apiKey, genreMap) {
+  if (!apiKey) return [];
+  const collected = [];
+
+  const tvPlan = [
+    { country: 'KR', pages: 12, extra: '&without_genres=16,10767,10763' },
+    { country: 'JP', pages: 6, extra: '&without_genres=16,10767,10763' },
+    { country: 'CN', pages: 6, extra: '&without_genres=16,10767,10763' },
+    { country: 'TW', pages: 2, extra: '&without_genres=16' },
+    { country: 'TH', pages: 2, extra: '&without_genres=16' },
+  ];
+
+  for (const plan of tvPlan) {
+    for (let page = 1; page <= plan.pages; page++) {
+      try {
+        const url = `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&with_origin_country=${plan.country}&sort_by=popularity.desc&language=pt-BR&page=${page}${plan.extra}`;
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        for (const row of json.results || []) {
+          if (!row.poster_path || !row.name) continue;
+          const genres = mapGenresToPt((row.genre_ids || []).map((id) => genreMap.get(id)).filter(Boolean));
+          if (genres.length === 0) genres.push('Drama');
+          const year = row.first_air_date ? Number(row.first_air_date.slice(0, 4)) : null;
+          collected.push({
+            title: row.name,
+            originalTitle: row.original_name || null,
+            romanizedTitle: null,
+            category: Category.DORAMA,
+            publicationStatus: year && year < new Date().getFullYear() - 1 ? PublicationStatus.FINALIZADA : PublicationStatus.EM_ANDAMENTO,
+            releaseYear: year && !isNaN(year) ? year : null,
+            originCountry: plan.country,
+            rating: typeof row.vote_average === 'number' && row.vote_average > 0 ? Number(row.vote_average.toFixed(1)) : 7.8,
+            totalEpisodes: 16,
+            synopsis: row.overview?.trim() || `${row.name} — Produção televisiva asiática (${plan.country}).`,
+            genres,
+            aliases: row.original_name && row.original_name !== row.name ? [row.original_name] : [],
+            coverUrl: `https://image.tmdb.org/t/p/w500${row.poster_path}`,
+            provenance: {
+              title: { source: 'TMDB', externalId: String(row.id), syncedAt: new Date().toISOString() },
+              cover: { source: 'TMDB', externalId: String(row.id), syncedAt: new Date().toISOString() },
+            },
+          });
+        }
+      } catch {
+        // Segue próxima página
+      }
+    }
+  }
+
+  const moviePlan = [
+    { country: 'KR', pages: 8 },
+    { country: 'JP', pages: 8 },
+    { country: 'CN', pages: 4 },
+    { country: 'TW', pages: 2 },
+    { country: 'TH', pages: 2 },
+  ];
+
+  for (const plan of moviePlan) {
+    for (let page = 1; page <= plan.pages; page++) {
+      try {
+        const url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_origin_country=${plan.country}&sort_by=popularity.desc&language=pt-BR&page=${page}`;
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        for (const row of json.results || []) {
+          if (!row.poster_path || !row.title) continue;
+          const genres = mapGenresToPt((row.genre_ids || []).map((id) => genreMap.get(id)).filter(Boolean));
+          if (genres.length === 0) genres.push('Drama');
+          const year = row.release_date ? Number(row.release_date.slice(0, 4)) : null;
+          collected.push({
+            title: row.title,
+            originalTitle: row.original_title || null,
+            romanizedTitle: null,
+            category: Category.FILME,
+            publicationStatus: PublicationStatus.FINALIZADA,
+            releaseYear: year && !isNaN(year) ? year : null,
+            originCountry: plan.country,
+            rating: typeof row.vote_average === 'number' && row.vote_average > 0 ? Number(row.vote_average.toFixed(1)) : 7.6,
+            synopsis: row.overview?.trim() || `${row.title} — Longa-metragem asiático (${plan.country}).`,
+            genres,
+            aliases: row.original_title && row.original_title !== row.title ? [row.original_title] : [],
+            coverUrl: `https://image.tmdb.org/t/p/w500${row.poster_path}`,
+            provenance: {
+              title: { source: 'TMDB', externalId: String(row.id), syncedAt: new Date().toISOString() },
+              cover: { source: 'TMDB', externalId: String(row.id), syncedAt: new Date().toISOString() },
+            },
+          });
+        }
+      } catch {
+        // Segue próxima página
+      }
+    }
+  }
+
+  return collected;
+}
+
+async function fetchKitsuCatalogBatch() {
+  const collected = [];
+  const kitsuPlan = [
+    { endpoint: 'anime', subtype: null, category: Category.ANIME, country: 'JP', pages: 18 },
+    { endpoint: 'manga', subtype: 'manga', category: Category.MANGA, country: 'JP', pages: 18 },
+    { endpoint: 'manga', subtype: 'manhwa', category: Category.MANHWA, country: 'KR', pages: 15 },
+    { endpoint: 'manga', subtype: 'manhua', category: Category.MANHUA, country: 'CN', pages: 12 },
+  ];
+
+  for (const plan of kitsuPlan) {
+    for (let page = 0; page < plan.pages; page++) {
+      try {
+        const offset = page * 20;
+        const subtypeQuery = plan.subtype ? `&filter[subtype]=${plan.subtype}` : '';
+        const url = `https://kitsu.io/api/edge/${plan.endpoint}?page[limit]=20&page[offset]=${offset}&include=genres&sort=popularityRank${subtypeQuery}`;
+        const res = await fetch(url, { headers: { Accept: 'application/vnd.api+json' } });
+        if (!res.ok) continue;
+        const json = await res.json();
+
+        const genreById = new Map();
+        for (const inc of json.included || []) {
+          if (inc.type === 'genres' && inc.attributes?.name) {
+            genreById.set(inc.id, inc.attributes.name);
+          }
+        }
+
+        for (const item of json.data || []) {
+          const attrs = item.attributes || {};
+          const title = attrs.canonicalTitle || attrs.titles?.en || attrs.titles?.en_jp;
+          const coverUrl = attrs.posterImage?.large || attrs.posterImage?.medium || attrs.posterImage?.original;
+          if (!title || !coverUrl) continue;
+
+          const relGenres = (item.relationships?.genres?.data || [])
+            .map((g) => genreById.get(g.id))
+            .filter(Boolean);
+          const genres = mapGenresToPt(relGenres);
+          if (genres.length === 0) genres.push('Ação');
+
+          const year = attrs.startDate ? Number(String(attrs.startDate).slice(0, 4)) : null;
+          const rawRating = attrs.averageRating ? Number(attrs.averageRating) / 10 : null;
+          const isAnime = plan.category === Category.ANIME;
+          const aliases = [attrs.titles?.en, attrs.titles?.en_jp, attrs.titles?.ja_jp]
+            .filter((a) => Boolean(a) && a !== title);
+
+          collected.push({
+            title,
+            originalTitle: attrs.titles?.ja_jp || attrs.titles?.ko_kr || attrs.titles?.zh_cn || null,
+            romanizedTitle: attrs.titles?.en_jp || null,
+            category: plan.category,
+            publicationStatus: attrs.status === 'finished' ? PublicationStatus.FINALIZADA : PublicationStatus.EM_ANDAMENTO,
+            releaseYear: year && !isNaN(year) ? year : null,
+            originCountry: plan.country,
+            rating: rawRating && !isNaN(rawRating) ? Number(rawRating.toFixed(1)) : 8.0,
+            totalEpisodes: isAnime && typeof attrs.episodeCount === 'number' ? attrs.episodeCount : null,
+            totalChapters: !isAnime && typeof attrs.chapterCount === 'number' ? attrs.chapterCount : null,
+            totalVolumes: !isAnime && typeof attrs.volumeCount === 'number' ? attrs.volumeCount : null,
+            synopsis: (attrs.synopsis || `${title} — Obra asiática catalogada via Kitsu.`).replace(/\s+/g, ' ').trim(),
+            genres,
+            aliases: Array.from(new Set(aliases)),
+            coverUrl,
+            provenance: {
+              title: { source: 'KITSU', externalId: String(item.id), syncedAt: new Date().toISOString() },
+              cover: { source: 'KITSU', externalId: String(item.id), syncedAt: new Date().toISOString() },
+            },
+          });
+        }
+      } catch {
+        // Segue próxima página
+      }
+    }
+  }
+
+  return collected;
+}
+
+export async function seedUserLibraryForTesting(prisma) {
+  let users = await prisma.user.findMany();
+  if (users.length === 0) {
+    console.log('[YuukiList Seed] Criando usuário demo (demo@yuukilist.com / YuukiDemo2026)...');
+    const demo = await prisma.user.create({
+      data: {
+        email: 'demo@yuukilist.com',
+        normalizedEmail: 'demo@yuukilist.com',
+        username: 'demonstracao',
+        normalizedUsername: 'demonstracao',
+        passwordHash: hashScryptPassword('YuukiDemo2026'),
+        bio: 'Entusiasta de narrativas asiáticas, doramas clássicos, cinema autoral e animes consagrados.',
+        location: 'São Paulo, Brasil',
+      },
+    });
+    users = [demo];
+  }
+
+  const categories = ['DORAMA', 'FILME', 'ANIME', 'MANGA', 'MANHWA', 'MANHUA'];
+  const balancedMedia = [];
+  for (const cat of categories) {
+    const itemsInCat = await prisma.mediaItem.findMany({
+      where: { category: cat },
+      take: 3,
+      orderBy: [{ rating: 'desc' }, { releaseYear: 'desc' }],
+    });
+    balancedMedia.push(...itemsInCat);
+  }
+
+  if (balancedMedia.length === 0) return;
+
+  const statusesByCategory = {
+    DORAMA: ['CONCLUIDO', 'ASSISTINDO', 'QUERO_ASSISTIR'],
+    FILME: ['CONCLUIDO', 'ASSISTIDO', 'QUERO_ASSISTIR'],
+    ANIME: ['CONCLUIDO', 'ASSISTINDO', 'PAUSADO'],
+    MANGA: ['CONCLUIDO', 'LENDO', 'QUERO_LER'],
+    MANHWA: ['LENDO', 'CONCLUIDO', 'QUERO_LER'],
+    MANHUA: ['CONCLUIDO', 'LENDO', 'PAUSADO'],
+  };
+
+  for (const user of users) {
+    console.log(`[YuukiList Seed] Semeando biblioteca multi-categoria e 6 favoritos para: ${user.username}...`);
+
+    for (let i = 0; i < balancedMedia.length; i++) {
+      const media = balancedMedia[i];
+      // Primeiro item de cada uma das 6 categorias vai para os Favoritos
+      const isFav = i % 3 === 0;
+      const catStatuses = statusesByCategory[media.category] || ['CONCLUIDO', 'ASSISTINDO', 'PAUSADO'];
+      const status = catStatuses[i % 3];
+      const isCompleted = status === 'CONCLUIDO' || status === 'ASSISTIDO';
+      const maxUnits = media.totalEpisodes || media.totalChapters || (media.category === 'FILME' ? 0 : 16);
+      const progress = media.category === 'FILME' ? 0 : isCompleted ? maxUnits : Math.max(1, Math.floor(maxUnits * 0.6));
+      const rating = isFav ? 10 : isCompleted ? 9 : 8;
+
+      await prisma.userLibraryItem.upsert({
+        where: {
+          userId_mediaItemId: {
+            userId: user.id,
+            mediaItemId: media.id,
+          },
+        },
+        update: {
+          status,
+          progress,
+          rating,
+          isFavorite: isFav,
+          notes: isFav ? 'Obra favorita com direção magistral e narrativa memorável.' : null,
+          rewatchCount: isCompleted ? 1 : 0,
+        },
+        create: {
+          userId: user.id,
+          mediaItemId: media.id,
+          status,
+          progress,
+          rating,
+          isFavorite: isFav,
+          notes: isFav ? 'Obra favorita com direção magistral e narrativa memorável.' : null,
+          rewatchCount: isCompleted ? 1 : 0,
+        },
+      });
+    }
+  }
+}
+
+async function main() {
+  loadEnvIfMissing();
+  console.log('[YuukiList Seed] Iniciando carga massiva e saneamento de capas oficiais no Supabase...');
+  const prisma = new PrismaClient();
+  const tmdbApiKey = process.env.TMDB_API_KEY;
+
+  try {
+    // 1. Resolve capas oficiais reais para obras curadas com URLs quebradas
+    console.log('[YuukiList Seed] Verificando/curando capas das obras principais...');
+    const healedCurated = [];
+    for (let i = 0; i < REAL_CATALOG_ALL.length; i += 8) {
+      const batch = REAL_CATALOG_ALL.slice(i, i + 8);
+      const processed = await Promise.all(
+        batch.map(async (item) => {
+          const cloned = { ...item };
+          if (isBrokenCoverUrl(cloned.coverUrl)) {
+            const liveCover = await resolveOfficialCover(cloned, tmdbApiKey);
+            if (liveCover) {
+              cloned.coverUrl = liveCover;
+            }
+          }
+          return cloned;
+        })
+      );
+      healedCurated.push(...processed);
+    }
+
+    // 2. Coleta lote ampliado das APIs oficiais (TMDB + Kitsu)
+    console.log('[YuukiList Seed] Coletando catálogo completo via TMDB e Kitsu com capas verificadas...');
+    const genreMap = await fetchTmdbGenreMap(tmdbApiKey);
+    const [tmdbItems, kitsuItems] = await Promise.all([
+      fetchTmdbDiscoverBatch(tmdbApiKey, genreMap),
+      fetchKitsuCatalogBatch(),
+    ]);
+
+    console.log(`[YuukiList Seed] Coletados: Curados=${healedCurated.length} | TMDB=${tmdbItems.length} | Kitsu=${kitsuItems.length}`);
+
+    // 3. Deduplicação por slug priorizando metadados curados (com capa curada) e APIs externas
+    const bySlug = new Map();
+    for (const item of [...healedCurated, ...tmdbItems, ...kitsuItems]) {
+      const slug = generateSlug(item.title);
+      if (!slug || slug.length > 155) continue;
+
+      const existingEntry = bySlug.get(slug);
+      if (!existingEntry) {
+        bySlug.set(slug, { ...item, slug });
+      } else if (isBrokenCoverUrl(existingEntry.coverUrl) && !isBrokenCoverUrl(item.coverUrl)) {
+        existingEntry.coverUrl = item.coverUrl;
+      }
+    }
+
+    const allUniqueItems = Array.from(bySlug.values());
+    console.log(`[YuukiList Seed] Total único preparado para sincronização: ${allUniqueItems.length} obras.`);
+
+    // 4. Carrega slugs existentes no banco em única consulta
+    const existingRows = await prisma.mediaItem.findMany({
+      select: { id: true, slug: true, coverPath: true },
+    });
+    const existingBySlug = new Map(existingRows.map((r) => [r.slug, r]));
+
+    let insertedCount = 0;
+    let updatedCount = 0;
+
+    // 5. Persiste em lotes concorrentes controlados
+    const CHUNK_SIZE = 15;
+    for (let i = 0; i < allUniqueItems.length; i += CHUNK_SIZE) {
+      const chunk = allUniqueItems.slice(i, i + CHUNK_SIZE);
+      await Promise.all(
+        chunk.map(async (item) => {
+          const slug = item.slug;
+          const normalizedTitle = normalizeSearchText(item.title);
+          const safeCover = (item.coverUrl && item.coverUrl.length <= 250 && !isBrokenCoverUrl(item.coverUrl))
+            ? item.coverUrl
+            : `/assets/covers/${slug}.svg`;
+          const safeGenres = mapGenresToPt(item.genres || []).slice(0, 6);
+          const safeAliases = Array.from(new Set(item.aliases || [])).filter(Boolean).slice(0, 6);
+
+          const existing = existingBySlug.get(slug);
+          if (existing) {
+            const shouldUpdateCover = isBrokenCoverUrl(existing.coverPath) || !isBrokenCoverUrl(item.coverUrl);
+            await prisma.mediaItem.update({
+              where: { slug },
+              data: {
+                title: item.title.slice(0, 250),
+                originalTitle: item.originalTitle ? String(item.originalTitle).slice(0, 250) : null,
+                romanizedTitle: item.romanizedTitle ? String(item.romanizedTitle).slice(0, 250) : null,
+                normalizedTitle: normalizedTitle.slice(0, 250),
+                synopsis: item.synopsis || item.title,
+                category: item.category,
+                publicationStatus: item.publicationStatus || PublicationStatus.FINALIZADA,
+                releaseYear: item.releaseYear || null,
+                originCountry: (item.originCountry || 'AS').slice(0, 60),
+                rating: item.rating ?? null,
+                coverPath: shouldUpdateCover ? safeCover : existing.coverPath,
+                totalEpisodes: item.totalEpisodes ?? null,
+                totalChapters: item.totalChapters ?? null,
+                totalVolumes: item.totalVolumes ?? null,
+                provenance: item.provenance || {},
+              },
+            });
+            updatedCount++;
+          } else {
+            await prisma.mediaItem.create({
+              data: {
+                slug,
+                title: item.title.slice(0, 250),
+                originalTitle: item.originalTitle ? String(item.originalTitle).slice(0, 250) : null,
+                romanizedTitle: item.romanizedTitle ? String(item.romanizedTitle).slice(0, 250) : null,
+                normalizedTitle: normalizedTitle.slice(0, 250),
+                synopsis: item.synopsis || item.title,
+                category: item.category,
+                publicationStatus: item.publicationStatus || PublicationStatus.FINALIZADA,
+                releaseYear: item.releaseYear || null,
+                originCountry: (item.originCountry || 'AS').slice(0, 60),
+                rating: item.rating ?? null,
+                coverPath: safeCover,
+                totalEpisodes: item.totalEpisodes ?? null,
+                totalChapters: item.totalChapters ?? null,
+                totalVolumes: item.totalVolumes ?? null,
+                provenance: item.provenance || {},
+                genres: {
+                  create: safeGenres.map((name) => ({ name: name.slice(0, 75) })),
+                },
+                aliases: {
+                  create: safeAliases.map((alias) => ({
+                    alias: String(alias).slice(0, 250),
+                    normalizedAlias: normalizeSearchText(String(alias)).slice(0, 250),
+                    languageCode: (item.originCountry || 'as').toLowerCase().slice(0, 12),
+                  })),
+                },
+              },
+            });
+            insertedCount++;
+          }
+        })
+      );
+      if ((i / CHUNK_SIZE) % 10 === 0 || i + CHUNK_SIZE >= allUniqueItems.length) {
+        console.log(`[YuukiList Seed] Progresso: ${Math.min(i + CHUNK_SIZE, allUniqueItems.length)}/${allUniqueItems.length} (Inseridas: ${insertedCount} | Atualizadas: ${updatedCount})`);
+      }
+    }
+
+    // 6. Saneamento adicional para registros remanescentes no banco que ainda tenham URL quebrada
+    const remainingBroken = await prisma.mediaItem.findMany({
+      where: {
+        OR: [
+          { coverPath: { contains: 'media.kitsu.io' } },
+          { coverPath: { contains: '1234567890' } },
+          { coverPath: { startsWith: '/assets/covers/' } },
+        ],
+      },
+      select: { id: true, slug: true, title: true, originalTitle: true, category: true, originCountry: true, provenance: true },
+    });
+
+    if (remainingBroken.length > 0) {
+      console.log(`[YuukiList Seed] Curando ${remainingBroken.length} capas remanescentes no banco...`);
+      for (const broken of remainingBroken) {
+        const liveCover = await resolveOfficialCover(broken, tmdbApiKey);
+        if (liveCover && liveCover.length <= 250) {
+          await prisma.mediaItem.update({
+            where: { id: broken.id },
+            data: { coverPath: liveCover },
+          });
+        }
+      }
+    }
+
+    const totalByCat = await prisma.mediaItem.groupBy({ by: ['category'], _count: true });
+    console.log('[YuukiList Seed] Distribuição final no Supabase:', totalByCat);
+
+    // 7. Popula biblioteca com favoritos e histórico para testes e estatísticas
+    await seedUserLibraryForTesting(prisma);
   } catch (err) {
     console.error('[YuukiList Seed] Erro ao sincronizar catálogo:', err);
     process.exit(1);

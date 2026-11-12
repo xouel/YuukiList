@@ -123,6 +123,12 @@ export function MediaCard({ item, isInLibrary: initialIsInLibrary = false, onNav
           src={item.coverUrl}
           alt={`Capa de ${item.title}`}
           loading="lazy"
+          onError={(e) => {
+            const fallback = `/api/v1/catalog/items/${item.slug}/cover`;
+            if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
+              e.currentTarget.src = fallback;
+            }
+          }}
           className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
         />
 

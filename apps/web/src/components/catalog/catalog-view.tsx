@@ -227,8 +227,14 @@ export function CatalogView({
     loadInitialItems(updated);
   };
 
+  const handleSelectGenre = (genre?: string) => {
+    const updated = { ...query, genre, theme: undefined, page: 1 };
+    setQuery(updated);
+    loadInitialItems(updated);
+  };
+
   const handleSelectTheme = (theme?: string) => {
-    const updated = { ...query, theme, page: 1 };
+    const updated = { ...query, genre: theme, theme: undefined, page: 1 };
     setQuery(updated);
     loadInitialItems(updated);
   };
@@ -245,6 +251,7 @@ export function CatalogView({
       category: undefined,
       status: undefined,
       country: undefined,
+      genre: undefined,
       theme: undefined,
       sortBy: 'relevance',
       page: 1,
@@ -312,12 +319,14 @@ export function CatalogView({
           selectedCategory={query.category}
           selectedStatus={query.status}
           selectedCountry={query.country}
-          selectedTheme={query.theme}
+          selectedGenre={query.genre || query.theme}
+          selectedTheme={query.genre || query.theme}
           sortBy={query.sortBy}
           onSelectCategory={handleSelectCategory}
           onSelectStatus={handleSelectStatus}
           onSelectCountry={handleSelectCountry}
-          onSelectTheme={handleSelectTheme}
+          onSelectGenre={handleSelectGenre}
+          onSelectTheme={handleSelectGenre}
           onSelectSortBy={handleSelectSortBy}
           onClearFilters={handleClearFilters}
           totalResults={viewStatus === 'success' ? meta.total : undefined}

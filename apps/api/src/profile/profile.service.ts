@@ -141,12 +141,13 @@ export class ProfileService {
       }
 
       if (item.isFavorite) {
+        const itemSlug = media ? media.slug : item.mediaItemId;
         favoriteItems.push({
           mediaItemId: item.mediaItemId,
           title: media ? media.title : item.mediaItemId,
-          slug: media ? media.slug : item.mediaItemId,
+          slug: itemSlug,
           category,
-          coverUrl: media ? media.coverUrl : '/covers/default.svg',
+          coverUrl: media?.coverUrl || `/api/v1/catalog/items/${itemSlug}/cover`,
           rating: item.rating,
         });
       }

@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import { PasswordService } from './password.service.ts';
 import { TokenService } from './token.service.ts';
 import { UsersRepository } from './users.repository.ts';
@@ -13,10 +14,10 @@ export class AuthModule {
   readonly authGuard: AuthGuard;
   readonly authController: AuthController;
 
-  constructor() {
+  constructor(prismaClient?: PrismaClient | null) {
     this.passwordService = new PasswordService();
     this.tokenService = new TokenService();
-    this.usersRepository = new UsersRepository();
+    this.usersRepository = new UsersRepository(prismaClient);
     this.authService = new AuthService(
       this.usersRepository,
       this.passwordService,

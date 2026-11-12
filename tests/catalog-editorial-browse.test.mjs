@@ -27,9 +27,9 @@ describe('US1 — Barra de Controles Condensada e Drawer "Mais Filtros" (TR-001,
     );
   });
 
-  it('TR-003 & TR-007: Drawer secundário deve acomodar país, temas, status e ordenação sem poluir a dobra inicial', () => {
+  it('TR-003 & TR-007: Drawer secundário deve acomodar país, gênero, status e ordenação sem poluir a dobra inicial', () => {
     assert.ok(filterBarContent.includes('filter-country'), 'Deve conter seletor de país');
-    assert.ok(filterBarContent.includes('filter-theme'), 'Deve conter seletor de temas (BL/GL)');
+    assert.ok(filterBarContent.includes('filter-genre') && filterBarContent.includes('GENRES'), 'Deve conter seletor de gênero');
     assert.ok(filterBarContent.includes('filter-status'), 'Deve conter seletor de status da publicação');
     assert.ok(filterBarContent.includes('filter-sort'), 'Deve conter seletor de ordenação');
     assert.ok(filterBarContent.includes('Limpar filtros'), 'Deve conter botão para limpar filtros ativos');

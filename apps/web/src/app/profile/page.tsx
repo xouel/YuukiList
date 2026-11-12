@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/auth-context';
 import type { ProfileStatsDto, UpdateProfileDto } from '@yuukilist/shared';
 import { profileApiClient } from '@/services/profile-api.client';
+import { LibraryApiClient } from '@/services/library-api.client';
 import { ProfileStats } from '@/components/profile/profile-stats';
 import { FavoritesShowcase } from '@/components/profile/favorites-showcase';
 import { ShareDialog } from '@/components/profile/share-dialog';
@@ -100,6 +101,12 @@ export default function ProfilePage() {
     } finally {
       setExporting(null);
     }
+  };
+
+  const handleRemoveFavorite = async (mediaItemId: string) => {
+    const libraryApi = new LibraryApiClient();
+    await libraryApi.updateItem(mediaItemId, { isFavorite: false });
+    await loadProfile();
   };
 
   if (isAuthLoading || loading) {
@@ -228,7 +235,12 @@ export default function ProfilePage() {
       </section>
 
       {/* 2. Vitrine de Favoritos (Inversão Hierárquica: Topo) */}
-      {stats && <FavoritesShowcase favorites={stats.favorites} />}
+      {stats && (
+        <FavoritesShowcase
+          favorites={stats.favorites}
+          onToggleFavorite={handleRemoveFavorite}
+        />
+      )}
 
       {/* 3. Estatísticas & Métricas de Consumo (Painel Compacto) */}
       {stats && <ProfileStats stats={stats} />}

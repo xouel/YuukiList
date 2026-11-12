@@ -127,9 +127,16 @@ export function LibraryCard({
       {/* Capa com Proporção 2:3 */}
       <div className="relative aspect-[2/3] w-full overflow-hidden bg-surface-canvas">
         <img
-          src={media?.coverUrl || '/covers/fallback.svg'}
+          src={media?.coverUrl || (media?.slug ? `/api/v1/catalog/items/${media.slug}/cover` : '/covers/fallback.svg')}
           alt={`Capa de ${media?.title || 'obra'}`}
           loading="lazy"
+          onError={(e) => {
+            const slug = media?.slug;
+            const fallback = slug ? `/api/v1/catalog/items/${slug}/cover` : '/covers/fallback.svg';
+            if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
+              e.currentTarget.src = fallback;
+            }
+          }}
           className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
         />
 

@@ -104,7 +104,7 @@ export function HeroSpotlight({
                     className="min-h-[44px] min-w-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
                     </svg>
                     <span>{isUpdating ? 'Salvando...' : '+1 Episódio'}</span>
                   </button>
@@ -159,6 +159,12 @@ export function HeroSpotlight({
           <img
             src={defaultCoverUrl}
             alt={`Capa de ${defaultTitle}`}
+            onError={(e) => {
+              const fallback = `/api/v1/catalog/items/${defaultSlug}/cover`;
+              if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
+                e.currentTarget.src = fallback;
+              }
+            }}
             className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">

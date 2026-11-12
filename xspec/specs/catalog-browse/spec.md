@@ -7,27 +7,12 @@ Prover os componentes de interface web e páginas em Next.js para exploração r
 ## Requirements
 
 ### Requirement: Catalog Exploration and Infinite Scroll Interface
-A interface web do catálogo SHALL exibir a exploração detalhada de obras na rota dedicada /explore com capas SVG, carregar páginas adicionais via rolagem infinita, manter sincronização bidirecional na URL, prover barra condensada com drawer de filtros e tratar buscas diretas legadas.
-
-#### Scenario: Exibição da grade de cards com rolagem infinita na rota de exploracao
-- **GIVEN** que o usuário acessa a rota /explore de exploração do acervo
-- **WHEN** o usuário visualiza o catálogo e rola a tela até o final da lista de itens
-- **THEN** a interface requisita a próxima página da API e anexa os novos cards ao final da grade sem recarregar a tela
-
-#### Scenario: Sincronização bidirecional de busca e filtros na URL
-- **GIVEN** o usuário na página de exploração /explore
-- **WHEN** um termo é digitado no campo de busca ou um filtro de categoria é acionado
-- **THEN** a interface atualiza os parâmetros de busca da URL com debounce de 300ms e recarrega a grade com os resultados filtrados
+A interface web do catalogo SHALL exibir a exploracao detalhada de obras na rota dedicada /explore com capas resilientes, manter busca com debounce e filtros de categoria, fornecer drawer recolhivel com seletor de generos literarios e audiovisuais e tratar buscas legadas.
 
 #### Scenario: Barra de controles condensada com drawer de filtros avancados
-- **GIVEN** o catálogo de exploração de obras
-- **WHEN** o usuário acessa a tela de exploração ou aciona o controle de filtros avançados
-- **THEN** a interface exibe busca e categorias em linha primária elegante e disponibiliza drawer recolhível para refinamento por país, status, temas e ordenação
-
-#### Scenario: Compatibilidade e redirecionamento de consultas diretas
-- **GIVEN** uma consulta iniciada diretamente na raiz com parâmetros de busca como /?q=termo
-- **WHEN** a rota inicial detecta parâmetros de pesquisa ativa
-- **THEN** a aplicação SHALL redirecionar o usuário para /explore preservando integralmente os parâmetros informados
+- **GIVEN** o catalogo de exploracao de obras
+- **WHEN** o usuario acessa a tela de exploracao ou aciona o controle de filtros avancados
+- **THEN** a interface exibe busca e categorias em linha primaria elegante e disponibiliza drawer recolhivel para refinamento por pais, status, generos literarios e audiovisuais e ordenacao sem filtro de temas transversais
 
 ### Requirement: Asynchronous Feedback and Resilient States
 A interface do catálogo SHALL prover feedback visual resiliente implementando quatro estados assíncronos distintos: skeletons pulsantes para carregamento, tela limpa para catálogo vazio, aviso contextual com botão de ação para busca sem resultados e alerta de erro com botão de repetição.
@@ -48,47 +33,17 @@ A interface do catálogo SHALL prover feedback visual resiliente implementando q
 - **THEN** a interface renderiza um aviso de erro amigável acompanhado de um botão para tentar novamente a requisição
 
 ### Requirement: Item Details View and Navigation History
-A aplicação SHALL fornecer o dossiê detalhado da obra na rota /items/:slug na tipografia Shippori Mincho (font-serif), com capa despoluída em proporção rígida 2:3 sem distorção hover nem badges artificiais sobrepostos, quatro métricas em tokens semânticos, console pessoal de acompanhamento, gerenciador interativo de episódios por temporadas, ficha técnica e sidebar analítica, preservando o retorno acessível ao catálogo e contraste WCAG 2.2 AA.
-
-#### Scenario: Navegação para a página de detalhes da obra por slug
-- **GIVEN** um card de obra exibido na grade
-- **WHEN** o usuário seleciona o card
-- **THEN** a aplicação navega para a rota /items/:slug exibindo capa vetorial, sinopse, gêneros e metadados completos
-
-#### Scenario: Retorno ao catálogo preservando filtros e rolagem
-- **GIVEN** o usuário na página de detalhes após navegar a partir de uma busca filtrada
-- **WHEN** o usuário aciona o botão de retorno
-- **THEN** a aplicação volta à tela de catálogo restaurando os filtros ativos e a posição de rolagem prévia
-
-#### Scenario: Acessibilidade de foco e contraste WCAG 2.2 AA
-- **GIVEN** a navegação na interface através do teclado
-- **WHEN** o usuário utiliza as teclas Tab e Enter para navegar entre cards e controles
-- **THEN** todos os elementos interativos possuem anel de foco claramente visível e contraste de cor em conformidade com o padrão WCAG 2.2 AA
+A aplicacao SHALL fornecer o dossier detalhado da obra na rota /items/:slug na tipografia Shippori Mincho, com capa despoluida em proporcao 2:3, metricas em tokens semanticos, console pessoal de acompanhamento com botao de incremento unitario ergonomico ('+1 {unidade}') sem duplicidade de icone de soma, e acao de favoritar conectada a persistencia da biblioteca e vitrine de perfil.
 
 #### Scenario: Exibicao da faixa de metricas editoriais e console pessoal de acompanhamento
 - **GIVEN** uma obra carregada na rota /items/:slug
-- **WHEN** o cabeçalho do dossiê é renderizado
-- **THEN** a interface SHALL exibir faixa com quatro métricas principais em tokens semânticos e console de acompanhamento pessoal com status, nota, tempo assistido e progresso relativo
+- **WHEN** o cabecalho do dossier e renderizado
+- **THEN** a interface SHALL exibir faixa com quatro metricas principais e console de acompanhamento pessoal com status, nota, tempo assistido e botao de incremento ergonomico exibindo '+1' acompanhado do nome da unidade sem icone redundante de adicao
 
-#### Scenario: Gerenciador de episodios com abas de temporadas e marcacao em lote
-- **GIVEN** uma série com episódios e temporadas registradas
-- **WHEN** o usuário visualiza o gerenciador de episódios
-- **THEN** a interface SHALL organizar os itens em abas de temporadas, prover botão para marcar toda a temporada e permitir alternar o status de cada episódio individual
-
-#### Scenario: Painel lateral com distribuicao de notas provedores oficiais e ficha tecnica
-- **GIVEN** a visualização detalhada da obra
-- **WHEN** a coluna lateral e a sinopse são carregadas
-- **THEN** o sistema SHALL renderizar histograma de distribuição de notas da comunidade, plataformas oficiais onde assistir com links externos seguros e créditos da equipe técnica
-
-#### Scenario: Tipografia Shippori Mincho e capa cinematografica despoluida
-- **GIVEN** o usuário acessando a rota /items/:slug
-- **WHEN** o dossiê detalhado é renderizado na tela
-- **THEN** a interface SHALL exibir o título principal em font-serif (Shippori Mincho) e a capa em proporção 2:3 sem selos artificiais sobrepostos nem distorção de escala hover:scale-105
-
-#### Scenario: Paineis e consoles baseados integralmente em tokens semanticos
-- **GIVEN** o dossiê da obra renderizado sob qualquer tema ativo
-- **WHEN** a interface apresenta as métricas, console e sinopse
-- **THEN** todas as superfícies e textos SHALL utilizar tokens semânticos do sistema sem valores hexadecimais brutos hardcoded
+#### Scenario: Acao de favoritar conectada e sincronizada no console pessoal
+- **GIVEN** um usuario autenticado visualizando o dossier da obra
+- **WHEN** o usuario aciona o botao de favoritar no console de acompanhamento
+- **THEN** a aplicacao SHALL persistir a marcacao de favorito na biblioteca e sincronizar o estado imediatamente com a vitrine de favoritos do perfil
 
 ### Requirement: Media Card Quick Actions and Enhanced Exploration
 A interface do catálogo SHALL fornecer cards de mídia com física tátil e micro-pressão no clique (:active:scale-[0.98]), números tabulares (tabular-nums), ausência de zoom agressivo de capa (hover:scale-105), ações rápidas de inclusão e badges editoriais discretos.

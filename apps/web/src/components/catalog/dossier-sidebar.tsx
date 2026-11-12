@@ -92,14 +92,14 @@ export function DossierSidebar({ item }: DossierSidebarProps) {
         </div>
       </div>
 
-      {/* 2. Gêneros & Temas Transversais */}
+      {/* 2. Gêneros */}
       {item.genres && item.genres.length > 0 && (
         <div className="p-5 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-3">
           <h3 className="text-xs font-serif font-bold uppercase tracking-wider text-[var(--color-text-secondary)] flex items-center gap-2">
             <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
-            <span>Gêneros &amp; Temas</span>
+            <span>Gêneros</span>
           </h3>
 
           <div className="flex flex-wrap gap-1.5">

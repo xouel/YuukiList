@@ -13,11 +13,13 @@ export interface FilterBarProps {
   selectedCategory?: Category;
   selectedStatus?: PublicationStatus;
   selectedCountry?: string;
+  selectedGenre?: string;
   selectedTheme?: string;
   sortBy?: CatalogSortBy;
   onSelectCategory: (category?: Category) => void;
   onSelectStatus: (status?: PublicationStatus) => void;
   onSelectCountry?: (country?: string) => void;
+  onSelectGenre?: (genre?: string) => void;
   onSelectTheme?: (theme?: string) => void;
   onSelectSortBy: (sortBy?: CatalogSortBy) => void;
   onClearFilters: () => void;
@@ -50,35 +52,51 @@ const COUNTRIES = [
   { code: 'TW', name: 'Taiwan (TW)' },
 ];
 
-const THEMES = [
-  { code: 'BL', name: "Boys' Love (BL)" },
-  { code: 'GL', name: "Girls' Love (GL)" },
+export const GENRES = [
+  'Ação',
+  'Aventura',
+  'Comédia',
+  'Cotidiano',
+  'Crime',
+  'Drama',
+  'Esporte',
+  'Fantasia',
+  'Ficção Científica',
+  'Mistério',
+  'Psicológico',
+  'Romance',
+  'Sobrenatural',
+  'Suspense',
+  'Terror',
 ];
 
 export function FilterBar({
   selectedCategory,
   selectedStatus,
   selectedCountry,
+  selectedGenre,
   selectedTheme,
   sortBy = 'relevance',
   onSelectCategory,
   onSelectStatus,
   onSelectCountry,
+  onSelectGenre,
   onSelectTheme,
   onSelectSortBy,
   onClearFilters,
   totalResults,
 }: FilterBarProps) {
+  const currentGenre = selectedGenre || selectedTheme;
   // Estado do Drawer / Sanfona de Filtros Avançados
   const hasSecondaryFilters = Boolean(
-    selectedStatus || selectedCountry || selectedTheme || (sortBy && sortBy !== 'relevance')
+    selectedStatus || selectedCountry || currentGenre || (sortBy && sortBy !== 'relevance')
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(hasSecondaryFilters);
 
   const activeSecondaryCount = [
     Boolean(selectedStatus),
     Boolean(selectedCountry),
-    Boolean(selectedTheme),
+    Boolean(currentGenre),
     Boolean(sortBy && sortBy !== 'relevance'),
   ].filter(Boolean).length;
 
@@ -224,21 +242,25 @@ export function FilterBar({
               </select>
             </div>
 
-            {/* Seletor de Temas Transversais (BL/GL) */}
+            {/* Seletor de Gênero */}
             <div className="space-y-1">
-              <label htmlFor="filter-theme" className="block text-xs font-medium text-[var(--color-text-secondary)]">
-                Temas Transversais
+              <label htmlFor="filter-genre" className="block text-xs font-medium text-[var(--color-text-secondary)]">
+                Gênero
               </label>
               <select
-                id="filter-theme"
-                value={selectedTheme || ''}
-                onChange={(e) => onSelectTheme && onSelectTheme(e.target.value || undefined)}
+                id="filter-genre"
+                value={currentGenre || ''}
+                onChange={(e) => {
+                  const val = e.target.value || undefined;
+                  if (onSelectGenre) onSelectGenre(val);
+                  if (onSelectTheme) onSelectTheme(val);
+                }}
                 className="w-full px-3 py-1.5 bg-surface-sunken border border-stroke-subtle rounded-lg text-xs sm:text-sm text-[var(--color-text-primary)] focus:border-stroke-accent focus-visible:ring-2 focus-visible:ring-accent outline-none transition-colors"
               >
-                <option value="">Todos os Temas</option>
-                {THEMES.map((t) => (
-                  <option key={t.code} value={t.code}>
-                    {t.name}
+                <option value="">Todos os Gêneros</option>
+                {GENRES.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
                   </option>
                 ))}
               </select>

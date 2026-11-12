@@ -7,55 +7,20 @@ Modelar os dados analiticos e metricas de consumo do perfil do usuario no YuukiL
 ## Requirements
 
 ### Requirement: User Profile Metrics and Consumption Analytics
-O sistema SHALL consolidar metricas analiticas de consumo apresentando-as em formato compacto com paleta Asian Editorial e rotulos humanizados sem ofuscar a vitrine de favoritos do usuario.
+O sistema SHALL consolidar metricas analiticas de consumo apresentando-as em formato compacto com paleta Asian Editorial e rotulos humanizados a partir do acervo completo da biblioteca.
 
 #### Scenario: Calculo consolidado de metricas de consumo
 - **GIVEN** um usuario com obras concluidas e em acompanhamento registradas em sua biblioteca
 - **WHEN** o endpoint de estatisticas de perfil e consultado
 - **THEN** o sistema SHALL retornar a contagem exata de concluidos, a media ponderada de avaliacoes e o tempo estimado calculado para as categorias com duracao disponivel
 
-#### Scenario: Tratamento de biblioteca recente ou sem obras concluidas
-- **GIVEN** um usuario recem-cadastrado sem nenhuma obra concluida ou avaliada
-- **WHEN** as metricas de perfil sao solicitadas
-- **THEN** o sistema SHALL retornar contadores zerados e media nula sem produzir erros de calculo ou divisao por zero
-
-#### Scenario: Metricas analiticas compactas com navegacao harmonizada
-- **GIVEN** as estatisticas e metricas de consumo do perfil
-- **WHEN** a secao analitica e renderizada na interface
-- **THEN** os dados SHALL ser estruturados de forma compacta com rotulos humanizados e paleta mineral Asian Editorial
-
 ### Requirement: Profile Showcase and Activity Feed Privacy
-A interface do perfil SHALL renderizar a identificação do usuário sem selos decorativos vazios e sem emojis, posicionando a vitrine de favoritos com prioridade visual, assegurando superfícies semânticas adaptadas a ambos os temas e mantendo anotações privadas e telefone restritos ao titular.
+A interface do perfil SHALL renderizar a identificacao do usuario sem selos decorativos vazios e sem emojis, posicionando a vitrine de favoritos conectada a biblioteca com prioridade visual no topo do perfil, assegurando superficies semanticas e mantendo dados privados restritos.
 
 #### Scenario: Exibicao da vitrine de obras favoritas no perfil
-- **GIVEN** um usuário autenticado com obras sinalizadas com o indicador de favorito no banco de dados
-- **WHEN** o perfil do usuário é renderizado na rota /profile
-- **THEN** a interface SHALL renderizar uma seção dedicada exibindo os cards das obras favoritas sincronizadas com suas respectivas capas e categorias
-
-#### Scenario: Ocultacao estrita de anotacoes privadas para terceiros
-- **GIVEN** uma obra na biblioteca contendo notas pessoais confidenciais do usuário ou dados de contato
-- **WHEN** os dados de perfil são solicitados em contexto compartilhado ou de terceiros
-- **THEN** o sistema SHALL omitir o campo de notas e telefone garantindo que apenas informações publicamente autorizadas sejam expostas
-
-#### Scenario: Inversao de hierarquia com vitrine de favoritos no topo do perfil
-- **GIVEN** um usuário acessando sua página de perfil na rota /profile
-- **WHEN** o conteúdo do perfil é renderizado na tela
-- **THEN** a vitrine de favoritos SHALL aparecer posicionada com destaque acima dos blocos de métricas analíticas e configurações de dados
-
-#### Scenario: Estado amigavel para vitrine sem favoritos
-- **GIVEN** um usuário que ainda não favoritou nenhuma obra
-- **WHEN** o perfil é renderizado na interface
-- **THEN** o sistema SHALL exibir convite visual acolhedor orientado ao catálogo sem telas de erro
-
-#### Scenario: Identificacao do usuario sem selos decorativos vazios e sem emojis
-- **GIVEN** a página de perfil renderizada na rota /profile
-- **WHEN** o cabeçalho de perfil do usuário é exibido
-- **THEN** a interface SHALL omitir selos decorativos vazios como 'Colecionador' e 'Acervo Privado' e não conter emojis em botões de compartilhamento
-
-#### Scenario: Harmonizacao semantica de superficies e textos do perfil
-- **GIVEN** a visualização do perfil do usuário em Modo Claro ou Modo Escuro
-- **WHEN** os blocos de perfil, vitrine de favoritos e métricas analíticas são exibidos
-- **THEN** os contêineres e textos SHALL adotar superfícies e cores semânticas sem classes hexadecimais escuras fixas (bg-[#1A1820], text-[#F4EFEA])
+- **GIVEN** um usuario autenticado com obras sinalizadas como favoritas na biblioteca pessoal
+- **WHEN** o perfil do usuario e renderizado na rota /profile
+- **THEN** a interface SHALL renderizar no topo a vitrine exibindo os cards das obras favoritas sincronizadas com suas respectivas capas e categorias a partir do banco de dados
 
 ### Requirement: User Profile Customization and Media Upload
 O sistema SHALL permitir ao usuário autenticado personalizar seu perfil por meio de um modal interativo de edição, suportando upload direto de foto de avatar e capa de topo para o Supabase Storage, seleção de moldura temática entre cinco opções editoriais, biografia e telefone opcional estritamente privado.

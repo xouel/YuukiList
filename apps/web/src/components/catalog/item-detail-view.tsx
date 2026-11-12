@@ -217,6 +217,39 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     }
   };
 
+  // Alternância de favorito no console pessoal
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      showFeedback('Faça login para favoritar esta obra.');
+      return;
+    }
+    const nextFavorite = !(libraryItem?.isFavorite);
+    const prev = libraryItem;
+
+    if (libraryItem) {
+      setLibraryItem({ ...libraryItem, isFavorite: nextFavorite });
+    }
+
+    try {
+      if (libraryItem) {
+        const updated = await libraryApi.updateItem(item.id, { isFavorite: nextFavorite });
+        setLibraryItem(updated);
+      } else {
+        const allowed = CATEGORY_ALLOWED_STATUSES[item.category] || ['ASSISTINDO'];
+        const created = await libraryApi.addItem({
+          mediaItemId: item.id,
+          status: allowed[0],
+          isFavorite: nextFavorite,
+        });
+        setLibraryItem(created);
+      }
+      showFeedback(nextFavorite ? 'Obra adicionada aos favoritos!' : 'Obra removida dos favoritos.');
+    } catch {
+      if (prev) setLibraryItem(prev);
+      showFeedback('Falha ao atualizar favorito.');
+    }
+  };
+
   // Alternância de episódio individual no gerenciador
   const handleMarkEpisode = async (episodeNumber: number) => {
     if (!isAuthenticated) return;
@@ -391,6 +424,12 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
               <img
                 src={item.coverUrl}
                 alt={`Capa oficial de ${item.title}`}
+                onError={(e) => {
+                  const fallback = `/api/v1/catalog/items/${item.slug}/cover`;
+                  if (e.currentTarget.src !== fallback && !e.currentTarget.src.endsWith(fallback)) {
+                    e.currentTarget.src = fallback;
+                  }
+                }}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -436,6 +475,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
               onStatusChange={handleStatusChange}
               onRatingChange={handleRatingChange}
               onQuickIncrement={handleQuickIncrement}
+              onToggleFavorite={handleToggleFavorite}
               onOpenEditModal={() => setIsModalOpen(true)}
               onOpenNoteModal={() => setIsNoteModalOpen(true)}
             />

@@ -28,22 +28,17 @@ O modelo de dados SHALL suportar exclusivamente as 6 categorias canônicas (DORA
 - **THEN** o sistema valida os valores contra os enums canônicos e rejeita valores fora do vocabulário oficial
 
 ### Requirement: Deterministic Seed Population
-O mecanismo de carga inicial SHALL popular o banco de dados Supabase com um acervo ampliado de 120 obras reais consagradas, divididas equitativamente em 20 títulos para cada uma das 6 categorias canônicas de forma idempotente.
+O mecanismo de carga inicial SHALL popular o banco de dados relacional Supabase PostgreSQL com um acervo ampliado e diversificado de obras consagradas em todas as 6 categorias canonicas com metadados completos de forma idempotente para suportar metricas estatisticas confiaveis.
 
 #### Scenario: Execucao idempotente da carga ampliada de obras reais
 - **GIVEN** o banco de dados Supabase PostgreSQL conectado
 - **WHEN** o servico de carga inicial for executado
-- **THEN** o banco contera exatamente 20 obras reais para cada uma das 6 categorias canonicas sem duplicacao de registros
+- **THEN** o banco contera acervo robusto de obras consagradas distribuidas nas 6 categorias canonicas sem duplicacao de registros
 
 ### Requirement: Local SVG Cover Serving and Fallback
-O repositório de dados SHALL fornecer uma capa SVG vetorial local para cada um dos 30 slugs do seed e prover um SVG substituto padrão caso o slug requisitado não exista.
+O repositorio de dados e o frontend SHALL fornecer capas oficiais com resolucao transparente e fallback automatico para a capa vetorial SVG local correspondente caso a imagem remota falhe ou se torne indisponivel.
 
-#### Scenario: Obtenção de capa válida por slug
-- **GIVEN** que a obra existe no catálogo do seed
-- **WHEN** a capa for requisitada pelo slug correspondente
-- **THEN** o sistema retorna o arquivo SVG original com cabeçalho Content-Type image/svg+xml
-
-#### Scenario: Fallback para slug inexistente
-- **GIVEN** que um slug inválido ou inexistente é requisitado
-- **WHEN** o recurso de capa for acessado
-- **THEN** o sistema retorna o SVG placeholder substituto sem gerar erro de servidor
+#### Scenario: Resiliencia e fallback automatico para capas oficiais
+- **GIVEN** uma obra exibida com URL de capa oficial remota
+- **WHEN** o carregamento da imagem remota falha por erro de conexao, bloqueio ou codigo HTTP de erro
+- **THEN** o sistema SHALL acionar o fallback imediato e transparente para a capa vetorial SVG gerada localmente

@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import {
   CatalogController,
   CatalogService,
@@ -48,11 +49,13 @@ class ServerContainer {
   readonly adminController: AdminController;
 
   constructor() {
-    this.catalogRepository = new PrismaCatalogRepository();
+    const prismaClient =
+      process.env.DATABASE_URL || process.env.DIRECT_URL ? new PrismaClient() : null;
+    this.catalogRepository = new PrismaCatalogRepository(prismaClient || undefined);
     this.catalogService = new CatalogService(this.catalogRepository);
     this.catalogController = new CatalogController(this.catalogService);
-    this.authModule = new AuthModule();
-    const libraryRepo = new LibraryRepository();
+    this.authModule = new AuthModule(prismaClient);
+    const libraryRepo = new LibraryRepository(prismaClient);
     const diaryRepo = new DiaryRepository();
     const diaryService = new DiaryService(diaryRepo, libraryRepo);
     const libraryService = new LibraryService(libraryRepo, this.catalogRepository, diaryService);
@@ -92,9 +95,14 @@ class ServerContainer {
     );
     this.adminController = new AdminController(this.adminService);
 
-    // Sincroniza lote canônico ingerido na memória do catálogo (Task 3.1)
-    const ingestion = new CatalogIngestionService(this.catalogRepository);
-    ingestion.syncCatalogBatch(SAMPLE_EXTERNAL_TITLES as any).catch(() => {});
+    // Sincroniza amostra canônica apenas se o catálogo estiver vazio (não sobrescreve capas do Supabase)
+    this.catalogRepository.count().then((total) => {
+      if (total === 0) {
+        const ingestion = new CatalogIngestionService(this.catalogRepository);
+        return ingestion.syncCatalogBatch(SAMPLE_EXTERNAL_TITLES as any);
+      }
+      return undefined;
+    }).catch(() => {});
   }
 }
 

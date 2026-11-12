@@ -87,7 +87,7 @@ export class CatalogIngestionService {
       }
     }
 
-    // Geração de Capa SVG Soberana
+    // Geração de Capa SVG Soberana (usada como primária quando offline ou fallback resiliente)
     const coverSvg = this.coverService.generateSvgCover({
       title: dto.title,
       originalTitle: dto.originalTitle,
@@ -99,12 +99,17 @@ export class CatalogIngestionService {
     });
     this.coverService.saveCover(slug, coverSvg);
 
+    const hasRemoteCover = Boolean(dto.coverUrl && /^https?:\/\//i.test(dto.coverUrl));
+    const resolvedCoverPath = hasRemoteCover ? dto.coverUrl! : `/assets/covers/${slug}.svg`;
+
     // Mapeamento de Proveniência Estruturada por Campo
     const provenance: MediaItemProvenance = {
       title: { source: dto.source, externalId: dto.externalId, syncedAt: nowIso },
       synopsis: { source: dto.source, externalId: dto.externalId, syncedAt: nowIso },
       category: { source: dto.source, externalId: dto.externalId, syncedAt: nowIso },
-      cover: { source: 'LOCAL', syncedAt: nowIso },
+      cover: hasRemoteCover
+        ? { source: dto.source, externalId: dto.externalId, syncedAt: nowIso }
+        : { source: 'LOCAL', syncedAt: nowIso },
     };
 
     if (dto.releaseYear) {
@@ -131,7 +136,7 @@ export class CatalogIngestionService {
       releaseYear: dto.releaseYear || null,
       originCountry: dto.originCountry || 'AS',
       rating: dto.rating ?? null,
-      coverPath: `/assets/covers/${slug}.svg`,
+      coverPath: resolvedCoverPath,
       genres: [...dto.genres],
       aliases: (dto.aliases || []).map((a) => ({
         alias: a,

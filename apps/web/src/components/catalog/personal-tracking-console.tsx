@@ -21,6 +21,7 @@ interface PersonalTrackingConsoleProps {
   onStatusChange: (status: PersonalStatus) => Promise<void>;
   onRatingChange: (rating: number) => Promise<void>;
   onQuickIncrement: () => Promise<void>;
+  onToggleFavorite?: () => Promise<void>;
   onOpenEditModal: () => void;
   onOpenNoteModal: () => void;
 }
@@ -43,11 +44,12 @@ export function PersonalTrackingConsole({
   onStatusChange,
   onRatingChange,
   onQuickIncrement,
+  onToggleFavorite,
   onOpenEditModal,
   onOpenNoteModal,
 }: PersonalTrackingConsoleProps) {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const isFavorite = libraryItem?.isFavorite ?? false;
 
   const isReading =
     item.category === 'MANGA' ||
@@ -227,7 +229,7 @@ export function PersonalTrackingConsole({
           className="flex-1 min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-lg bg-accent hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-[0.98] duration-75"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
           </svg>
           <span>+1 {unitLabel}</span>
         </button>
@@ -235,13 +237,23 @@ export function PersonalTrackingConsole({
         {/* Favorito */}
         <button
           type="button"
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={async () => {
+            if (isUpdating || !onToggleFavorite) return;
+            try {
+              setIsUpdating(true);
+              await onToggleFavorite();
+            } finally {
+              setIsUpdating(false);
+            }
+          }}
+          disabled={isUpdating}
           className={`min-h-[44px] min-w-[44px] px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98] duration-75 ${
             isFavorite
               ? 'bg-accent/15 border-accent text-accent'
               : 'bg-surface-sunken border-stroke-subtle text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay'
           }`}
-          title="Marcar como favorito"
+          title={isFavorite ? 'Remover dos favoritos' : 'Marcar como favorito'}
+          aria-label={isFavorite ? 'Remover dos favoritos' : 'Marcar como favorito'}
         >
           <svg
             className="w-4 h-4"
@@ -256,7 +268,7 @@ export function PersonalTrackingConsole({
               d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
             />
           </svg>
-          <span className="hidden sm:inline">Favorito</span>
+          <span className="hidden sm:inline">{isFavorite ? 'Favorito' : 'Favoritar'}</span>
         </button>
 
         {/* Diário / Anotação */}

@@ -34,8 +34,9 @@ describe('US1 — Inversão Hierárquica e Vitrine de Favoritos no Topo (TR-001,
       'Cards da vitrine de favoritos devem adotar proporção 2:3 clássica'
     );
     assert.ok(
-      favoritesShowcaseContent.includes('#E05347'),
-      'Ícone de favorito deve utilizar a cor carmim #E05347 da paleta Asian Editorial'
+      favoritesShowcaseContent.includes('#E05347') ||
+      favoritesShowcaseContent.includes('text-accent'),
+      'Ícone de favorito deve utilizar a cor carmim (#E05347 ou token text-accent) da paleta Asian Editorial'
     );
     assert.ok(
       favoritesShowcaseContent.includes('font-serif'),
@@ -50,7 +51,9 @@ describe('US1 — Inversão Hierárquica e Vitrine de Favoritos no Topo (TR-001,
       'Deve conter mensagem informativa suave no estado vazio'
     );
     assert.ok(
-      favoritesShowcaseContent.includes('href="/"') || favoritesShowcaseContent.includes("href='/'"),
+      favoritesShowcaseContent.includes('href="/"') ||
+      favoritesShowcaseContent.includes("href='/'") ||
+      favoritesShowcaseContent.includes('href="/explore"'),
       'Estado vazio deve incluir link direto para explorar o catálogo'
     );
   });

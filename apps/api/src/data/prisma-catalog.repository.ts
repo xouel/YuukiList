@@ -154,13 +154,14 @@ export class PrismaCatalogRepository implements ICatalogRepository {
   async findById(id: string): Promise<MediaItemDetailDto | null> {
     if (!id) return null;
     const cleanId = id.trim().toLowerCase();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
 
     if (this.prisma) {
       try {
         const item = await this.prisma.mediaItem.findFirst({
-          where: {
-            OR: [{ id: cleanId }, { slug: cleanId }],
-          },
+          where: isUuid
+            ? { OR: [{ id: cleanId }, { slug: cleanId }] }
+            : { slug: cleanId },
           include: { genres: true, aliases: true },
         });
 

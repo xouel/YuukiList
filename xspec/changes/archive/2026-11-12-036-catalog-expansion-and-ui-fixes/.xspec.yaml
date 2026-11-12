@@ -1,0 +1,17 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "036-catalog-expansion-and-ui-fixes"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "catalog-browse"
+  - "catalog-data"
+  - "user-profile-stats"
+base_specs:
+  catalog-browse: "sha256:a42a8c8b83647e0135822178d47ff5b71059ee1a6458c5d6acd9245ee3a7e00b"
+  catalog-data: "sha256:8c63745dbdb21de97ad3061dd169b4c5e233ed6d1fa4d80d7256855d28968497"
+  user-profile-stats: "sha256:27e37f1572d6531bf917dbf5d39c5d00cb6708f62b59c2e655f0786b3ae31c5b"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-12T22:23:11.416Z"

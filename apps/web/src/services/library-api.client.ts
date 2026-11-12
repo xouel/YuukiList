@@ -77,6 +77,7 @@ export class LibraryApiClient {
         method: 'GET',
         headers: { Accept: 'application/json' },
         credentials: 'include',
+        cache: 'no-store',
       });
 
       if (!response.ok) {
@@ -128,6 +129,7 @@ export class LibraryApiClient {
         method: 'GET',
         headers: { Accept: 'application/json' },
         credentials: 'include',
+        cache: 'no-store',
       });
 
       if (!response.ok) {
