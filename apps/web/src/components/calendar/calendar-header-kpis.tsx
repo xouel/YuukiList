@@ -39,7 +39,7 @@ export function CalendarHeaderKpis({
         <button
           type="button"
           onClick={onSelectToday}
-          className="flex flex-col p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top hover:border-stroke-accent hover:bg-surface-overlay transition-all text-left cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="flex flex-col p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top hover:border-stroke-accent hover:bg-surface-overlay transition-all text-left cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-[0.98] duration-75"
         >
           <div className="flex items-center justify-between w-full">
             <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]">
@@ -48,7 +48,7 @@ export function CalendarHeaderKpis({
             <span className="w-2 h-2 rounded-full bg-accent" />
           </div>
           <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold font-mono text-[var(--color-text-primary)] group-hover:text-accent transition-colors">
+            <span className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-[var(--color-text-primary)] group-hover:text-accent transition-colors">
               {kpis.todayCount}
             </span>
             <span className="text-xs text-[var(--color-text-secondary)] font-medium">
@@ -61,7 +61,7 @@ export function CalendarHeaderKpis({
         <button
           type="button"
           onClick={onFilterQueue}
-          className="flex flex-col p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top hover:border-stroke-accent hover:bg-surface-overlay transition-all text-left cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="flex flex-col p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top hover:border-stroke-accent hover:bg-surface-overlay transition-all text-left cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-[0.98] duration-75"
         >
           <div className="flex items-center justify-between w-full">
             <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]">
@@ -78,7 +78,7 @@ export function CalendarHeaderKpis({
             </svg>
           </div>
           <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold font-mono text-[var(--color-text-primary)]">
+            <span className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-[var(--color-text-primary)]">
               {kpis.queueCount}
             </span>
             <span className="text-xs text-[var(--color-text-secondary)] font-medium">
@@ -104,7 +104,7 @@ export function CalendarHeaderKpis({
             </svg>
           </div>
           <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold font-mono text-[var(--color-text-primary)]">
+            <span className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-[var(--color-text-primary)]">
               {kpis.weekTotalCount}
             </span>
             <span className="text-xs text-[var(--color-text-secondary)] font-medium">
@@ -116,4 +116,3 @@ export function CalendarHeaderKpis({
     </header>
   );
 }
-

@@ -35,12 +35,12 @@ interface ItemDetailViewProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  DORAMA: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
-  FILME: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
-  ANIME: 'bg-purple-950/80 text-purple-300 border-purple-800/60',
-  MANGA: 'bg-rose-950/80 text-rose-300 border-rose-800/60',
-  MANHWA: 'bg-cyan-950/80 text-cyan-300 border-cyan-800/60',
-  MANHUA: 'bg-indigo-950/80 text-indigo-300 border-indigo-800/60',
+  DORAMA: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40',
+  FILME: 'bg-amber-950/40 text-amber-400 border-amber-800/40',
+  ANIME: 'bg-purple-950/40 text-purple-400 border-purple-800/40',
+  MANGA: 'bg-rose-950/40 text-rose-400 border-rose-800/40',
+  MANHWA: 'bg-cyan-950/40 text-cyan-400 border-cyan-800/40',
+  MANHUA: 'bg-indigo-950/40 text-indigo-400 border-indigo-800/40',
 };
 
 const PUBLICATION_STATUS_LABELS: Record<string, string> = {
@@ -70,7 +70,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
   // Estados de Relacionamentos e Franquia
   const [relationsData, setRelationsData] = useState<ItemRelationsResponseDto | null>(null);
 
-  const categoryClass = CATEGORY_COLORS[item.category] || 'bg-[#201D28] text-[#9E98A8] border-[#2B2735]';
+  const categoryClass = CATEGORY_COLORS[item.category] || 'bg-surface-sunken text-[var(--color-text-secondary)] border-stroke-subtle';
   const pubStatusLabel = PUBLICATION_STATUS_LABELS[item.publicationStatus] || item.publicationStatus;
 
   const showFeedback = (msg: string) => {
@@ -339,14 +339,14 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-[#201D28] border border-[#E05347]/40 text-[#F4EFEA] text-sm shadow-2xl shadow-black/80 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-surface-overlay border border-accent/40 text-[var(--color-text-primary)] text-sm shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
         >
-          <span className="w-2 h-2 rounded-full bg-[#E05347]" />
+          <span className="w-2 h-2 rounded-full bg-accent" />
           <span>{feedbackMessage}</span>
           <button
             type="button"
             onClick={() => setFeedbackMessage(null)}
-            className="text-[#9E98A8] hover:text-[#F4EFEA] ml-2 p-1 rounded hover:bg-[#2B2735] transition-colors"
+            className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] ml-2 p-1 rounded hover:bg-surface-sunken transition-colors"
             title="Fechar notificação"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,7 +361,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#9E98A8] hover:text-[#F4EFEA] bg-[#201D28] hover:bg-[#2B2735] border border-[#2B2735] rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none min-h-[44px]"
+          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] bg-surface-raised hover:bg-surface-overlay border border-stroke-subtle rounded-lg transition-all focus-visible:ring-2 focus-visible:ring-accent outline-none min-h-[44px] active:scale-[0.98] duration-75"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -372,7 +372,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
         {libraryItem && (
           <a
             href="/library"
-            className="text-xs text-[#E05347] hover:text-[#C93B2F] font-bold flex items-center gap-1.5 hover:underline min-h-[44px] px-2"
+            className="text-xs text-accent hover:opacity-80 font-bold flex items-center gap-1.5 hover:underline min-h-[44px] px-2"
           >
             <span>Minha Biblioteca</span>
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -383,19 +383,16 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
       </div>
 
       {/* Hero Principal do Dossiê */}
-      <article className="p-6 sm:p-8 rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-xl shadow-black/50 space-y-6">
+      <article className="p-6 sm:p-8 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-start">
-          {/* Capa Ampliada com Selo de Destaque */}
+          {/* Capa Ampliada Rígida sem Selos Artificiais Flutuantes */}
           <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center">
-            <div className="w-full max-w-[260px] aspect-[2/3] rounded-xl overflow-hidden border border-[#2B2735] shadow-2xl bg-[#121115] relative group">
+            <div className="w-full max-w-[260px] aspect-[2/3] rounded-xl overflow-hidden border border-stroke-subtle shadow-md bg-surface-sunken relative">
               <img
                 src={item.coverUrl}
                 alt={`Capa oficial de ${item.title}`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-[#121115]/90 border border-[#2B2735] text-[10px] font-extrabold uppercase tracking-wider text-[#E05347]">
-                #2 Global
-              </div>
             </div>
           </div>
 
@@ -406,23 +403,23 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
               <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${categoryClass}`}>
                 {item.category}
               </span>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#201D28] text-[#9E98A8] border border-[#2B2735]">
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-surface-sunken text-[var(--color-text-secondary)] border border-stroke-subtle">
                 {pubStatusLabel}
               </span>
               {item.releaseYear && (
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#201D28] text-[#9E98A8] border border-[#2B2735]">
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-surface-sunken text-[var(--color-text-secondary)] border border-stroke-subtle font-mono tabular-nums">
                   {item.releaseYear}
                 </span>
               )}
             </div>
 
-            {/* Títulos */}
+            {/* Títulos com Tipografia Shippori Mincho */}
             <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#F4EFEA]">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold tracking-tight text-[var(--color-text-primary)]">
                 {item.title}
               </h1>
               {item.originalTitle && (
-                <p className="text-sm sm:text-base text-[#9E98A8] font-light mt-1">
+                <p className="text-sm sm:text-base text-[var(--color-text-secondary)] font-light mt-1">
                   {item.originalTitle}
                 </p>
               )}
@@ -460,16 +457,16 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
           />
 
           {/* 2. Sinopse Completa & Ficha Técnica */}
-          <section className="p-6 sm:p-8 rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-lg shadow-black/40 space-y-6">
+          <section className="p-6 sm:p-8 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-6">
             {item.synopsis && (
               <div className="space-y-3">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-[#E05347] flex items-center gap-2">
+                <h2 className="text-sm font-serif font-bold uppercase tracking-wider text-accent flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   <span>Sinopse Completa</span>
                 </h2>
-                <p className="text-sm sm:text-base text-[#F4EFEA]/90 leading-relaxed font-normal">
+                <p className="text-sm sm:text-base text-[var(--color-text-primary)]/90 leading-relaxed font-normal">
                   {item.synopsis}
                 </p>
               </div>
@@ -477,43 +474,43 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
 
             {/* Títulos Alternativos */}
             {item.aliases && item.aliases.length > 0 && (
-              <div className="space-y-2 pt-4 border-t border-[#2B2735]">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#9E98A8]">
+              <div className="space-y-2 pt-4 border-t border-stroke-subtle">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text-secondary)]">
                   Títulos Alternativos &amp; Sinônimos
                 </h3>
-                <p className="text-xs text-[#9E98A8] leading-relaxed">
+                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
                   {item.aliases.join(' • ')}
                 </p>
               </div>
             )}
 
             {/* Proveniência e Atribuição Legal de Metadados */}
-            <div className="space-y-3 pt-4 border-t border-[#2B2735]">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#9E98A8] flex items-center gap-2">
-                <svg className="w-3.5 h-3.5 text-[#9E98A8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="space-y-3 pt-4 border-t border-stroke-subtle">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text-secondary)] flex items-center gap-2">
+                <svg className="w-3.5 h-3.5 text-[var(--color-text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>Proveniência e Atribuição dos Dados</span>
               </h3>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px] p-3.5 rounded-xl bg-[#201D28] border border-[#2B2735]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px] p-3.5 rounded-xl bg-surface-sunken border border-stroke-subtle">
                 <div>
-                  <span className="text-[#9E98A8] block">Sinopse &amp; Metadados</span>
-                  <span className="text-[#F4EFEA] font-semibold">
+                  <span className="text-[var(--color-text-secondary)] block">Sinopse &amp; Metadados</span>
+                  <span className="text-[var(--color-text-primary)] font-semibold">
                     {item.provenance?.synopsis?.source || (item.category === 'DORAMA' || item.category === 'FILME' ? 'TMDB / TVmaze' : 'ANN / Kitsu')}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[#9E98A8] block">Armazenamento de Capa</span>
+                  <span className="text-[var(--color-text-secondary)] block">Armazenamento de Capa</span>
                   <span className="text-emerald-400 font-semibold">Soberania Local (SVG)</span>
                 </div>
                 <div>
-                  <span className="text-[#9E98A8] block">Identificador Canônico</span>
-                  <span className="text-[#F4EFEA] font-semibold">YuukiList Sovereign UUID</span>
+                  <span className="text-[var(--color-text-secondary)] block">Identificador Canônico</span>
+                  <span className="text-[var(--color-text-primary)] font-semibold">YuukiList Sovereign UUID</span>
                 </div>
               </div>
 
-              <p className="text-[10px] text-[#9E98A8] leading-relaxed">
+              <p className="text-[10px] text-[var(--color-text-secondary)] leading-relaxed">
                 Este produto utiliza metadados verificados de fontes públicas (TMDB, TVmaze, Anime News Network e MangaUpdates) em conformidade com o princípio de soberania de dados do YuukiList.
               </p>
             </div>
@@ -529,16 +526,16 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
           )}
 
           {/* 4. Diário Pessoal & Histórico da Obra */}
-          <section className="p-6 sm:p-8 rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-lg shadow-black/40 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2B2735] pb-4">
+          <section className="p-6 sm:p-8 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stroke-subtle pb-4">
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-[#F4EFEA] tracking-tight flex items-center gap-2">
-                  <svg className="w-5 h-5 text-[#E05347]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h2 className="text-base sm:text-lg font-serif font-bold text-[var(--color-text-primary)] tracking-tight flex items-center gap-2">
+                  <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                   <span>Diário &amp; Histórico da Obra</span>
                 </h2>
-                <p className="text-xs text-[#9E98A8] mt-0.5">
+                <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
                   Registros cronológicos, ciclos e anotações por episódio com proteção contra spoilers.
                 </p>
               </div>
@@ -547,7 +544,7 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
                 <button
                   type="button"
                   onClick={() => setIsNoteModalOpen(true)}
-                  className="min-h-[44px] px-4 py-2 rounded-lg bg-[#E05347] hover:bg-[#C93B2F] text-[#F4EFEA] font-bold text-xs sm:text-sm transition-colors shadow-md shadow-[#E05347]/20 cursor-pointer self-start sm:self-auto flex items-center gap-2"
+                  className="min-h-[44px] px-4 py-2 rounded-lg bg-accent hover:opacity-90 text-white font-bold text-xs sm:text-sm transition-all shadow-sm active:scale-[0.98] duration-75 cursor-pointer self-start sm:self-auto flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -558,13 +555,13 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
             </div>
 
             {!isAuthenticated ? (
-              <div className="py-8 text-center bg-[#201D28] border border-[#2B2735] rounded-xl space-y-2">
-                <p className="text-sm text-[#9E98A8]">
+              <div className="py-8 text-center bg-surface-sunken border border-stroke-subtle rounded-xl space-y-2">
+                <p className="text-sm text-[var(--color-text-secondary)]">
                   Faça login para registrar anotações e consultar seu histórico desta obra.
                 </p>
                 <a
                   href={`/login?redirect=${encodeURIComponent(`/items/${item.slug}`)}`}
-                  className="inline-block text-xs font-bold text-[#E05347] hover:underline min-h-[44px] py-2"
+                  className="inline-block text-xs font-bold text-accent hover:underline min-h-[44px] py-2"
                 >
                   Entrar na conta →
                 </a>

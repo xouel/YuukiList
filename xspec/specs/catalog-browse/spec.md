@@ -48,7 +48,7 @@ A interface do catálogo SHALL prover feedback visual resiliente implementando q
 - **THEN** a interface renderiza um aviso de erro amigável acompanhado de um botão para tentar novamente a requisição
 
 ### Requirement: Item Details View and Navigation History
-A aplicação SHALL fornecer o dossiê detalhado da obra na rota /items/:slug na paleta Asian Editorial, com faixa de quatro métricas principais, console pessoal de acompanhamento, gerenciador interativo de episódios por temporadas, ficha técnica com equipe e sidebar analítica, preservando o retorno acessível ao catálogo conforme as diretrizes WCAG 2.2 AA.
+A aplicação SHALL fornecer o dossiê detalhado da obra na rota /items/:slug na tipografia Shippori Mincho (font-serif), com capa despoluída em proporção rígida 2:3 sem distorção hover nem badges artificiais sobrepostos, quatro métricas em tokens semânticos, console pessoal de acompanhamento, gerenciador interativo de episódios por temporadas, ficha técnica e sidebar analítica, preservando o retorno acessível ao catálogo e contraste WCAG 2.2 AA.
 
 #### Scenario: Navegação para a página de detalhes da obra por slug
 - **GIVEN** um card de obra exibido na grade
@@ -68,7 +68,7 @@ A aplicação SHALL fornecer o dossiê detalhado da obra na rota /items/:slug na
 #### Scenario: Exibicao da faixa de metricas editoriais e console pessoal de acompanhamento
 - **GIVEN** uma obra carregada na rota /items/:slug
 - **WHEN** o cabeçalho do dossiê é renderizado
-- **THEN** a interface SHALL exibir faixa com quatro métricas principais em destaque e console de acompanhamento pessoal com status, nota, tempo assistido e progresso relativo
+- **THEN** a interface SHALL exibir faixa com quatro métricas principais em tokens semânticos e console de acompanhamento pessoal com status, nota, tempo assistido e progresso relativo
 
 #### Scenario: Gerenciador de episodios com abas de temporadas e marcacao em lote
 - **GIVEN** uma série com episódios e temporadas registradas
@@ -79,6 +79,16 @@ A aplicação SHALL fornecer o dossiê detalhado da obra na rota /items/:slug na
 - **GIVEN** a visualização detalhada da obra
 - **WHEN** a coluna lateral e a sinopse são carregadas
 - **THEN** o sistema SHALL renderizar histograma de distribuição de notas da comunidade, plataformas oficiais onde assistir com links externos seguros e créditos da equipe técnica
+
+#### Scenario: Tipografia Shippori Mincho e capa cinematografica despoluida
+- **GIVEN** o usuário acessando a rota /items/:slug
+- **WHEN** o dossiê detalhado é renderizado na tela
+- **THEN** a interface SHALL exibir o título principal em font-serif (Shippori Mincho) e a capa em proporção 2:3 sem selos artificiais sobrepostos nem distorção de escala hover:scale-105
+
+#### Scenario: Paineis e consoles baseados integralmente em tokens semanticos
+- **GIVEN** o dossiê da obra renderizado sob qualquer tema ativo
+- **WHEN** a interface apresenta as métricas, console e sinopse
+- **THEN** todas as superfícies e textos SHALL utilizar tokens semânticos do sistema sem valores hexadecimais brutos hardcoded
 
 ### Requirement: Media Card Quick Actions and Enhanced Exploration
 A interface do catálogo SHALL fornecer cards de mídia com física tátil e micro-pressão no clique (:active:scale-[0.98]), números tabulares (tabular-nums), ausência de zoom agressivo de capa (hover:scale-105), ações rápidas de inclusão e badges editoriais discretos.

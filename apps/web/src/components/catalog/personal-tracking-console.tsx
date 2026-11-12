@@ -107,19 +107,19 @@ export function PersonalTrackingConsole({
 
   if (!isAuthenticated) {
     return (
-      <div className="p-4 sm:p-5 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-lg shadow-black/40">
+      <div className="p-4 sm:p-5 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#F4EFEA] tracking-tight">
+            <h3 className="text-sm font-serif font-bold text-[var(--color-text-primary)] tracking-tight">
               Console Pessoal de Acompanhamento
             </h3>
-            <p className="text-xs text-[#9E98A8]">
+            <p className="text-xs text-[var(--color-text-secondary)]">
               Faça login para registrar seu status, avaliar e sincronizar episódios e capítulos.
             </p>
           </div>
           <a
             href={`/login?redirect=${encodeURIComponent(`/items/${item.slug}`)}`}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#E05347] hover:bg-[#C93B2F] text-[#F4EFEA] font-bold text-xs transition-colors shadow-md shadow-[#E05347]/20 min-h-[44px] min-w-[44px]"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:opacity-90 text-white font-bold text-xs transition-all shadow-sm min-h-[44px] min-w-[44px] active:scale-[0.98] duration-75"
           >
             <span>Entrar para Acompanhar</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,12 +132,12 @@ export function PersonalTrackingConsole({
   }
 
   return (
-    <div className="p-4 sm:p-5 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-lg shadow-black/40 space-y-4">
+    <div className="p-4 sm:p-5 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-4">
       {/* 1. Seletores de Status & Nota Pessoal */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Meu Status */}
         <div className="space-y-1.5">
-          <label htmlFor="console-status-select" className="text-[11px] font-semibold uppercase tracking-wider text-[#9E98A8]">
+          <label htmlFor="console-status-select" className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
             Meu Status
           </label>
           <div className="relative">
@@ -146,7 +146,7 @@ export function PersonalTrackingConsole({
               value={libraryItem?.status || allowedStatuses[0]}
               onChange={handleStatusSelect}
               disabled={isUpdating}
-              className="w-full px-3 py-2 text-xs font-semibold rounded-lg bg-[#201D28] border border-[#2B2735] text-[#F4EFEA] focus:border-[#E05347] focus:ring-1 focus:ring-[#E05347] outline-none transition-colors appearance-none cursor-pointer"
+              className="w-full px-3 py-2 text-xs font-semibold rounded-lg bg-surface-sunken border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors appearance-none cursor-pointer"
             >
               {allowedStatuses.map((s) => (
                 <option key={s} value={s}>
@@ -154,7 +154,7 @@ export function PersonalTrackingConsole({
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-[#9E98A8]">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-[var(--color-text-secondary)]">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
@@ -164,7 +164,7 @@ export function PersonalTrackingConsole({
 
         {/* Minha Nota */}
         <div className="space-y-1.5">
-          <label htmlFor="console-rating-select" className="text-[11px] font-semibold uppercase tracking-wider text-[#9E98A8]">
+          <label htmlFor="console-rating-select" className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
             Minha Nota
           </label>
           <div className="relative">
@@ -173,7 +173,7 @@ export function PersonalTrackingConsole({
               value={libraryItem?.rating ? Math.round(libraryItem.rating) : 0}
               onChange={handleRatingSelect}
               disabled={isUpdating}
-              className="w-full px-3 py-2 text-xs font-semibold rounded-lg bg-[#201D28] border border-[#2B2735] text-[#F4EFEA] focus:border-[#E05347] focus:ring-1 focus:ring-[#E05347] outline-none transition-colors appearance-none cursor-pointer"
+              className="w-full px-3 py-2 text-xs font-semibold rounded-lg bg-surface-sunken border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors appearance-none cursor-pointer"
             >
               <option value="0">Sem nota atribuída</option>
               <option value="10">10 - Obra-Prima</option>
@@ -187,7 +187,7 @@ export function PersonalTrackingConsole({
               <option value="2">2 - Terrível</option>
               <option value="1">1 - Inassistível</option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-[#E5A93C]">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-amber-400">
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
               </svg>
@@ -197,21 +197,21 @@ export function PersonalTrackingConsole({
       </div>
 
       {/* 2. Barra Visual de Progresso & Tempo Assistido */}
-      <div className="p-3 rounded-lg bg-[#201D28] border border-[#2B2735]/70 space-y-2">
+      <div className="p-3 rounded-lg bg-surface-sunken border border-stroke-subtle space-y-2">
         <div className="flex items-center justify-between text-xs">
-          <span className="font-semibold text-[#F4EFEA]">
+          <span className="font-semibold text-[var(--color-text-primary)] font-mono tabular-nums">
             Progresso Pessoal: {currentProgress} / {totalUnits ? totalUnits : '?'} {unitLabelShort.toLowerCase()}s
             {totalUnits ? ` (${progressPercent}%)` : ''}
           </span>
-          <span className="text-[#9E98A8] text-[11px] font-medium">
+          <span className="text-[var(--color-text-secondary)] text-[11px] font-medium font-mono tabular-nums">
             {estimatedTimeText}
           </span>
         </div>
 
         {/* Track da Barra de Progresso */}
-        <div className="w-full h-2 rounded-full bg-[#16141B] border border-[#2B2735]/60 overflow-hidden">
+        <div className="w-full h-2 rounded-full bg-surface-canvas border border-stroke-subtle overflow-hidden">
           <div
-            className="h-full bg-[#E05347] transition-all duration-300 rounded-full"
+            className="h-full bg-accent transition-all duration-300 rounded-full"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -224,7 +224,7 @@ export function PersonalTrackingConsole({
           type="button"
           onClick={handleIncrementClick}
           disabled={isUpdating || (Boolean(totalUnits) && currentProgress >= (totalUnits || 0))}
-          className="flex-1 min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-lg bg-[#E05347] hover:bg-[#C93B2F] disabled:opacity-50 disabled:cursor-not-allowed text-[#F4EFEA] font-bold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 shadow-md shadow-[#E05347]/20 cursor-pointer"
+          className="flex-1 min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-lg bg-accent hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-[0.98] duration-75"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -236,10 +236,10 @@ export function PersonalTrackingConsole({
         <button
           type="button"
           onClick={() => setIsFavorite(!isFavorite)}
-          className={`min-h-[44px] min-w-[44px] px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
+          className={`min-h-[44px] min-w-[44px] px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98] duration-75 ${
             isFavorite
-              ? 'bg-[#E05347]/20 border-[#E05347] text-[#E05347]'
-              : 'bg-[#201D28] border-[#2B2735] text-[#9E98A8] hover:text-[#F4EFEA] hover:bg-[#2B2735]'
+              ? 'bg-accent/15 border-accent text-accent'
+              : 'bg-surface-sunken border-stroke-subtle text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay'
           }`}
           title="Marcar como favorito"
         >
@@ -263,7 +263,7 @@ export function PersonalTrackingConsole({
         <button
           type="button"
           onClick={onOpenNoteModal}
-          className="min-h-[44px] min-w-[44px] px-3.5 py-2.5 rounded-lg bg-[#201D28] hover:bg-[#2B2735] border border-[#2B2735] text-[#9E98A8] hover:text-[#F4EFEA] text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+          className="min-h-[44px] min-w-[44px] px-3.5 py-2.5 rounded-lg bg-surface-sunken hover:bg-surface-overlay border border-stroke-subtle text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98] duration-75"
           title="Nova anotação no diário"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,7 +276,7 @@ export function PersonalTrackingConsole({
         <button
           type="button"
           onClick={onOpenEditModal}
-          className="min-h-[44px] min-w-[44px] px-3.5 py-2.5 rounded-lg bg-[#201D28] hover:bg-[#2B2735] border border-[#2B2735] text-[#9E98A8] hover:text-[#F4EFEA] text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+          className="min-h-[44px] min-w-[44px] px-3.5 py-2.5 rounded-lg bg-surface-sunken hover:bg-surface-overlay border border-stroke-subtle text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98] duration-75"
           title="Editar detalhes da biblioteca"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,4 +288,3 @@ export function PersonalTrackingConsole({
     </div>
   );
 }
-

@@ -258,7 +258,7 @@ export function CalendarView() {
       {timeRange === 'WEEK' && (
         <section aria-label="Navegação semanal em faixa" className="space-y-2">
           <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
-            <span>Programação da Semana</span>
+            <span className="font-serif font-bold text-sm tracking-tight text-[var(--color-text-primary)]">Programação da Semana</span>
             {selectedDay && (
               <button
                 type="button"
@@ -282,7 +282,7 @@ export function CalendarView() {
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => setSelectedDay(isSelected ? null : day.dateStr)}
-                  className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center cursor-pointer min-w-[50px] min-h-[60px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                  className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center cursor-pointer min-w-[50px] min-h-[60px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-[0.98] duration-75 ${
                     isSelected
                       ? 'bg-accent/20 border-accent text-[var(--color-text-primary)] shadow-sm ring-1 ring-accent'
                       : day.isToday
@@ -294,7 +294,7 @@ export function CalendarView() {
                     {day.dayName}
                   </span>
                   <span
-                    className={`text-base font-bold my-0.5 font-mono ${
+                    className={`text-base font-bold my-0.5 font-mono tabular-nums ${
                       isSelected
                         ? 'text-accent'
                         : day.isToday
@@ -306,12 +306,12 @@ export function CalendarView() {
                   </span>
                   <div className="flex items-center gap-1 mt-0.5">
                     {day.isToday ? (
-                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold font-mono uppercase bg-accent text-white tracking-wider">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold font-mono tabular-nums uppercase bg-accent text-white tracking-wider">
                         HOJE
                       </span>
                     ) : (
                       <span
-                        className={`text-[10px] font-mono px-1 rounded ${
+                        className={`text-[10px] font-mono tabular-nums px-1 rounded ${
                           day.eventCount > 0 ? 'bg-surface-sunken text-[var(--color-text-secondary)]' : 'text-[var(--color-text-secondary)]/50'
                         }`}
                       >

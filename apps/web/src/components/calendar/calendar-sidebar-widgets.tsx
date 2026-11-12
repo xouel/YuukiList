@@ -84,7 +84,7 @@ export function CalendarSidebarWidgets({
             <span className="block text-[11px] font-medium text-[var(--color-text-secondary)]">
               {dualTimes.localLabel}
             </span>
-            <span className="block text-xl font-bold font-mono text-[var(--color-text-primary)] mt-1">
+            <span className="block text-xl font-bold font-mono tabular-nums text-[var(--color-text-primary)] mt-1">
               {dualTimes.localTime}
             </span>
           </div>
@@ -94,7 +94,7 @@ export function CalendarSidebarWidgets({
             <span className="block text-[11px] font-medium text-accent">
               {dualTimes.jstLabel}
             </span>
-            <span className="block text-xl font-bold font-mono text-[var(--color-text-primary)] mt-1">
+            <span className="block text-xl font-bold font-mono tabular-nums text-[var(--color-text-primary)] mt-1">
               {dualTimes.jstTime}
             </span>
           </div>
@@ -135,7 +135,7 @@ export function CalendarSidebarWidgets({
                     <img
                       src={item.coverImage}
                       alt={item.mediaTitle}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover transition-colors"
                       loading="lazy"
                     />
                   ) : (
@@ -153,7 +153,7 @@ export function CalendarSidebarWidgets({
                   <p className="text-[10px] text-[var(--color-text-secondary)] truncate mt-0.5">
                     {item.subtitle}
                   </p>
-                  <span className="inline-block text-[10px] font-mono text-accent font-semibold mt-0.5">
+                  <span className="inline-block text-[10px] font-mono tabular-nums text-accent font-semibold mt-0.5">
                     {item.formattedTime}
                   </span>
                 </div>

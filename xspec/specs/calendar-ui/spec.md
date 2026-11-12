@@ -7,7 +7,7 @@ Fornecer a interface da rota `/calendar` no padrao Dark Editorial, permitindo na
 ## Requirements
 
 ### Requirement: Responsive Calendar Timeline with Day Grouping
-A interface SHALL renderizar a página /calendar com cabeçalho ao vivo de três KPIs, Weekly Strip horizontal no topo com selo textual HOJE, agrupamento por turnos em grade assimétrica e barra lateral de widgets analíticos, sem emojis.
+A interface SHALL renderizar a página /calendar com cabeçalho ao vivo em tipografia Shippori Mincho (font-serif), Weekly Strip de sete dias com alinhamento óptico uniforme e números tabulares, agrupamento por turnos em grade assimétrica e barra lateral analítica com relógio de fuso duplo estável, sem emojis.
 
 #### Scenario: Alternancia entre as tres abas de visualizacao
 - **GIVEN** a pagina de calendario carregada na visao de Lancamentos Gerais
@@ -38,6 +38,16 @@ A interface SHALL renderizar a página /calendar com cabeçalho ao vivo de três
 - **GIVEN** a exibição do calendário em tela ampla
 - **WHEN** a coluna lateral de quatro slots é carregada
 - **THEN** a interface SHALL apresentar relógio comparativo de fuso local e JST Tóquio, vitrine dos mais esperados e botão de download client-side de arquivo .ics para calendários externos
+
+#### Scenario: Alinhamento optico uniforme e numeros tabulares na Weekly Strip
+- **GIVEN** a visualização da Weekly Strip de 7 dias no calendário
+- **WHEN** os botões diários são renderizados
+- **THEN** a interface SHALL exibir os 7 dias com largura e altura balanceadas, contadores de eventos em font-mono tabular-nums e selo minimalista HOJE sem oscilação
+
+#### Scenario: Relogio de fuso duplo comparativo com numeros tabulares estaveis
+- **GIVEN** o painel lateral de widgets do calendário
+- **WHEN** o relógio de transmissão ao vivo (Local vs JST Tóquio) é exibido
+- **THEN** a interface SHALL renderizar ambos os horários com font-mono tabular-nums sem causar salto ou layout jitter no card
 
 ### Requirement: Local Timezone Conversion and Reliability Badges
 A interface SHALL converter horários com números tabulares (tabular-nums), exibir badges de confiabilidade, eliminar dilatação hover:scale-105 e disponibilizar botões com resposta elástica no clique (:active:scale-[0.98]) nos cards de lançamento.
