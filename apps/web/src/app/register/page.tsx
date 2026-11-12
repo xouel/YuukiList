@@ -7,7 +7,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/auth-context.tsx';
-import { RegisterForm } from '../../components/auth/register-form.tsx';
+import { AuthDossierCard } from '../../components/auth/auth-dossier-card.tsx';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function RegisterPage() {
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-[#181C2B] border-t-[#06B6D4] animate-spin" />
+        <div className="w-8 h-8 rounded-full border-2 border-[#2B2735] border-t-[#E05347] animate-spin" />
       </div>
     );
   }
@@ -32,9 +32,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <main id="main-content" className="py-12 px-4 sm:px-6 flex items-center justify-center">
-      <RegisterForm />
+    <main id="main-content" className="py-8 sm:py-12 px-4 sm:px-6 flex items-center justify-center">
+      <AuthDossierCard initialTab="signup" />
     </main>
   );
 }
-

@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "027-editorial-auth-experience"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "auth-ui"
+base_specs:
+  auth-ui: "sha256:de481f1901c2847bfcf841fff5024c1482d961170a30ff719aefb00c4e6423ee"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-12T00:02:44.054Z"
