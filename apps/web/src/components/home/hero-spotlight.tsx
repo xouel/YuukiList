@@ -104,7 +104,7 @@ export function HeroSpotlight({
                   type="button"
                   onClick={handleIncrement}
                   disabled={isUpdating}
-                  className="min-h-[44px] min-w-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="min-h-[44px] min-w-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -114,7 +114,7 @@ export function HeroSpotlight({
 
                 <Link
                   href={`/items/${defaultSlug}`}
-                  className="min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors"
+                  className="min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors active:scale-[0.98]"
                 >
                   Ver Detalhes
                 </Link>
@@ -124,13 +124,13 @@ export function HeroSpotlight({
             <div className="pt-2 border-t border-stroke-subtle flex flex-wrap items-center gap-3">
               <Link
                 href="/register"
-                className="min-h-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+                className="min-h-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
               >
                 <span>Criar Conta Gratuita</span>
               </Link>
               <Link
                 href="/explore"
-                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors active:scale-[0.98]"
               >
                 Explorar Catálogo
               </Link>
@@ -143,7 +143,7 @@ export function HeroSpotlight({
           <img
             src={defaultCoverUrl}
             alt={`Capa de ${defaultTitle}`}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
             <span className="text-[11px] font-medium text-white/90">

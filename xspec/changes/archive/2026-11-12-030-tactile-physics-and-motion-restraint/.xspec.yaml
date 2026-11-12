@@ -1,0 +1,17 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "030-tactile-physics-and-motion-restraint"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "calendar-ui"
+  - "catalog-browse"
+  - "personal-library-ui"
+base_specs:
+  calendar-ui: "sha256:0beb40951947c18bd5eaedd0d9c08248c2308b02878d696a43b0756c88b85633"
+  catalog-browse: "sha256:f99016638de7179b015ddd7cc4b8da402985400355f6b9bcd0a9879d8402c3b5"
+  personal-library-ui: "sha256:0ff9ea29f24a7bad888da44b57bc86942ace11401cc8ead4a5bb5f987eea225c"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-12T01:47:26.350Z"

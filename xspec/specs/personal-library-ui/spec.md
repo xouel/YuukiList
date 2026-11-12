@@ -45,12 +45,12 @@ O sistema SHALL renderizar a biblioteca pessoal na rota /library com cabeçalho 
 - **THEN** a interface SHALL incluir ao final um card com borda tracejada de Registrar Nova Obra com botão de Pesquisa Global direcionando para exploração
 
 ### Requirement: Quick Progress Tracking and Detail Modal
-O sistema SHALL disponibilizar controle tátil de progresso com formatação relativa ao total conhecido, barra visual de progresso proporcional, botão de incremento rápido com área de toque mínima de 44x44px, popover inline para avaliação rápida por estrelas, atalho para notas do diário e modal para edição detalhada.
+O sistema SHALL disponibilizar controle de progresso tátil com micro-pressão (:active:scale-[0.98]), números tabulares (tabular-nums), ausência de zoom agressivo (hover:scale-105), barra proporcional, alvo mínimo de 44x44px, popover de estrelas e modal detalhado.
 
 #### Scenario: Incremento rapido de unidade com atualizacao otimista
 - **GIVEN** uma série com episódios disponíveis e botão de incremento visível
 - **WHEN** o usuário clica na ação de avançar um episódio
-- **THEN** o sistema SHALL atualizar otimisticamente a contagem na interface e sincronizar com o backend em segundo plano
+- **THEN** o sistema SHALL responder com micro-pressão física no clique, atualizar otimisticamente a contagem na interface e sincronizar com o backend em segundo plano
 
 #### Scenario: Exibicao destacada do badge Em dia para obras alcancadas
 - **GIVEN** uma obra cujo progresso atinge o total de unidades disponíveis
@@ -65,7 +65,7 @@ O sistema SHALL disponibilizar controle tátil de progresso com formatação rel
 #### Scenario: Controle tatil com barra de progresso visual e alvo minimo de toque de 44px
 - **GIVEN** uma obra em andamento com total de episódios ou capítulos conhecido
 - **WHEN** o card da obra é visualizado pelo usuário
-- **THEN** a interface exibe o progresso no formato Ep. X/Y com barra visual proporcional de preenchimento e provê botão de avanço com área tátil mínima de 44x44px
+- **THEN** a interface exibe o progresso no formato Ep. X/Y com números tabulares e barra visual proporcional, provendo botão de avanço com área tátil mínima de 44x44px sem dilatação hover:scale-105
 
 #### Scenario: Avaliacao rapida inline com popover de estrelas e atalho para diario
 - **GIVEN** um card de obra exibido na biblioteca

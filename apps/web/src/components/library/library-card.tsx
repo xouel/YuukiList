@@ -124,7 +124,7 @@ export function LibraryCard({
   return (
     <article
       onClick={handleCardClick}
-      className="group relative bg-surface-raised rounded-xl overflow-hidden border border-stroke-subtle hover:border-stroke-accent shadow-hairline-top transition-all duration-300 hover:shadow-xl hover:shadow-black/50 flex flex-col h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      className="group relative bg-surface-raised rounded-xl overflow-hidden border border-stroke-subtle hover:border-stroke-accent shadow-hairline-top transition-all duration-300 hover:shadow-xl hover:shadow-black/50 active:scale-[0.98] active:transition-transform flex flex-col h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -141,7 +141,7 @@ export function LibraryCard({
           src={media?.coverUrl || '/covers/fallback.svg'}
           alt={`Capa de ${media?.title || 'obra'}`}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
         />
 
         {/* Canto Superior Esquerdo: Status Pessoal Sóbrio De-Boxed */}
@@ -185,7 +185,7 @@ export function LibraryCard({
             type="button"
             onClick={handleToggleFavorite}
             aria-label={item.isFavorite ? 'Desmarcar favorito' : 'Marcar como favorito'}
-            className={`p-1.5 rounded-lg backdrop-blur transition-all shadow-md focus-visible:ring-2 focus-visible:ring-accent ${
+            className={`p-1.5 rounded-lg backdrop-blur transition-all shadow-md active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent ${
               item.isFavorite
                 ? 'bg-accent/25 text-accent border border-accent/50 hover:bg-accent/35'
                 : 'bg-black/60 text-[var(--color-text-secondary)] hover:text-accent border border-white/10'
@@ -217,7 +217,7 @@ export function LibraryCard({
             </span>
           )}
           {typeof (media as any)?.score === 'number' && (media as any).score > 0 && (
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/75 text-amber-300 border border-white/10 flex items-center gap-1 backdrop-blur">
+            <span className="text-[10px] font-mono tabular-nums font-bold px-1.5 py-0.5 rounded bg-black/75 text-amber-300 border border-white/10 flex items-center gap-1 backdrop-blur">
               ★ {((media as any).score).toFixed(1)}
             </span>
           )}
@@ -241,7 +241,7 @@ export function LibraryCard({
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)]">
             <span className="font-light text-[11px] uppercase tracking-wider">Progresso</span>
-            <span className="font-medium text-[var(--color-text-primary)]">{progressText}</span>
+            <span className="font-medium font-mono tabular-nums text-[var(--color-text-primary)]">{progressText}</span>
           </div>
 
           {progressPercentage !== null && (
@@ -271,7 +271,7 @@ export function LibraryCard({
             onClick={handleNoteClick}
             aria-label={`Criar anotação no diário para ${media?.title || 'obra'}`}
             title="Anotação no Diário"
-            className="min-w-[36px] min-h-[36px] p-2 rounded-lg bg-surface-overlay hover:bg-surface-overlay/80 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent hover:border-stroke-subtle transition-all flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent"
+            className="min-w-[36px] min-h-[36px] p-2 rounded-lg bg-surface-overlay hover:bg-surface-overlay/80 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent hover:border-stroke-subtle transition-all active:scale-[0.98] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -292,7 +292,7 @@ export function LibraryCard({
               onClick={handleIncrement}
               disabled={isMutating}
               aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
-              className="min-w-[44px] min-h-[44px] px-3 inline-flex items-center justify-center rounded-xl bg-media-anime/20 hover:bg-media-anime text-media-anime hover:text-black active:scale-95 border border-media-anime/40 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent"
+              className="min-w-[44px] min-h-[44px] px-3 inline-flex items-center justify-center rounded-xl bg-media-anime/20 hover:bg-media-anime text-media-anime hover:text-black active:scale-[0.98] border border-media-anime/40 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent"
             >
               {isMutating ? (
                 <div className="w-4 h-4 rounded-full border border-current border-t-transparent animate-spin" />

@@ -91,15 +91,15 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
   return (
     <article
       data-testid={`calendar-event-${event.id}`}
-      className="group relative flex flex-col md:flex-row items-start md:items-center justify-between p-3.5 sm:p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top hover:border-stroke-accent transition-all hover:bg-surface-overlay gap-4"
+      className="group relative flex flex-col md:flex-row items-start md:items-center justify-between p-3.5 sm:p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top hover:border-stroke-accent transition-all hover:bg-surface-overlay active:scale-[0.98] active:transition-transform gap-4"
     >
       <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1 w-full">
         {/* Coluna de Horário Dedicada */}
         <div className="w-16 sm:w-20 flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-lg bg-surface-sunken border border-stroke-subtle text-center">
-          <span className="text-xs sm:text-sm font-bold font-mono text-accent">
+          <span className="text-xs sm:text-sm font-bold font-mono tabular-nums text-accent">
             {formattedTime}
           </span>
-          <span className="text-[10px] text-[var(--color-text-secondary)] font-mono mt-0.5">
+          <span className="text-[10px] text-[var(--color-text-secondary)] font-mono tabular-nums mt-0.5">
             {event.originRegion || 'LOCAL'}
           </span>
         </div>
@@ -113,7 +113,7 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
             <img
               src={event.coverImage}
               alt={event.mediaTitle}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
               loading="lazy"
             />
           ) : (
@@ -159,7 +159,7 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
             onClick={handleMarkWatched}
             disabled={isWatched || isUpdatingProgress}
             aria-label={isWatched ? 'Episódio já marcado como visto' : 'Marcar +1 visto'}
-            className={`min-h-[44px] min-w-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+            className={`min-h-[44px] min-w-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               isWatched
                 ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 cursor-default'
                 : 'bg-surface-sunken hover:bg-surface-overlay text-[var(--color-text-primary)] border border-stroke-subtle hover:border-emerald-700/50 hover:text-emerald-300'
@@ -183,7 +183,7 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
           type="button"
           aria-label={isPlanned ? 'Remover da agenda' : 'Lembrar lançamento na agenda'}
           onClick={() => setIsPlanned(!isPlanned)}
-          className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+          className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
             isPlanned
               ? 'bg-accent/20 text-accent border border-accent/40 hover:bg-accent/30'
               : 'bg-surface-sunken text-[var(--color-text-secondary)] border border-stroke-subtle hover:border-stroke-accent hover:text-[var(--color-text-primary)]'

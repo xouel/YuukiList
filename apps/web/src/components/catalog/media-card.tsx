@@ -116,14 +116,14 @@ export function MediaCard({ item, isInLibrary: initialIsInLibrary = false, onNav
   };
 
   return (
-    <article className="group relative bg-surface-raised rounded-xl overflow-hidden border border-stroke-subtle hover:border-stroke-accent shadow-hairline-top transition-colors duration-200 hover:shadow-xl hover:shadow-black/40 flex flex-col h-full">
+    <article className="group relative bg-surface-raised rounded-xl overflow-hidden border border-stroke-subtle hover:border-stroke-accent shadow-hairline-top transition-all duration-200 hover:shadow-xl hover:shadow-black/40 active:scale-[0.98] active:transition-transform flex flex-col h-full">
       {/* Capa com Proporção 2:3 */}
       <div className="relative aspect-[2/3] w-full overflow-hidden bg-surface-canvas">
         <img
           src={item.coverUrl}
           alt={`Capa de ${item.title}`}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
         />
 
         {/* Badge de Categoria Editorial */}
@@ -165,7 +165,7 @@ export function MediaCard({ item, isInLibrary: initialIsInLibrary = false, onNav
             <button
               onClick={handleQuickAdd}
               disabled={isSubmitting}
-              className="quick-add p-1.5 rounded-lg bg-black/70 hover:bg-accent text-white hover:text-white border border-white/20 hover:border-accent transition-all backdrop-blur shadow-md hover:scale-110 active:scale-95 focus-visible:ring-2 focus-visible:ring-accent"
+              className="quick-add p-1.5 rounded-lg bg-black/70 hover:bg-accent text-white hover:text-white border border-white/20 hover:border-accent transition-all backdrop-blur shadow-md active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent"
               aria-label={`Adicionar ${item.title} à biblioteca`}
               title="Adicionar à biblioteca rapidamente"
             >
@@ -197,8 +197,8 @@ export function MediaCard({ item, isInLibrary: initialIsInLibrary = false, onNav
           )}
         </div>
 
-        {/* Metadados: Gêneros em Largura Total Livre de Colisão */}
-        <div className="pt-2 border-t border-stroke-subtle flex items-center text-xs text-[var(--color-text-secondary)]">
+        {/* Metadados: Gêneros e Indicadores Tabulares em Largura Total */}
+        <div className="pt-2 border-t border-stroke-subtle flex items-center justify-between text-xs font-mono tabular-nums text-[var(--color-text-secondary)]">
           <span className="truncate w-full font-light" title={item.genres.join(', ')}>
             {item.genres.length > 0 ? item.genres.slice(0, 3).join(' • ') : 'Geral'}
           </span>

@@ -81,12 +81,12 @@ A aplicação SHALL fornecer o dossiê detalhado da obra na rota /items/:slug na
 - **THEN** o sistema SHALL renderizar histograma de distribuição de notas da comunidade, plataformas oficiais onde assistir com links externos seguros e créditos da equipe técnica
 
 ### Requirement: Media Card Quick Actions and Enhanced Exploration
-A interface do catálogo SHALL fornecer ações rápidas de inclusão na biblioteca diretamente nos cards de mídia, alternância de estado para obras já salvas, prevenção de colisão de metadados no rodapé do card e badges editoriais discretos.
+A interface do catálogo SHALL fornecer cards de mídia com física tátil e micro-pressão no clique (:active:scale-[0.98]), números tabulares (tabular-nums), ausência de zoom agressivo de capa (hover:scale-105), ações rápidas de inclusão e badges editoriais discretos.
 
 #### Scenario: Adicao rapida de obra a biblioteca pessoal a partir do card
 - **GIVEN** um usuário autenticado visualizando a grade de obras do catálogo
 - **WHEN** o usuário aciona o botão de ação rápida no card da obra
-- **THEN** o sistema SHALL registrar o item na biblioteca com o status canônico padrão da categoria e atualizar o estado visual do card imediatamente
+- **THEN** o sistema SHALL fornecer resposta elástica imediata no clique e registrar o item na biblioteca com o status canônico padrão atualizando o estado visual imediatamente
 
 #### Scenario: Alternancia visual do botao de acao rapida para obras salvas
 - **GIVEN** uma obra já presente na biblioteca pessoal do usuário
@@ -96,9 +96,4 @@ A interface do catálogo SHALL fornecer ações rápidas de inclusão na bibliot
 #### Scenario: Disposicao anti-colisao e badges editoriais no card de midia
 - **GIVEN** obras com múltiplos gêneros e status de publicação longo
 - **WHEN** os cards de mídia são renderizados na grade
-- **THEN** os metadados de gênero e status da obra ocupam slots independentes sem truncamento colidente e as categorias adotam badges editoriais refinados
-
-#### Scenario: Filtragem combinada por pais de origem e temas transversais
-- **GIVEN** o catálogo de obras exibido na interface
-- **WHEN** o usuário seleciona filtros de país de origem e tema transversal
-- **THEN** a interface SHALL atualizar a listagem exibindo somente as obras compatíveis com todos os critérios selecionados
+- **THEN** os metadados de gênero e status ocupam slots independentes com números tabulares e a capa é destacada sem distorção de escala hover:scale-105
