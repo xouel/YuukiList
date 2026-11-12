@@ -20,6 +20,26 @@
   --color-accent-cyan: #E05347;
   --color-accent-violet: #8B5CF6;
 
+  /* Superfícies Minerais Padronizadas */
+  --surface-canvas: #121115;
+  --surface-raised: #1A1820;
+  --surface-overlay: #201D28;
+  --surface-sunken: #0D0C0F;
+
+  /* Contornos e Refração */
+  --stroke-subtle: rgba(255, 255, 255, 0.08);
+  --stroke-strong: rgba(255, 255, 255, 0.16);
+  --stroke-accent: rgba(224, 83, 71, 0.35);
+  --highlight-hairline: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+
+  /* Acentos de Mídia Bimodais */
+  --accent-media-video: #D4A373;
+  --accent-media-print: #D97757;
+  --accent-media-anime: #9D8DF1;
+
+  /* Anel de Foco Acessível */
+  --ring-focus: #E05347;
+
   /* Fontes Semânticas em Três Níveis */
   --font-serif-editorial: 'Shippori Mincho', 'Playfair Display', 'Cinzel', 'Times New Roman', serif;
   --font-sans-ui: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -40,6 +60,26 @@
   --color-accent-subtle: #FEE2E2;
   --color-accent-cyan: #C8453B;
   --color-accent-violet: #7C3AED;
+
+  /* Superfícies Claras Padronizadas */
+  --surface-canvas: #F8FAFC;
+  --surface-raised: #FFFFFF;
+  --surface-overlay: #F1F5F9;
+  --surface-sunken: #E2E8F0;
+
+  /* Contornos e Refração Claro */
+  --stroke-subtle: rgba(15, 23, 42, 0.08);
+  --stroke-strong: rgba(15, 23, 42, 0.16);
+  --stroke-accent: rgba(200, 69, 59, 0.35);
+  --highlight-hairline: inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+
+  /* Acentos de Mídia Bimodais Claro */
+  --accent-media-video: #B88350;
+  --accent-media-print: #C25E3E;
+  --accent-media-anime: #7C6BC9;
+
+  /* Anel de Foco Acessível Claro */
+  --ring-focus: #C8453B;
 }
 
 body {
@@ -69,11 +109,16 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* WCAG 2.2 AA: Anel de foco visível com acento carmim */
+/* WCAG 2.2 AA: Anel de foco visível com acento carmim semântico */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--ring-focus);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
+}
+
+.focus-ring-carmim:focus-visible {
+  outline: 2px solid var(--ring-focus);
+  outline-offset: 2px;
 }
 
 /* WCAG 2.2 AA / Diretiva de Movimento Reduzido */

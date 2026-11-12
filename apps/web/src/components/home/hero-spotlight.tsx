@@ -44,9 +44,9 @@ export function HeroSpotlight({
   };
 
   return (
-    <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1820] via-[#16141C] to-[#121115] border border-[#2B2735] p-6 sm:p-8 shadow-xl">
+    <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-raised via-surface-canvas to-surface-sunken border border-stroke-subtle p-6 sm:p-8 shadow-xl shadow-hairline-top">
       {/* Luz de fundo carmim ambiente */}
-      <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#E05347]/10 blur-3xl pointer-events-none" />
+      <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 flex flex-col md:flex-row items-center md:items-stretch justify-between gap-6 sm:gap-8">
         {/* Lado Esquerdo: Metadados, Título, Sinopse e Controles de Progresso */}
@@ -54,47 +54,47 @@ export function HeroSpotlight({
           <div>
             {/* Badges Superiores */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#E05347]/20 text-[#E05347] border border-[#E05347]/30 shadow-sm">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent/15 text-accent border border-accent/30 shadow-sm">
                 ✦ {isAuthenticated ? 'Destaque do Diário' : 'Destaque Editorial'}
               </span>
-              <span className="text-xs font-medium px-2.5 py-0.5 rounded bg-[#201D28] text-[#9C96A2] border border-[#2B2735]">
+              <span className="text-xs font-medium px-2.5 py-0.5 rounded bg-surface-overlay text-[var(--color-text-secondary)] border border-stroke-subtle">
                 {defaultCategory}
               </span>
               <span className="text-xs font-semibold text-amber-400 flex items-center gap-1">
-                ★ 9.6 <span className="text-[#726C78] font-normal">(42.1k)</span>
+                ★ 9.6 <span className="text-[var(--color-text-muted)] font-normal">(42.1k)</span>
               </span>
             </div>
 
             <Link href={`/items/${defaultSlug}`} className="group inline-block">
-              <h2 className="font-serif-editorial text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#F4EFEA] group-hover:text-[#E05347] transition-colors">
+              <h2 className="font-serif-editorial text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[var(--color-text-primary)] group-hover:text-accent transition-colors">
                 {defaultTitle}
               </h2>
             </Link>
 
-            <p className="text-xs sm:text-sm text-[#9C96A2] leading-relaxed mt-2 line-clamp-3 font-light max-w-xl">
+            <p className="text-xs sm:text-sm text-[var(--color-text-secondary)] leading-relaxed mt-2 line-clamp-3 font-light max-w-xl">
               {defaultSynopsis}
             </p>
           </div>
 
           {/* Área de Ação e Progresso */}
           {isAuthenticated && libraryItem ? (
-            <div className="pt-2 border-t border-[#2B2735]/80 space-y-3">
+            <div className="pt-2 border-t border-stroke-subtle space-y-3">
               <div className="flex items-center justify-between text-xs font-medium">
-                <span className="text-[#9C96A2]">
+                <span className="text-[var(--color-text-secondary)]">
                   Seu Progresso Atual:{' '}
-                  <strong className="text-[#F4EFEA]">
+                  <strong className="text-[var(--color-text-primary)]">
                     Episódio {currentProgress} de {totalUnits} ({progressPercent}%)
                   </strong>
                 </span>
-                <span className="text-[11px] px-2 py-0.5 rounded bg-[#E05347]/10 text-[#E05347] border border-[#E05347]/20 font-semibold">
+                <span className="text-[11px] px-2 py-0.5 rounded bg-accent/10 text-accent border border-accent/20 font-semibold">
                   Assistindo
                 </span>
               </div>
 
               {/* Barra de Progresso Visual */}
-              <div className="w-full h-2 rounded-full bg-[#201D28] overflow-hidden border border-[#2B2735]">
+              <div className="w-full h-2 rounded-full bg-surface-overlay overflow-hidden border border-stroke-subtle">
                 <div
-                  className="h-full bg-gradient-to-r from-[#E05347] to-[#F87171] rounded-full transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-accent to-rose-400 rounded-full transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -105,7 +105,7 @@ export function HeroSpotlight({
                   type="button"
                   onClick={handleIncrement}
                   disabled={isUpdating}
-                  className="min-h-[44px] min-w-[44px] px-5 py-2.5 rounded-xl bg-[#E05347] hover:bg-[#C8453B] text-white font-bold text-xs sm:text-sm shadow-lg shadow-[#E05347]/20 flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="min-h-[44px] min-w-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -115,23 +115,23 @@ export function HeroSpotlight({
 
                 <Link
                   href={`/items/${defaultSlug}`}
-                  className="min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl bg-[#201D28] hover:bg-[#2B2735] text-[#F4EFEA] border border-[#2B2735] font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors"
+                  className="min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors"
                 >
                   Ver Detalhes
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="pt-2 border-t border-[#2B2735]/80 flex flex-wrap items-center gap-3">
+            <div className="pt-2 border-t border-stroke-subtle flex flex-wrap items-center gap-3">
               <Link
                 href="/register"
-                className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#E05347] hover:bg-[#C8453B] text-white font-bold text-xs sm:text-sm shadow-lg shadow-[#E05347]/20 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+                className="min-h-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
               >
                 <span>Criar Conta Gratuita</span>
               </Link>
               <Link
                 href="/explore"
-                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#201D28] hover:bg-[#2B2735] text-[#F4EFEA] border border-[#2B2735] font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors"
               >
                 Explorar Catálogo
               </Link>
@@ -140,7 +140,7 @@ export function HeroSpotlight({
         </div>
 
         {/* Lado Direito: Capa em Cartão 2:3 Editorial */}
-        <div className="shrink-0 w-44 sm:w-52 lg:w-56 aspect-[2/3] rounded-xl overflow-hidden border border-[#2B2735] shadow-2xl relative group">
+        <div className="shrink-0 w-44 sm:w-52 lg:w-56 aspect-[2/3] rounded-xl overflow-hidden border border-stroke-subtle shadow-2xl relative group">
           <img
             src={defaultCoverUrl}
             alt={`Capa de ${defaultTitle}`}
@@ -148,7 +148,7 @@ export function HeroSpotlight({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
             <span className="text-[11px] font-medium text-white/90">
-              Próxima Meta: <strong className="text-[#E05347]">Episódio {currentProgress + 1}</strong>
+              Próxima Meta: <strong className="text-accent">Episódio {currentProgress + 1}</strong>
             </span>
           </div>
         </div>

@@ -9,7 +9,7 @@ export function LegalFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg-surface)]/60 text-[var(--color-text-muted)] py-8 px-4 sm:px-6 lg:px-8 mt-16 transition-colors">
+    <footer className="border-t border-stroke-subtle bg-surface-raised/60 text-[var(--color-text-muted)] py-8 px-4 sm:px-6 lg:px-8 mt-16 transition-colors shadow-hairline-top">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Identidade e Soberania */}
         <div className="flex flex-col items-center md:items-start gap-1.5 text-center md:text-left">

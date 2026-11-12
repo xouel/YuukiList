@@ -31,14 +31,14 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
 
 // Paleta Editorial Bimodal / Categoria
 const CATEGORY_COLORS: Record<string, string> = {
-  // Audiovisual (Ocre #D4A373 e Lavanda #9D8DF1)
-  DORAMA: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
-  FILME: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
-  ANIME: 'bg-[#9D8DF1]/15 text-[#9D8DF1] border-[#9D8DF1]/30',
-  // Impresso (Terracota #D97757)
-  MANGA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
-  MANHWA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
-  MANHUA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
+  // Audiovisual (Ocre e Lavanda)
+  DORAMA: 'bg-media-video/15 text-media-video border-media-video/30',
+  FILME: 'bg-media-video/15 text-media-video border-media-video/30',
+  ANIME: 'bg-media-anime/15 text-media-anime border-media-anime/30',
+  // Impresso (Terracota)
+  MANGA: 'bg-media-print/15 text-media-print border-media-print/30',
+  MANHWA: 'bg-media-print/15 text-media-print border-media-print/30',
+  MANHUA: 'bg-media-print/15 text-media-print border-media-print/30',
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -62,7 +62,7 @@ export function LibraryRow({
   const media = item.mediaItem;
   const category = media?.category as Category | undefined;
   const categoryName = category ? CATEGORY_DISPLAY_NAMES[category] || category : undefined;
-  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-[#1A1820] text-[#9C96A2] border-[#2B2735]';
+  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-surface-raised text-[var(--color-text-secondary)] border-stroke-subtle';
   const statusLabel = STATUS_LABELS[item.status] || item.status;
 
   const totalUnits =
@@ -109,7 +109,7 @@ export function LibraryRow({
   return (
     <div
       onClick={handleEditClick}
-      className="group flex items-center justify-between gap-3 p-3 sm:p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] hover:border-[#E05347]/50 transition-all duration-200 cursor-pointer"
+      className="group flex items-center justify-between gap-3 p-3 sm:p-4 rounded-xl bg-surface-raised border border-stroke-subtle hover:border-stroke-accent shadow-hairline-top transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       role="row"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -122,7 +122,7 @@ export function LibraryRow({
     >
       {/* Miniatura da Capa e Título */}
       <div className="flex items-center gap-3.5 min-w-0 flex-1">
-        <div className="w-11 sm:w-14 aspect-[2/3] shrink-0 rounded-lg overflow-hidden bg-[#121115] border border-[#2B2735]">
+        <div className="w-11 sm:w-14 aspect-[2/3] shrink-0 rounded-lg overflow-hidden bg-surface-canvas border border-stroke-subtle">
           <img
             src={media?.coverUrl || '/covers/fallback.svg'}
             alt={`Capa de ${media?.title || 'obra'}`}
@@ -133,7 +133,7 @@ export function LibraryRow({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-serif font-medium text-sm sm:text-base text-[#F4EFEA] truncate group-hover:text-[#E05347] transition-colors">
+            <h3 className="font-serif font-medium text-sm sm:text-base text-[var(--color-text-primary)] truncate group-hover:text-accent transition-colors">
               {media?.title || 'Obra sem título'}
             </h3>
 
@@ -149,15 +149,15 @@ export function LibraryRow({
             {item.isUpToDate && (
               <span
                 data-testid="up-to-date-badge"
-                className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#064E3B] text-[#34D399] border border-[#059669]/60"
+                className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/40"
               >
                 Em dia
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-2 mt-1 text-xs text-[#9C96A2] flex-wrap">
-            <span className="px-1.5 py-0.2 rounded bg-black/40 text-[#F4EFEA] border border-white/10 text-[10px]">
+          <div className="flex items-center gap-2 mt-1 text-xs text-[var(--color-text-secondary)] flex-wrap">
+            <span className="px-1.5 py-0.2 rounded bg-surface-sunken text-[var(--color-text-primary)] border border-stroke-subtle text-[10px]">
               {statusLabel}
             </span>
 
@@ -174,7 +174,7 @@ export function LibraryRow({
             )}
 
             {item.rewatchCount > 0 && (
-              <span className="text-[#F4EFEA] font-bold text-[10px]">
+              <span className="text-[var(--color-text-primary)] font-bold text-[10px]">
                 ↻ {item.rewatchCount}x
               </span>
             )}
@@ -185,13 +185,13 @@ export function LibraryRow({
       {/* Progresso, Barra Visual e Ações Ágeis */}
       <div className="flex items-center gap-3 shrink-0">
         <div className="flex flex-col items-end gap-1">
-          <span className="text-xs sm:text-sm font-medium text-[#F4EFEA]">
+          <span className="text-xs sm:text-sm font-medium text-[var(--color-text-primary)]">
             {progressText}
           </span>
           {progressPercentage !== null && (
-            <div className="w-20 sm:w-28 bg-[#2B2735] h-1.5 rounded-full overflow-hidden">
+            <div className="w-20 sm:w-28 bg-surface-sunken h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#E05347] h-full rounded-full transition-all duration-300"
+                className="bg-accent h-full rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -205,7 +205,7 @@ export function LibraryRow({
             onClick={handleIncrement}
             disabled={isMutating}
             aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
-            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl bg-[#E05347]/15 text-[#E05347] hover:bg-[#E05347] hover:text-white active:scale-95 border border-[#E05347]/30 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#E05347]"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl bg-accent/15 text-accent hover:bg-accent hover:text-white active:scale-95 border border-accent/30 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent"
           >
             {isMutating ? (
               <div className="w-4 h-4 rounded-full border border-current border-t-transparent animate-spin" />
@@ -220,10 +220,10 @@ export function LibraryRow({
           type="button"
           onClick={handleToggleFavorite}
           aria-label={item.isFavorite ? 'Desmarcar favorito' : 'Marcar como favorito'}
-          className={`p-2 rounded-xl transition-all ${
+          className={`p-2 rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-accent ${
             item.isFavorite
-              ? 'bg-[#E05347]/25 text-[#E05347] border border-[#E05347]/50 hover:bg-[#E05347]/35'
-              : 'text-[#9C96A2] hover:text-[#E05347] hover:bg-white/5 border border-transparent'
+              ? 'bg-accent/25 text-accent border border-accent/50 hover:bg-accent/35'
+              : 'text-[var(--color-text-secondary)] hover:text-accent hover:bg-surface-overlay border border-transparent'
           }`}
         >
           <svg

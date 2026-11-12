@@ -271,10 +271,10 @@ export function CatalogView({
       {/* Seção Superior: Cabeçalho Editorial e Barra de Busca */}
       <section className="space-y-4">
         <div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#F4EFEA]">
+          <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-text-primary)]">
             Explorar Catálogo
           </h1>
-          <p className="text-sm sm:text-base text-[#9C96A2] mt-1 font-light">
+          <p className="text-sm sm:text-base text-[var(--color-text-secondary)] mt-1 font-light">
             Doramas, filmes, animes, mangás, manhwas e manhuas em um só lugar.
           </p>
         </div>
@@ -335,13 +335,13 @@ export function CatalogView({
             {/* Sentinela de Rolagem Infinita */}
             <div ref={sentinelRef} className="py-6 text-center">
               {isLoadingMore && (
-                <div className="inline-flex items-center gap-2 text-xs text-[#E05347] animate-pulse">
-                  <div className="w-2 h-2 rounded-full bg-[#E05347]" />
+                <div className="inline-flex items-center gap-2 text-xs text-accent animate-pulse">
+                  <div className="w-2 h-2 rounded-full bg-accent" />
                   <span>Carregando mais obras...</span>
                 </div>
               )}
               {!isLoadingMore && meta.page >= meta.totalPages && meta.total > 0 && (
-                <p className="text-xs text-[#9C96A2]">
+                <p className="text-xs text-[var(--color-text-secondary)]">
                   Você chegou ao fim do catálogo ({meta.total} obras exibidas).
                 </p>
               )}

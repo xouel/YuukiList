@@ -1,0 +1,13 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "028-tokens-unification-and-anti-drift"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "navigation-shell"
+base_specs:
+  navigation-shell: "sha256:df696897a302e884aef922d6eb6db2e2c1a5d0f4d3e9f31b069d4db95c05bdbd"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-12T01:02:58.580Z"

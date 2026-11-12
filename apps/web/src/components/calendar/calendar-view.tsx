@@ -142,21 +142,21 @@ export function CalendarView() {
       />
 
       {/* 2. Barra de Visões e Controles de Navegação Temporal */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#2B2735]">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-stroke-subtle">
         {/* Seletor das 3 Visões Canônicas */}
         <div
           role="tablist"
           aria-label="Modo de visualização do calendário"
-          className="inline-flex p-1 rounded-xl bg-[#1A1820] border border-[#2B2735] self-start"
+          className="inline-flex p-1 rounded-xl bg-surface-raised border border-stroke-subtle self-start"
         >
           <button
             role="tab"
             aria-selected={activeView === CalendarViewMode.RELEASES}
             onClick={() => setActiveView(CalendarViewMode.RELEASES)}
-            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               activeView === CalendarViewMode.RELEASES
-                ? 'bg-[#E05347] text-white shadow-sm'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
             Lançamentos Gerais
@@ -165,10 +165,10 @@ export function CalendarView() {
             role="tab"
             aria-selected={activeView === CalendarViewMode.TRACKING}
             onClick={() => setActiveView(CalendarViewMode.TRACKING)}
-            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               activeView === CalendarViewMode.TRACKING
-                ? 'bg-[#E05347] text-white shadow-sm'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
             Acompanhamento
@@ -177,10 +177,10 @@ export function CalendarView() {
             role="tab"
             aria-selected={activeView === CalendarViewMode.AGENDA}
             onClick={() => setActiveView(CalendarViewMode.AGENDA)}
-            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               activeView === CalendarViewMode.AGENDA
-                ? 'bg-[#E05347] text-white shadow-sm'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
             Minha Agenda
@@ -188,12 +188,12 @@ export function CalendarView() {
         </div>
 
         {/* Controles de Navegação Temporal */}
-        <div className="flex flex-wrap items-center gap-3 bg-[#1A1820] p-2 rounded-xl border border-[#2B2735]">
+        <div className="flex flex-wrap items-center gap-3 bg-surface-raised p-2 rounded-xl border border-stroke-subtle shadow-hairline-top">
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setOffsetWeeks((prev) => prev - 1)}
               aria-label="Período anterior"
-              className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-[#24202C] hover:bg-[#2F2A3A] text-zinc-300 border border-[#2B2735] transition-colors cursor-pointer flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#E05347]/40"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-surface-sunken hover:bg-surface-overlay text-[var(--color-text-secondary)] border border-stroke-subtle transition-colors cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -204,35 +204,35 @@ export function CalendarView() {
                 setOffsetWeeks(0);
                 setSelectedDay(null);
               }}
-              className="min-h-[44px] px-3.5 py-1 rounded-lg text-xs font-semibold bg-[#24202C] text-zinc-200 hover:bg-[#2F2A3A] border border-[#2B2735] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40"
+              className="min-h-[44px] px-3.5 py-1 rounded-lg text-xs font-semibold bg-surface-sunken text-[var(--color-text-primary)] hover:bg-surface-overlay border border-stroke-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               Hoje
             </button>
             <button
               onClick={() => setOffsetWeeks((prev) => prev + 1)}
               aria-label="Próximo período"
-              className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-[#24202C] hover:bg-[#2F2A3A] text-zinc-300 border border-[#2B2735] transition-colors cursor-pointer flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#E05347]/40"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-surface-sunken hover:bg-surface-overlay text-[var(--color-text-secondary)] border border-stroke-subtle transition-colors cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
 
-            <span className="text-sm font-serif font-bold text-[#F4EFEA] px-2">
+            <span className="text-sm font-serif font-bold text-[var(--color-text-primary)] px-2">
               {rangeLabel}
             </span>
           </div>
 
-          <div className="inline-flex p-0.5 rounded-lg bg-[#24202C] border border-[#2B2735] text-xs ml-auto">
+          <div className="inline-flex p-0.5 rounded-lg bg-surface-sunken border border-stroke-subtle text-xs ml-auto">
             <button
               onClick={() => {
                 setTimeRange('WEEK');
                 setOffsetWeeks(0);
               }}
-              className={`min-h-[36px] px-3 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+              className={`min-h-[36px] px-3 py-1 rounded-md font-medium transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent ${
                 timeRange === 'WEEK'
-                  ? 'bg-[#E05347] text-white font-semibold'
-                  : 'text-zinc-400 hover:text-zinc-200'
+                  ? 'bg-accent text-white font-semibold'
+                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
               }`}
             >
               Semana
@@ -242,10 +242,10 @@ export function CalendarView() {
                 setTimeRange('MONTH');
                 setOffsetWeeks(0);
               }}
-              className={`min-h-[36px] px-3 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+              className={`min-h-[36px] px-3 py-1 rounded-md font-medium transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-accent ${
                 timeRange === 'MONTH'
-                  ? 'bg-[#E05347] text-white font-semibold'
-                  : 'text-zinc-400 hover:text-zinc-200'
+                  ? 'bg-accent text-white font-semibold'
+                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
               }`}
             >
               Mês
@@ -257,13 +257,13 @@ export function CalendarView() {
       {/* 3. Weekly Strip Horizontal com Selo HOJE */}
       {timeRange === 'WEEK' && (
         <section aria-label="Navegação semanal em faixa" className="space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
             <span>Programação da Semana</span>
             {selectedDay && (
               <button
                 type="button"
                 onClick={() => setSelectedDay(null)}
-                className="text-[#E05347] hover:underline normal-case font-medium text-xs cursor-pointer"
+                className="text-accent hover:underline normal-case font-medium text-xs cursor-pointer focus-visible:ring-2 focus-visible:ring-accent"
               >
                 Ver semana completa
               </button>
@@ -282,12 +282,12 @@ export function CalendarView() {
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => setSelectedDay(isSelected ? null : day.dateStr)}
-                  className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center cursor-pointer min-w-[50px] min-h-[60px] focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+                  className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center cursor-pointer min-w-[50px] min-h-[60px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                     isSelected
-                      ? 'bg-[#E05347]/20 border-[#E05347] text-[#F4EFEA] shadow-sm ring-1 ring-[#E05347]'
+                      ? 'bg-accent/20 border-accent text-[var(--color-text-primary)] shadow-sm ring-1 ring-accent'
                       : day.isToday
-                      ? 'bg-[#24202C] border-[#E05347]/60 text-[#F4EFEA]'
-                      : 'bg-[#1A1820] border-[#2B2735] hover:border-[#3B3647] text-zinc-400 hover:text-zinc-200'
+                      ? 'bg-surface-sunken border-accent/60 text-[var(--color-text-primary)]'
+                      : 'bg-surface-raised border-stroke-subtle hover:border-stroke-accent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
                   }`}
                 >
                   <span className="text-[11px] font-medium uppercase tracking-wider">
@@ -296,23 +296,23 @@ export function CalendarView() {
                   <span
                     className={`text-base font-bold my-0.5 font-mono ${
                       isSelected
-                        ? 'text-[#E05347]'
+                        ? 'text-accent'
                         : day.isToday
-                        ? 'text-[#F4EFEA]'
-                        : 'text-zinc-300'
+                        ? 'text-[var(--color-text-primary)]'
+                        : 'text-[var(--color-text-secondary)]'
                     }`}
                   >
                     {day.dayNumber}
                   </span>
                   <div className="flex items-center gap-1 mt-0.5">
                     {day.isToday ? (
-                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold font-mono uppercase bg-[#E05347] text-white tracking-wider">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold font-mono uppercase bg-accent text-white tracking-wider">
                         HOJE
                       </span>
                     ) : (
                       <span
                         className={`text-[10px] font-mono px-1 rounded ${
-                          day.eventCount > 0 ? 'bg-[#2B2735] text-zinc-300' : 'text-zinc-600'
+                          day.eventCount > 0 ? 'bg-surface-sunken text-[var(--color-text-secondary)]' : 'text-[var(--color-text-secondary)]/50'
                         }`}
                       >
                         {day.eventCount}
@@ -336,10 +336,10 @@ export function CalendarView() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`min-h-[36px] px-3.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all border cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+                className={`min-h-[36px] px-3.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all border cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   selectedCategory === cat.id
-                    ? 'bg-[#E05347]/15 text-[#E05347] border-[#E05347]/40 shadow-sm font-semibold'
-                    : 'bg-[#1A1820] text-zinc-400 border-[#2B2735] hover:border-[#3B3647] hover:text-zinc-300'
+                    ? 'bg-accent/15 text-accent border-accent/40 shadow-sm font-semibold'
+                    : 'bg-surface-raised text-[var(--color-text-secondary)] border-stroke-subtle hover:border-stroke-accent hover:text-[var(--color-text-primary)]'
                 }`}
               >
                 {cat.label}
@@ -349,8 +349,8 @@ export function CalendarView() {
 
           {/* Conteúdo: Loading, Erro ou Lista de Grupos */}
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 text-zinc-400 space-y-3">
-              <div className="w-8 h-8 rounded-full border-2 border-[#E05347]/20 border-t-[#E05347] animate-spin" />
+            <div className="flex flex-col items-center justify-center py-20 text-[var(--color-text-secondary)] space-y-3">
+              <div className="w-8 h-8 rounded-full border-2 border-accent/20 border-t-accent animate-spin" />
               <p className="text-sm font-medium">Carregando calendário de lançamentos...</p>
             </div>
           ) : error ? (
@@ -364,25 +364,25 @@ export function CalendarView() {
               </button>
             </div>
           ) : displayGroupedEvents.length === 0 ? (
-            <div className="p-12 rounded-xl bg-[#1A1820] border border-[#2B2735] text-center space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-[#24202C] border border-[#2B2735] flex items-center justify-center mx-auto text-zinc-400">
+            <div className="p-12 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top text-center space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-surface-sunken border border-stroke-subtle flex items-center justify-center mx-auto text-[var(--color-text-secondary)]">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-base font-serif font-bold text-[#F4EFEA]">
+              <h2 className="text-base font-serif font-bold text-[var(--color-text-primary)]">
                 {selectedDay
                   ? 'Nenhum lançamento catalogado para este dia específico'
                   : 'Nenhum lançamento encontrado para este período'}
               </h2>
-              <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+              <p className="text-xs text-[var(--color-text-secondary)] max-w-md mx-auto leading-relaxed">
                 {selectedDay ? (
                   <span>
                     Não há lançamentos previstos para esta data.{' '}
                     <button
                       type="button"
                       onClick={() => setSelectedDay(null)}
-                      className="text-[#E05347] underline hover:text-[#E05347]/80"
+                      className="text-accent underline hover:text-accent/80"
                     >
                       Ver a programação completa da semana
                     </button>

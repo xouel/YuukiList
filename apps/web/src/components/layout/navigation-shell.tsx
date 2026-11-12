@@ -3,6 +3,7 @@
 /**
  * YuukiList — Casca de Navegação Responsiva (Top Command Bar Desktop + Bottom Nav Mobile)
  * Conforme Seções 3.2, 3.3 e 11.1 do Documento Mestre de Contexto e Slices 018 / 023 (Consolidated Product UI)
+ * Paleta Mineral: var(--color-bg-surface) e var(--color-border)
  */
 
 import React, { useState } from 'react';
@@ -95,15 +96,15 @@ export function NavigationShell({ children }: NavigationShellProps) {
   return (
     <div className="min-h-screen flex flex-col bg-[var(--color-bg-base)] text-[var(--color-text-primary)] transition-colors duration-200 font-sans-ui">
       {/* 1. TOP COMMAND BAR DESKTOP & HEADER MOBILE */}
-      <header className="sticky top-0 z-40 h-16 w-full border-b border-[var(--color-border)] bg-[var(--color-bg-surface)]/95 backdrop-blur-md transition-colors">
+      <header className="sticky top-0 z-40 h-16 w-full border-b border-stroke-subtle bg-surface-raised/95 backdrop-blur-md shadow-hairline-top transition-colors">
         <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Logo / Wordmark */}
           <div className="flex items-center gap-6 shrink-0">
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="font-serif-editorial font-bold text-2xl tracking-wider text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
+              <span className="font-serif-editorial font-bold text-2xl tracking-wider text-[var(--color-text-primary)] group-hover:text-accent transition-colors">
                 YUUKILIST
               </span>
-              <span className="hidden xl:inline-block text-[10px] font-medium tracking-widest uppercase text-[var(--color-text-muted)] border-l border-[var(--color-border)] pl-2">
+              <span className="hidden xl:inline-block text-[10px] font-medium tracking-widest uppercase text-[var(--color-text-muted)] border-l border-stroke-subtle pl-2">
                 Catálogo Asiático
               </span>
             </Link>
@@ -114,10 +115,10 @@ export function NavigationShell({ children }: NavigationShellProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-colors ${
                     item.isActive
-                      ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)] border border-[var(--color-accent)]/40 shadow-sm'
-                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-card)]'
+                      ? 'bg-accent/15 text-accent border border-accent/40 shadow-sm'
+                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay'
                   }`}
                 >
                   {item.name}
@@ -139,7 +140,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar animes, doramas, mangás, filmes..."
-                className="w-full pl-9 pr-4 py-1.5 text-xs rounded-full bg-[var(--color-bg-base)] border border-[var(--color-border)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] transition-all"
+                className="w-full pl-9 pr-4 py-1.5 text-xs rounded-full bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
               />
             </form>
           </div>
@@ -156,11 +157,11 @@ export function NavigationShell({ children }: NavigationShellProps) {
                 <button
                   type="button"
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2 p-1 rounded-full hover:bg-[var(--color-bg-card)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                  className="flex items-center gap-2 p-1 rounded-full hover:bg-surface-overlay transition-colors focus:outline-none focus:ring-2 focus:ring-accent"
                   aria-expanded={isUserMenuOpen}
                   aria-label="Menu do Usuário"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0">
                     {user.username.charAt(0).toUpperCase()}
                   </div>
                   <span className="hidden md:inline-block text-xs font-medium text-[var(--color-text-primary)] max-w-[100px] truncate">
@@ -173,17 +174,17 @@ export function NavigationShell({ children }: NavigationShellProps) {
 
                 {isUserMenuOpen && (
                   <div
-                    className="absolute right-0 mt-2 w-48 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                    className="absolute right-0 mt-2 w-48 rounded-xl bg-surface-raised border border-stroke-subtle shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150"
                     onMouseLeave={() => setIsUserMenuOpen(false)}
                   >
-                    <div className="px-3 py-2 border-b border-[var(--color-border)] mb-1">
+                    <div className="px-3 py-2 border-b border-stroke-subtle mb-1">
                       <p className="text-xs font-bold text-[var(--color-text-primary)] truncate">{user.username}</p>
                       <p className="text-[10px] text-[var(--color-text-muted)] truncate">{user.email}</p>
                     </div>
                     <Link
                       href="/profile"
                       onClick={() => setIsUserMenuOpen(false)}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-card)] transition-colors"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay transition-colors"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -193,7 +194,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
                     <Link
                       href="/library"
                       onClick={() => setIsUserMenuOpen(false)}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-card)] transition-colors"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay transition-colors"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -203,7 +204,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-400 hover:bg-rose-950/20 transition-colors mt-1 border-t border-[var(--color-border)] pt-2"
+                      className="w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-400 hover:bg-rose-950/20 transition-colors mt-1 border-t border-stroke-subtle pt-2"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -217,20 +218,20 @@ export function NavigationShell({ children }: NavigationShellProps) {
               <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                  className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors ${
                     isLogin
-                      ? 'bg-[#E05347] text-white shadow-sm'
-                      : 'bg-[var(--color-bg-card)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border)]'
+                      ? 'bg-accent text-white shadow-sm'
+                      : 'bg-surface-overlay text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-stroke-subtle'
                   }`}
                 >
                   Entrar
                 </Link>
                 <Link
                   href="/register"
-                  className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                  className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors ${
                     isRegister
-                      ? 'bg-[#E05347] text-white shadow-sm'
-                      : 'bg-[#E05347]/15 hover:bg-[#E05347] text-[#E05347] hover:text-white border border-[#E05347]/40 shadow-sm'
+                      ? 'bg-accent text-white shadow-sm'
+                      : 'bg-accent/15 hover:bg-accent text-accent hover:text-white border border-accent/40 shadow-sm'
                   }`}
                 >
                   Cadastrar
@@ -253,7 +254,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
       <nav
         role="navigation"
         aria-label="Navegação Móvel"
-        className="lg:hidden fixed bottom-0 inset-x-0 h-16 bg-[var(--color-bg-surface)]/95 backdrop-blur-md border-t border-[var(--color-border)] flex items-center justify-around z-50 px-2 transition-colors"
+        className="lg:hidden fixed bottom-0 inset-x-0 h-16 bg-surface-raised/95 backdrop-blur-md border-t border-stroke-subtle shadow-hairline-top flex items-center justify-around z-50 px-2 transition-colors"
       >
         {navItems.map((item) => (
           <Link

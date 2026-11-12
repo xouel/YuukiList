@@ -47,15 +47,15 @@ export function DayGroup({ dateString, events }: DayGroupProps) {
   return (
     <section className="space-y-4" aria-labelledby={`day-heading-${dateString}`}>
       {/* Cabeçalho do Dia */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#2B2735]">
+      <div className="flex items-center justify-between pb-2 border-b border-stroke-subtle">
         <h3
           id={`day-heading-${dateString}`}
-          className="text-base font-serif font-bold text-[#F4EFEA] tracking-tight flex items-center gap-2.5"
+          className="text-base font-serif font-bold text-[var(--color-text-primary)] tracking-tight flex items-center gap-2.5"
         >
-          <span className="w-2 h-2 rounded-full bg-[#E05347]" />
+          <span className="w-2 h-2 rounded-full bg-accent" />
           {formattedHeader}
         </h3>
-        <span className="text-xs font-mono text-zinc-400 font-medium">
+        <span className="text-xs font-mono text-[var(--color-text-secondary)] font-medium">
           {events.length} {events.length === 1 ? 'lançamento' : 'lançamentos'}
         </span>
       </div>
@@ -65,11 +65,11 @@ export function DayGroup({ dateString, events }: DayGroupProps) {
         {shiftGroups.length > 0 ? (
           shiftGroups.map((group) => (
             <div key={group.shift} className="space-y-2.5">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                <span className="w-1.5 h-1.5 rounded-sm bg-zinc-600" />
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                <span className="w-1.5 h-1.5 rounded-sm bg-stroke-strong" />
                 <span>{group.label}</span>
-                <span className="text-zinc-600 font-normal">({group.timeRange})</span>
-                <span className="text-zinc-500 font-mono text-[11px] ml-auto">
+                <span className="text-[var(--color-text-secondary)]/70 font-normal">({group.timeRange})</span>
+                <span className="text-[var(--color-text-secondary)]/80 font-mono text-[11px] ml-auto">
                   {group.events.length} {group.events.length === 1 ? 'obra' : 'obras'}
                 </span>
               </div>

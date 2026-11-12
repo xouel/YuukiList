@@ -32,13 +32,14 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   MANHUA: 'Manhuas',
 };
 
+// Paleta Editorial Bimodal / Categoria: Audiovisual Ocre (#D4A373) e Lavanda (#9D8DF1), Impresso Terracota (#D97757)
 const CATEGORY_COLORS: Record<string, string> = {
-  DORAMA: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
-  FILME: 'bg-[#D4A373]/15 text-[#D4A373] border-[#D4A373]/30',
-  ANIME: 'bg-[#9D8DF1]/15 text-[#9D8DF1] border-[#9D8DF1]/30',
-  MANGA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
-  MANHWA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
-  MANHUA: 'bg-[#D97757]/15 text-[#D97757] border-[#D97757]/30',
+  DORAMA: 'bg-media-video/15 text-media-video border-media-video/30',
+  FILME: 'bg-media-video/15 text-media-video border-media-video/30',
+  ANIME: 'bg-media-anime/15 text-media-anime border-media-anime/30',
+  MANGA: 'bg-media-print/15 text-media-print border-media-print/30',
+  MANHWA: 'bg-media-print/15 text-media-print border-media-print/30',
+  MANHUA: 'bg-media-print/15 text-media-print border-media-print/30',
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -64,7 +65,7 @@ export function LibraryCard({
   const media = item.mediaItem;
   const category = media?.category as Category | undefined;
   const categoryName = category ? CATEGORY_DISPLAY_NAMES[category] || category : undefined;
-  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-[#1A1820] text-[#9C96A2] border-[#2B2735]';
+  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-surface-raised text-[var(--color-text-secondary)] border-stroke-subtle';
   const statusLabel = STATUS_LABELS[item.status] || item.status;
   const isCompleted = item.status === 'CONCLUIDO' || item.status === 'ASSISTIDO';
 
@@ -123,7 +124,7 @@ export function LibraryCard({
   return (
     <article
       onClick={handleCardClick}
-      className="group relative bg-[#1A1820] rounded-xl overflow-hidden border border-[#2B2735] hover:border-[#9D8DF1]/50 transition-all duration-300 hover:shadow-xl hover:shadow-black/50 flex flex-col h-full cursor-pointer"
+      className="group relative bg-surface-raised rounded-xl overflow-hidden border border-stroke-subtle hover:border-stroke-accent shadow-hairline-top transition-all duration-300 hover:shadow-xl hover:shadow-black/50 flex flex-col h-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -135,7 +136,7 @@ export function LibraryCard({
       aria-label={`Ver detalhes de ${media?.title || 'obra'}`}
     >
       {/* Capa com Proporção 2:3 */}
-      <div className="relative aspect-[2/3] w-full overflow-hidden bg-[#121115]">
+      <div className="relative aspect-[2/3] w-full overflow-hidden bg-surface-canvas">
         <img
           src={media?.coverUrl || '/covers/fallback.svg'}
           alt={`Capa de ${media?.title || 'obra'}`}
@@ -149,12 +150,12 @@ export function LibraryCard({
             className={`text-[10px] font-bold px-2 py-0.5 rounded-md border backdrop-blur flex items-center gap-1.5 shadow-md ${
               isCompleted
                 ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/40'
-                : 'bg-black/75 text-[#F4EFEA] border-white/10'
+                : 'bg-black/75 text-[var(--color-text-primary)] border-white/10'
             }`}
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
-                isCompleted ? 'bg-emerald-400' : 'bg-[#9D8DF1]'
+                isCompleted ? 'bg-emerald-400' : 'bg-media-anime'
               }`}
             />
             {statusLabel}
@@ -166,9 +167,9 @@ export function LibraryCard({
           {item.isUpToDate && (
             <span
               data-testid="up-to-date-badge"
-              className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-[#064E3B] text-[#34D399] border border-[#059669]/60 shadow-lg shadow-black/40 backdrop-blur"
+              className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 shadow-lg shadow-black/40 backdrop-blur"
             >
-              <svg className="w-3 h-3 text-[#34D399]" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-3 h-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -184,10 +185,10 @@ export function LibraryCard({
             type="button"
             onClick={handleToggleFavorite}
             aria-label={item.isFavorite ? 'Desmarcar favorito' : 'Marcar como favorito'}
-            className={`p-1.5 rounded-lg backdrop-blur transition-all shadow-md ${
+            className={`p-1.5 rounded-lg backdrop-blur transition-all shadow-md focus-visible:ring-2 focus-visible:ring-accent ${
               item.isFavorite
-                ? 'bg-[#E05347]/25 text-[#E05347] border border-[#E05347]/50 hover:bg-[#E05347]/35'
-                : 'bg-black/60 text-[#9C96A2] hover:text-[#E05347] border border-white/10'
+                ? 'bg-accent/25 text-accent border border-accent/50 hover:bg-accent/35'
+                : 'bg-black/60 text-[var(--color-text-secondary)] hover:text-accent border border-white/10'
             }`}
           >
             <svg
@@ -226,11 +227,11 @@ export function LibraryCard({
       {/* Detalhes e Controle Tátil de Progresso */}
       <div className="p-3.5 flex flex-col flex-1 justify-between gap-3">
         <div>
-          <h3 className="font-serif font-medium text-base text-[#F4EFEA] line-clamp-1 group-hover:text-[#9D8DF1] transition-colors">
+          <h3 className="font-serif font-medium text-base text-[var(--color-text-primary)] line-clamp-1 group-hover:text-accent transition-colors">
             {media?.title || 'Obra sem título'}
           </h3>
           {media?.originalTitle && (
-            <p className="text-xs text-[#9C96A2] line-clamp-1 mt-0.5 opacity-70 font-light">
+            <p className="text-xs text-[var(--color-text-secondary)] line-clamp-1 mt-0.5 opacity-70 font-light">
               {media.originalTitle}
             </p>
           )}
@@ -238,16 +239,16 @@ export function LibraryCard({
 
         {/* Barra Visual Proporcional de Progresso */}
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between text-xs text-[#9C96A2]">
+          <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)]">
             <span className="font-light text-[11px] uppercase tracking-wider">Progresso</span>
-            <span className="font-medium text-[#F4EFEA]">{progressText}</span>
+            <span className="font-medium text-[var(--color-text-primary)]">{progressText}</span>
           </div>
 
           {progressPercentage !== null && (
-            <div className="w-full bg-[#2B2735] h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-surface-sunken h-1.5 rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-300 ${
-                  isCompleted ? 'bg-emerald-400' : 'bg-gradient-to-r from-[#9D8DF1] to-[#E05347]'
+                  isCompleted ? 'bg-emerald-400' : 'bg-gradient-to-r from-media-anime to-accent'
                 }`}
                 style={{ width: `${progressPercentage}%` }}
               />
@@ -256,7 +257,7 @@ export function LibraryCard({
         </div>
 
         {/* Rodapé de Ações Rápidas (Nota Inline, Diário e +1) */}
-        <div className="pt-2.5 border-t border-[#2B2735] flex items-center justify-between gap-2">
+        <div className="pt-2.5 border-t border-stroke-subtle flex items-center justify-between gap-2">
           {/* Seletor Popover de Avaliação Rápida */}
           <QuickRatingPopover
             currentRating={item.rating}
@@ -270,7 +271,7 @@ export function LibraryCard({
             onClick={handleNoteClick}
             aria-label={`Criar anotação no diário para ${media?.title || 'obra'}`}
             title="Anotação no Diário"
-            className="min-w-[36px] min-h-[36px] p-2 rounded-lg bg-[#2B2735]/40 hover:bg-[#2B2735] text-[#9C96A2] hover:text-[#F4EFEA] border border-transparent hover:border-[#2B2735] transition-all flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#9D8DF1]"
+            className="min-w-[36px] min-h-[36px] p-2 rounded-lg bg-surface-overlay hover:bg-surface-overlay/80 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent hover:border-stroke-subtle transition-all flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -291,7 +292,7 @@ export function LibraryCard({
               onClick={handleIncrement}
               disabled={isMutating}
               aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
-              className="min-w-[44px] min-h-[44px] px-3 inline-flex items-center justify-center rounded-xl bg-[#9D8DF1]/20 hover:bg-[#9D8DF1] text-[#9D8DF1] hover:text-black active:scale-95 border border-[#9D8DF1]/40 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#9D8DF1]"
+              className="min-w-[44px] min-h-[44px] px-3 inline-flex items-center justify-center rounded-xl bg-media-anime/20 hover:bg-media-anime text-media-anime hover:text-black active:scale-95 border border-media-anime/40 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent"
             >
               {isMutating ? (
                 <div className="w-4 h-4 rounded-full border border-current border-t-transparent animate-spin" />

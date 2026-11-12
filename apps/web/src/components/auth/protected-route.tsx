@@ -32,8 +32,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         aria-live="polite"
         className="min-h-[50vh] flex flex-col items-center justify-center p-8 text-center"
       >
-        <div className="w-12 h-12 rounded-full border-2 border-[#181C2B] border-t-[#06B6D4] animate-spin mb-4" />
-        <p className="text-sm text-[#94A3B8]">Verificando sessão segura...</p>
+        <div className="w-12 h-12 rounded-full border-2 border-stroke-subtle border-t-accent animate-spin mb-4" />
+        <p className="text-sm text-[var(--color-text-secondary)]">Verificando sessão segura...</p>
       </div>
     );
   }

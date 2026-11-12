@@ -99,10 +99,10 @@ export function FilterBar({
             role="tab"
             aria-selected={!selectedCategory}
             onClick={() => onSelectCategory(undefined)}
-            className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none ${
+            className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-accent outline-none ${
               !selectedCategory
-                ? 'bg-[#E05347] text-white shadow-sm font-semibold'
-                : 'bg-[#1A1820] text-[#9C96A2] hover:text-[#F4EFEA] hover:bg-[#25222E] border border-[#2B2735]'
+                ? 'bg-accent text-white shadow-sm font-semibold'
+                : 'bg-surface-raised text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay border border-stroke-subtle'
             }`}
           >
             Todas as Categorias
@@ -117,10 +117,10 @@ export function FilterBar({
                 role="tab"
                 aria-selected={isSelected}
                 onClick={() => onSelectCategory(isSelected ? undefined : cat)}
-                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none ${
+                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-accent outline-none ${
                   isSelected
-                    ? 'bg-[#E05347] text-white shadow-sm font-semibold'
-                    : 'bg-[#1A1820] text-[#9C96A2] hover:text-[#F4EFEA] hover:bg-[#25222E] border border-[#2B2735]'
+                    ? 'bg-accent text-white shadow-sm font-semibold'
+                    : 'bg-surface-raised text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay border border-stroke-subtle'
                 }`}
               >
                 {CATEGORY_DISPLAY_NAMES[cat]}
@@ -136,14 +136,14 @@ export function FilterBar({
             onClick={() => setIsDrawerOpen((prev) => !prev)}
             aria-expanded={isDrawerOpen}
             aria-controls="catalog-advanced-filters"
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium border transition-all focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none ${
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium border transition-all focus-visible:ring-2 focus-visible:ring-accent outline-none ${
               isDrawerOpen || activeSecondaryCount > 0
-                ? 'bg-[#25222E] text-[#F4EFEA] border-[#E05347]/50 shadow-sm'
-                : 'bg-[#1A1820] text-[#9C96A2] hover:text-[#F4EFEA] hover:bg-[#25222E] border-[#2B2735]'
+                ? 'bg-surface-overlay text-[var(--color-text-primary)] border-stroke-accent shadow-sm'
+                : 'bg-surface-raised text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay border-stroke-subtle'
             }`}
           >
             <svg
-              className="w-4 h-4 text-[#E05347]"
+              className="w-4 h-4 text-accent"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -157,12 +157,12 @@ export function FilterBar({
             </svg>
             <span>Mais Filtros</span>
             {activeSecondaryCount > 0 && (
-              <span className="w-4 h-4 rounded-full bg-[#E05347] text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="w-4 h-4 rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center">
                 {activeSecondaryCount}
               </span>
             )}
             <svg
-              className={`w-3.5 h-3.5 text-[#9C96A2] transition-transform duration-200 ${
+              className={`w-3.5 h-3.5 text-[var(--color-text-secondary)] transition-transform duration-200 ${
                 isDrawerOpen ? 'rotate-180' : ''
               }`}
               fill="none"
@@ -179,19 +179,19 @@ export function FilterBar({
       {isDrawerOpen && (
         <div
           id="catalog-advanced-filters"
-          className="p-4 bg-[#16151B] border border-[#2B2735] rounded-xl shadow-lg space-y-4 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="p-4 bg-surface-raised border border-stroke-subtle rounded-xl shadow-lg space-y-4 animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {/* Seletor de País de Origem */}
             <div className="space-y-1">
-              <label htmlFor="filter-country" className="block text-xs font-medium text-[#9C96A2]">
+              <label htmlFor="filter-country" className="block text-xs font-medium text-[var(--color-text-secondary)]">
                 País de Origem
               </label>
               <select
                 id="filter-country"
                 value={selectedCountry || ''}
                 onChange={(e) => onSelectCountry && onSelectCountry(e.target.value || undefined)}
-                className="w-full px-3 py-1.5 bg-[#121115] border border-[#2B2735] rounded-lg text-xs sm:text-sm text-[#F4EFEA] focus:border-[#E05347] focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none transition-colors"
+                className="w-full px-3 py-1.5 bg-surface-sunken border border-stroke-subtle rounded-lg text-xs sm:text-sm text-[var(--color-text-primary)] focus:border-stroke-accent focus-visible:ring-2 focus-visible:ring-accent outline-none transition-colors"
               >
                 <option value="">Todos os Países</option>
                 {COUNTRIES.map((c) => (
@@ -204,7 +204,7 @@ export function FilterBar({
 
             {/* Seletor de Status da Obra */}
             <div className="space-y-1">
-              <label htmlFor="filter-status" className="block text-xs font-medium text-[#9C96A2]">
+              <label htmlFor="filter-status" className="block text-xs font-medium text-[var(--color-text-secondary)]">
                 Status da Obra
               </label>
               <select
@@ -213,7 +213,7 @@ export function FilterBar({
                 onChange={(e) =>
                   onSelectStatus(e.target.value ? (e.target.value as PublicationStatus) : undefined)
                 }
-                className="w-full px-3 py-1.5 bg-[#121115] border border-[#2B2735] rounded-lg text-xs sm:text-sm text-[#F4EFEA] focus:border-[#E05347] focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none transition-colors"
+                className="w-full px-3 py-1.5 bg-surface-sunken border border-stroke-subtle rounded-lg text-xs sm:text-sm text-[var(--color-text-primary)] focus:border-stroke-accent focus-visible:ring-2 focus-visible:ring-accent outline-none transition-colors"
               >
                 <option value="">Todos os Status</option>
                 {PUBLICATION_STATUSES.map((status) => (
@@ -226,14 +226,14 @@ export function FilterBar({
 
             {/* Seletor de Temas Transversais (BL/GL) */}
             <div className="space-y-1">
-              <label htmlFor="filter-theme" className="block text-xs font-medium text-[#9C96A2]">
+              <label htmlFor="filter-theme" className="block text-xs font-medium text-[var(--color-text-secondary)]">
                 Temas Transversais
               </label>
               <select
                 id="filter-theme"
                 value={selectedTheme || ''}
                 onChange={(e) => onSelectTheme && onSelectTheme(e.target.value || undefined)}
-                className="w-full px-3 py-1.5 bg-[#121115] border border-[#2B2735] rounded-lg text-xs sm:text-sm text-[#F4EFEA] focus:border-[#E05347] focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none transition-colors"
+                className="w-full px-3 py-1.5 bg-surface-sunken border border-stroke-subtle rounded-lg text-xs sm:text-sm text-[var(--color-text-primary)] focus:border-stroke-accent focus-visible:ring-2 focus-visible:ring-accent outline-none transition-colors"
               >
                 <option value="">Todos os Temas</option>
                 {THEMES.map((t) => (
@@ -246,14 +246,14 @@ export function FilterBar({
 
             {/* Seletor de Ordenação */}
             <div className="space-y-1">
-              <label htmlFor="filter-sort" className="block text-xs font-medium text-[#9C96A2]">
+              <label htmlFor="filter-sort" className="block text-xs font-medium text-[var(--color-text-secondary)]">
                 Ordenação
               </label>
               <select
                 id="filter-sort"
                 value={sortBy}
                 onChange={(e) => onSelectSortBy(e.target.value as CatalogSortBy)}
-                className="w-full px-3 py-1.5 bg-[#121115] border border-[#2B2735] rounded-lg text-xs sm:text-sm text-[#F4EFEA] focus:border-[#E05347] focus-visible:ring-2 focus-visible:ring-[#E05347] outline-none transition-colors"
+                className="w-full px-3 py-1.5 bg-surface-sunken border border-stroke-subtle rounded-lg text-xs sm:text-sm text-[var(--color-text-primary)] focus:border-stroke-accent focus-visible:ring-2 focus-visible:ring-accent outline-none transition-colors"
               >
                 <option value="relevance">Mais Relevantes</option>
                 <option value="title">Título (A-Z)</option>
@@ -262,10 +262,10 @@ export function FilterBar({
           </div>
 
           {/* Rodapé do Drawer: Totalizador e Ações */}
-          <div className="flex items-center justify-between pt-2 border-t border-[#2B2735] text-xs">
+          <div className="flex items-center justify-between pt-2 border-t border-stroke-subtle text-xs">
             <div>
               {typeof totalResults === 'number' && (
-                <span className="text-[#9C96A2]">
+                <span className="text-[var(--color-text-secondary)]">
                   {totalResults === 1 ? '1 obra encontrada' : `${totalResults} obras encontradas`}
                 </span>
               )}
@@ -276,7 +276,7 @@ export function FilterBar({
                 <button
                   type="button"
                   onClick={onClearFilters}
-                  className="text-[#E05347] hover:underline focus-visible:ring-2 focus-visible:ring-[#E05347] rounded outline-none font-medium"
+                  className="text-accent hover:underline focus-visible:ring-2 focus-visible:ring-accent rounded outline-none font-medium"
                 >
                   Limpar filtros
                 </button>
@@ -284,7 +284,7 @@ export function FilterBar({
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(false)}
-                className="text-[#9C96A2] hover:text-[#F4EFEA] transition-colors"
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-accent rounded outline-none"
               >
                 Recolher
               </button>

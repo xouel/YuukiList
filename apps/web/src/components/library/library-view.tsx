@@ -449,14 +449,14 @@ export function LibraryView() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-[#1A1820] border border-[#E05347]/40 text-[#F4EFEA] text-sm shadow-2xl shadow-black/80 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-surface-raised border border-accent/40 text-[var(--color-text-primary)] text-sm shadow-2xl shadow-black/80 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
         >
-          <span className="w-2 h-2 rounded-full bg-[#E05347]" />
+          <span className="w-2 h-2 rounded-full bg-accent" />
           <span>{toastMessage}</span>
           <button
             type="button"
             onClick={() => setToastMessage(null)}
-            className="text-[#9C96A2] hover:text-[#F4EFEA] ml-2 text-xs"
+            className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] ml-2 text-xs"
           >
             ✕
           </button>
@@ -468,14 +468,14 @@ export function LibraryView() {
 
       {/* Alternador de Visão Principal: Acervo vs Histórico & Diário */}
       <div className="flex items-center justify-between gap-4 pb-2">
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#1A1820] border border-[#2B2735]">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-raised border border-stroke-subtle">
           <button
             type="button"
             onClick={() => setViewMode('COLLECTION')}
-            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
+            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all focus-visible:ring-2 focus-visible:ring-accent ${
               viewMode === 'COLLECTION'
-                ? 'bg-[#E05347] text-white shadow-sm'
-                : 'text-[#9C96A2] hover:text-[#F4EFEA] hover:bg-white/5'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay'
             }`}
           >
             Acervo
@@ -483,17 +483,17 @@ export function LibraryView() {
           <button
             type="button"
             onClick={() => setViewMode('DIARY')}
-            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-all flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-accent ${
               viewMode === 'DIARY'
-                ? 'bg-[#E05347] text-white shadow-sm'
-                : 'text-[#9C96A2] hover:text-[#F4EFEA] hover:bg-white/5'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay'
             }`}
           >
             <span>Histórico & Diário</span>
             {diaryEvents.length > 0 && (
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                  viewMode === 'DIARY' ? 'bg-black/30 text-white' : 'bg-[#2B2735] text-[#9C96A2]'
+                  viewMode === 'DIARY' ? 'bg-black/30 text-white' : 'bg-surface-sunken text-[var(--color-text-secondary)]'
                 }`}
               >
                 {diaryEvents.length}
@@ -508,8 +508,8 @@ export function LibraryView() {
         <div className="space-y-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="font-serif text-xl font-normal text-[#F4EFEA]">Linha do Tempo Pessoal</h2>
-              <p className="text-xs text-[#9C96A2] font-light">
+              <h2 className="font-serif text-xl font-normal text-[var(--color-text-primary)]">Linha do Tempo Pessoal</h2>
+              <p className="text-xs text-[var(--color-text-secondary)] font-light">
                 Registro cronológico independente das suas ações, reflexões e memórias de consumo.
               </p>
             </div>
@@ -521,7 +521,7 @@ export function LibraryView() {
                   setSelectedMediaForNote(null);
                   setIsNoteModalOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-[#E05347] text-white hover:bg-[#c94539] transition-all shadow-md shadow-[#E05347]/20"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-accent text-white hover:opacity-90 transition-all shadow-md shadow-accent/20 focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <span>+</span>
                 <span>Nova Anotação</span>
@@ -568,7 +568,7 @@ export function LibraryView() {
           ) : items.length === 0 ? (
             /* Estado Vazio Convidativo no Padrão Asian Editorial */
             <div className="py-16 px-4 text-center max-w-lg mx-auto my-8">
-              <div className="w-14 h-14 rounded-full bg-[#1A1820] border border-[#2B2735] flex items-center justify-center mx-auto mb-4 text-[#E05347]">
+              <div className="w-14 h-14 rounded-full bg-surface-raised border border-stroke-subtle flex items-center justify-center mx-auto mb-4 text-accent">
                 <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
@@ -578,14 +578,14 @@ export function LibraryView() {
                   />
                 </svg>
               </div>
-              <h2 className="font-serif text-2xl font-normal text-[#F4EFEA]">Sua biblioteca ainda está vazia</h2>
-              <p className="text-sm text-[#9C96A2] mt-2 max-w-sm mx-auto font-light">
+              <h2 className="font-serif text-2xl font-normal text-[var(--color-text-primary)]">Sua biblioteca ainda está vazia</h2>
+              <p className="text-sm text-[var(--color-text-secondary)] mt-2 max-w-sm mx-auto font-light">
                 Explore nosso catálogo completo com doramas, filmes, animes e mangás e adicione suas primeiras obras para começar a acompanhar!
               </p>
               <div className="mt-6">
                 <a
                   href="/explore"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#E05347] hover:bg-[#c94539] rounded-xl transition-all shadow-md shadow-[#E05347]/20 focus-visible:ring-2 focus-visible:ring-[#E05347]"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-accent hover:opacity-90 rounded-xl transition-all shadow-md shadow-accent/20 focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   Explorar Catálogo
                 </a>

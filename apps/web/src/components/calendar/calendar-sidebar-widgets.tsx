@@ -65,59 +65,59 @@ export function CalendarSidebarWidgets({
   return (
     <aside aria-label="Painel lateral de widgets do calendário" className="space-y-6">
       {/* Widget 1: Relógio de Fuso Duplo (Local vs Tóquio JST) */}
-      <section className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] space-y-3.5">
+      <section className="p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
               Fuso de Transmissão
             </h2>
           </div>
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#24202C] text-zinc-400 border border-[#2B2735]">
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-sunken text-[var(--color-text-secondary)] border border-stroke-subtle">
             AO VIVO
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-2.5 pt-1">
           {/* Fuso Local */}
-          <div className="p-2.5 rounded-lg bg-[#24202C] border border-[#2B2735] text-center">
-            <span className="block text-[11px] font-medium text-zinc-400">
+          <div className="p-2.5 rounded-lg bg-surface-sunken border border-stroke-subtle text-center">
+            <span className="block text-[11px] font-medium text-[var(--color-text-secondary)]">
               {dualTimes.localLabel}
             </span>
-            <span className="block text-xl font-bold font-mono text-[#F4EFEA] mt-1">
+            <span className="block text-xl font-bold font-mono text-[var(--color-text-primary)] mt-1">
               {dualTimes.localTime}
             </span>
           </div>
 
           {/* Fuso Tóquio JST */}
-          <div className="p-2.5 rounded-lg bg-[#24202C] border border-[#E05347]/30 text-center">
-            <span className="block text-[11px] font-medium text-[#E05347]">
+          <div className="p-2.5 rounded-lg bg-surface-sunken border border-accent/30 text-center">
+            <span className="block text-[11px] font-medium text-accent">
               {dualTimes.jstLabel}
             </span>
-            <span className="block text-xl font-bold font-mono text-[#F4EFEA] mt-1">
+            <span className="block text-xl font-bold font-mono text-[var(--color-text-primary)] mt-1">
               {dualTimes.jstTime}
             </span>
           </div>
         </div>
 
-        <p className="text-[11px] text-zinc-500 leading-tight">
+        <p className="text-[11px] text-[var(--color-text-secondary)] leading-tight">
           Lançamentos simultâneos no Japão transmitem tipicamente às 23:00 - 24:00 JST.
         </p>
       </section>
 
       {/* Widget 2: Mais Esperados da Semana */}
-      <section className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] space-y-3">
+      <section className="p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
             Mais Esperados
           </h2>
-          <span className="text-[11px] text-zinc-500 font-mono">
+          <span className="text-[11px] text-[var(--color-text-secondary)] font-mono">
             {highlights.length} em destaque
           </span>
         </div>
 
         {highlights.length === 0 ? (
-          <p className="text-xs text-zinc-500 py-3 text-center">
+          <p className="text-xs text-[var(--color-text-secondary)] py-3 text-center">
             Nenhuma obra em destaque para o período.
           </p>
         ) : (
@@ -125,11 +125,11 @@ export function CalendarSidebarWidgets({
             {highlights.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center gap-3 p-2 rounded-lg bg-[#24202C] border border-[#2B2735] hover:border-[#3B3647] transition-colors group"
+                className="flex items-center gap-3 p-2 rounded-lg bg-surface-sunken border border-stroke-subtle hover:border-stroke-accent transition-colors group"
               >
                 <Link
                   href={`/items/${item.mediaSlug}`}
-                  className="w-9 h-12 rounded overflow-hidden bg-[#1A1820] flex-shrink-0 flex items-center justify-center text-[9px] text-zinc-500 font-bold border border-[#2B2735]"
+                  className="w-9 h-12 rounded overflow-hidden bg-surface-canvas flex-shrink-0 flex items-center justify-center text-[9px] text-[var(--color-text-secondary)] font-bold border border-stroke-subtle focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   {item.coverImage ? (
                     <img
@@ -146,14 +146,14 @@ export function CalendarSidebarWidgets({
                 <div className="min-w-0 flex-1">
                   <Link
                     href={`/items/${item.mediaSlug}`}
-                    className="block text-xs font-serif font-bold text-[#F4EFEA] hover:text-[#E05347] transition-colors truncate"
+                    className="block text-xs font-serif font-bold text-[var(--color-text-primary)] hover:text-accent transition-colors truncate focus-visible:ring-2 focus-visible:ring-accent"
                   >
                     {item.mediaTitle}
                   </Link>
-                  <p className="text-[10px] text-zinc-400 truncate mt-0.5">
+                  <p className="text-[10px] text-[var(--color-text-secondary)] truncate mt-0.5">
                     {item.subtitle}
                   </p>
-                  <span className="inline-block text-[10px] font-mono text-[#E05347] font-semibold mt-0.5">
+                  <span className="inline-block text-[10px] font-mono text-accent font-semibold mt-0.5">
                     {item.formattedTime}
                   </span>
                 </div>
@@ -164,12 +164,12 @@ export function CalendarSidebarWidgets({
       </section>
 
       {/* Widget 3: Exportação de Calendário (.ics RFC 5545) */}
-      <section className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] space-y-3">
+      <section className="p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-3">
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
             Exportar Agenda
           </h2>
-          <p className="text-[11px] text-zinc-400 mt-1 leading-snug">
+          <p className="text-[11px] text-[var(--color-text-secondary)] mt-1 leading-snug">
             Sincronize esta programação com seu Google Calendar, Apple Calendar ou Outlook.
           </p>
         </div>
@@ -178,10 +178,10 @@ export function CalendarSidebarWidgets({
           type="button"
           onClick={handleDownloadIcs}
           disabled={isExporting || events.length === 0}
-          className="w-full min-h-[44px] px-4 py-2.5 rounded-lg text-xs font-semibold bg-[#24202C] hover:bg-[#2F2A3A] text-[#F4EFEA] border border-[#2B2735] hover:border-[#E05347]/50 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group focus:outline-none focus:ring-2 focus:ring-[#E05347]/40"
+          className="w-full min-h-[44px] px-4 py-2.5 rounded-lg text-xs font-semibold bg-surface-sunken hover:bg-surface-overlay text-[var(--color-text-primary)] border border-stroke-subtle hover:border-stroke-accent transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           <svg
-            className="w-4 h-4 text-[#E05347] group-hover:scale-110 transition-transform"
+            className="w-4 h-4 text-accent group-hover:scale-110 transition-transform"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

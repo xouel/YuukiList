@@ -46,7 +46,7 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
       case DateReliability.UNCONFIRMED:
       default:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-[#1F1C27] text-zinc-400 border border-[#2B2735]">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-surface-sunken text-[var(--color-text-secondary)] border border-stroke-subtle">
             Não Confirmada
           </span>
         );
@@ -91,15 +91,15 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
   return (
     <article
       data-testid={`calendar-event-${event.id}`}
-      className="group relative flex flex-col md:flex-row items-start md:items-center justify-between p-3.5 sm:p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] hover:border-[#3B3647] transition-all hover:bg-[#1E1B25] gap-4"
+      className="group relative flex flex-col md:flex-row items-start md:items-center justify-between p-3.5 sm:p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top hover:border-stroke-accent transition-all hover:bg-surface-overlay gap-4"
     >
       <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1 w-full">
         {/* Coluna de Horário Dedicada */}
-        <div className="w-16 sm:w-20 flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-lg bg-[#24202C] border border-[#2B2735] text-center">
-          <span className="text-xs sm:text-sm font-bold font-mono text-[#E05347]">
+        <div className="w-16 sm:w-20 flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-lg bg-surface-sunken border border-stroke-subtle text-center">
+          <span className="text-xs sm:text-sm font-bold font-mono text-accent">
             {formattedTime}
           </span>
-          <span className="text-[10px] text-zinc-500 font-mono mt-0.5">
+          <span className="text-[10px] text-[var(--color-text-secondary)] font-mono mt-0.5">
             {event.originRegion || 'LOCAL'}
           </span>
         </div>
@@ -107,7 +107,7 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
         {/* Capa */}
         <Link
           href={`/items/${event.mediaSlug}`}
-          className="w-12 h-16 sm:w-14 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-[#24202C] border border-[#2B2735] flex items-center justify-center text-xs text-zinc-500 font-semibold shadow-inner"
+          className="w-12 h-16 sm:w-14 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-surface-canvas border border-stroke-subtle flex items-center justify-center text-xs text-[var(--color-text-secondary)] font-semibold shadow-inner focus-visible:ring-2 focus-visible:ring-accent"
         >
           {event.coverImage ? (
             <img
@@ -117,7 +117,7 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
               loading="lazy"
             />
           ) : (
-            <span className="text-[10px] tracking-wider text-zinc-500 font-bold">YUUKI</span>
+            <span className="text-[10px] tracking-wider text-[var(--color-text-secondary)] font-bold">YUUKI</span>
           )}
         </Link>
 
@@ -127,7 +127,7 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
           <div className="flex flex-wrap items-center gap-2 mb-1">
             {reliabilityBadge}
             {event.isUserTracking && (
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#262135] text-purple-300 border border-purple-800/40">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-media-anime/15 text-media-anime border border-media-anime/30">
                 Acompanhando
               </span>
             )}
@@ -136,34 +136,33 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
           {/* Título Editorial */}
           <Link
             href={`/items/${event.mediaSlug}`}
-            className="block text-base font-serif font-bold text-[#F4EFEA] hover:text-[#E05347] transition-colors truncate"
+            className="block text-base font-serif font-bold text-[var(--color-text-primary)] hover:text-accent transition-colors truncate focus-visible:ring-2 focus-visible:ring-accent"
           >
             {event.mediaTitle}
           </Link>
 
           {/* Subtítulo Despoluído */}
-          <p className="text-xs text-zinc-400 mt-0.5 truncate">
+          <p className="text-xs text-[var(--color-text-secondary)] mt-0.5 truncate">
             {subtitle}
             {event.sourceName && (
-              <span className="text-zinc-500 ml-2">Fonte: {event.sourceName}</span>
+              <span className="text-[var(--color-text-secondary)]/70 ml-2">Fonte: {event.sourceName}</span>
             )}
           </p>
         </div>
       </div>
 
       {/* Bloco Lateral de Ações Táteis */}
-      <div className="flex items-center gap-2 w-full md:w-auto justify-end border-t md:border-t-0 pt-2.5 md:pt-0 border-[#2B2735]">
-        {/* Ação +1 Visto (se em acompanhamento ativo) */}
+      <div className="flex items-center gap-2 w-full md:w-auto justify-end border-t md:border-t-0 pt-2.5 md:pt-0 border-stroke-subtle">
         {event.isUserTracking && (
           <button
             type="button"
             onClick={handleMarkWatched}
             disabled={isWatched || isUpdatingProgress}
             aria-label={isWatched ? 'Episódio já marcado como visto' : 'Marcar +1 visto'}
-            className={`min-h-[44px] min-w-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+            className={`min-h-[44px] min-w-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               isWatched
                 ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/50 cursor-default'
-                : 'bg-[#24202C] hover:bg-[#2F2A3A] text-zinc-200 border border-[#2B2735] hover:border-emerald-700/50 hover:text-emerald-300'
+                : 'bg-surface-sunken hover:bg-surface-overlay text-[var(--color-text-primary)] border border-stroke-subtle hover:border-emerald-700/50 hover:text-emerald-300'
             }`}
           >
             {isWatched ? (
@@ -184,22 +183,22 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
           type="button"
           aria-label={isPlanned ? 'Remover da agenda' : 'Lembrar lançamento na agenda'}
           onClick={() => setIsPlanned(!isPlanned)}
-          className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+          className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
             isPlanned
-              ? 'bg-[#E05347]/20 text-[#E05347] border border-[#E05347]/40 hover:bg-[#E05347]/30'
-              : 'bg-[#24202C] text-zinc-300 border border-[#2B2735] hover:border-[#3B3647] hover:text-[#F4EFEA]'
+              ? 'bg-accent/20 text-accent border border-accent/40 hover:bg-accent/30'
+              : 'bg-surface-sunken text-[var(--color-text-secondary)] border border-stroke-subtle hover:border-stroke-accent hover:text-[var(--color-text-primary)]'
           }`}
         >
           {isPlanned ? (
             <>
-              <svg className="w-3.5 h-3.5 text-[#E05347]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+              <svg className="w-3.5 h-3.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
               <span>Na Agenda</span>
             </>
           ) : (
             <>
-              <svg className="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <svg className="w-3.5 h-3.5 text-[var(--color-text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
               <span>Lembrar</span>

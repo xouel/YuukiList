@@ -43,7 +43,7 @@ export function ConsumptionCadenceBanner({
   const areaD = `${pathD} L ${width} ${height} L 0 ${height} Z`;
 
   return (
-    <div className="w-full rounded-2xl bg-[#1A1820] border border-[#2B2735] p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 mt-6 shadow-xl shadow-black/40">
+    <div className="w-full rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 mt-6 shadow-xl shadow-black/40">
       {/* Lado Esquerdo: Identificação e Resumo dos 30 Dias */}
       <div className="flex items-start sm:items-center gap-3.5">
         <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5 sm:mt-0">
@@ -52,10 +52,10 @@ export function ConsumptionCadenceBanner({
           </svg>
         </div>
         <div>
-          <h3 className="font-serif text-base sm:text-lg font-medium text-[#F4EFEA] flex items-center gap-2">
+          <h3 className="font-serif text-base sm:text-lg font-medium text-[var(--color-text-primary)] flex items-center gap-2">
             Cadência de Consumo
           </h3>
-          <p className="text-xs text-[#9C96A2] font-light mt-0.5">
+          <p className="text-xs text-[var(--color-text-secondary)] font-light mt-0.5">
             {data.totalEpisodes30Days} episódios e {data.totalChapters30Days} capítulos registrados nos últimos 30 dias
           </p>
         </div>
@@ -65,7 +65,7 @@ export function ConsumptionCadenceBanner({
       <div className="flex flex-wrap items-center justify-between md:justify-end gap-5">
         {/* Média Diária */}
         <div className="flex flex-col">
-          <span className="text-[10px] text-[#9C96A2] uppercase tracking-wider font-semibold">
+          <span className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-semibold">
             MÉDIA DIÁRIA
           </span>
           <span className="text-lg font-bold text-emerald-400 font-mono leading-tight">
@@ -82,15 +82,15 @@ export function ConsumptionCadenceBanner({
           >
             <defs>
               <linearGradient id="sparklineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#9D8DF1" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#9D8DF1" stopOpacity="0.0" />
+                <stop offset="0%" stopColor="var(--accent-media-anime)" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="var(--accent-media-anime)" stopOpacity="0.0" />
               </linearGradient>
             </defs>
             <path d={areaD} fill="url(#sparklineGrad)" />
             <path
               d={pathD}
               fill="none"
-              stroke="#9D8DF1"
+              stroke="var(--accent-media-anime)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -102,9 +102,9 @@ export function ConsumptionCadenceBanner({
         <button
           type="button"
           onClick={onExportCsv}
-          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-[#2B2735]/70 hover:bg-[#2B2735] text-xs font-semibold text-[#F4EFEA] border border-[#2B2735] hover:border-[#F4EFEA]/30 transition-all flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-[#9D8DF1]"
+          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-surface-sunken hover:bg-surface-overlay text-xs font-semibold text-[var(--color-text-primary)] border border-stroke-subtle hover:border-stroke-accent transition-all flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-accent"
         >
-          <svg className="w-3.5 h-3.5 text-[#9C96A2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-3.5 h-3.5 text-[var(--color-text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
           <span>Exportar CSV</span>

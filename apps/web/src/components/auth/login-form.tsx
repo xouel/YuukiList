@@ -3,6 +3,7 @@
 /**
  * YuukiList — Formulário de Login de Usuário
  * Conforme Requisito: User Login Interface and Session Recovery
+ * Paleta Mineral Asian Editorial: Acento Carmim (#E05347)
  */
 
 import React, { useState, useCallback, useMemo, type FormEvent, type FocusEvent } from 'react';
@@ -98,10 +99,10 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
   const formBody = (
     <>
       <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-serif font-bold text-[#F4EFEA] tracking-tight mb-1.5">
+        <h1 className="text-xl sm:text-2xl font-serif font-bold text-[var(--color-text-primary)] tracking-tight mb-1.5">
           Acessar Conta
         </h1>
-        <p className="text-xs sm:text-sm text-zinc-400">
+        <p className="text-xs sm:text-sm text-[var(--color-text-secondary)]">
           Informe suas credenciais para gerenciar sua biblioteca e acompanhar estreias.
         </p>
       </div>
@@ -134,7 +135,7 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
         <div>
           <label
             htmlFor="identifier"
-            className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-1.5"
           >
             E-mail ou Nome de Usuário
           </label>
@@ -149,10 +150,10 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
             onBlur={handleBlur('identifier')}
             aria-invalid={Boolean(touched.identifier && errors.identifier)}
             aria-describedby={touched.identifier && errors.identifier ? 'identifier-error' : undefined}
-            className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-[#24202C] border text-[#F4EFEA] placeholder-zinc-500 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+            className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-surface-sunken border text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/60 text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               touched.identifier && errors.identifier
                 ? 'border-red-500/80 focus:border-red-500'
-                : 'border-[#2B2735] focus:border-[#E05347]'
+                : 'border-stroke-subtle focus:border-stroke-accent'
             }`}
             placeholder="usuario ou seu.email@exemplo.com"
           />
@@ -166,7 +167,7 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
         <div>
           <label
             htmlFor="password"
-            className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-1.5"
           >
             Senha
           </label>
@@ -182,10 +183,10 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
               onBlur={handleBlur('password')}
               aria-invalid={Boolean(touched.password && errors.password)}
               aria-describedby={touched.password && errors.password ? 'password-error' : undefined}
-              className={`w-full min-h-[44px] pl-3.5 pr-12 py-2.5 rounded-xl bg-[#24202C] border text-[#F4EFEA] placeholder-zinc-500 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+              className={`w-full min-h-[44px] pl-3.5 pr-12 py-2.5 rounded-xl bg-surface-sunken border text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/60 text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                 touched.password && errors.password
                   ? 'border-red-500/80 focus:border-red-500'
-                  : 'border-[#2B2735] focus:border-[#E05347]'
+                  : 'border-stroke-subtle focus:border-stroke-accent'
               }`}
               placeholder="Sua senha secreta"
             />
@@ -193,7 +194,7 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? 'Ocultar senha' : 'Exibir senha'}
-              className="absolute right-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 rounded-lg cursor-pointer"
+              className="absolute right-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg cursor-pointer"
             >
               {showPassword ? (
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -217,7 +218,7 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full min-h-[44px] mt-2 py-2.5 px-6 rounded-xl font-semibold text-sm text-white bg-[#E05347] hover:bg-[#E05347]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-[#E05347]/20 flex items-center justify-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40"
+          className="w-full min-h-[44px] mt-2 py-2.5 px-6 rounded-xl font-semibold text-sm text-white bg-accent hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-accent/20 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           {isSubmitting ? (
             <>
@@ -237,18 +238,18 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
         </button>
       </form>
 
-      <div className="mt-6 text-center text-xs text-zinc-400">
+      <div className="mt-6 text-center text-xs text-[var(--color-text-secondary)]">
         Ainda não tem conta?{' '}
         {onSwitchToRegister ? (
           <button
             type="button"
             onClick={onSwitchToRegister}
-            className="text-[#E05347] hover:underline font-semibold cursor-pointer"
+            className="text-accent hover:underline font-semibold cursor-pointer focus-visible:ring-2 focus-visible:ring-accent"
           >
             Criar conta agora
           </button>
         ) : (
-          <Link href="/register" className="text-[#E05347] hover:underline font-semibold">
+          <Link href="/register" className="text-accent hover:underline font-semibold focus-visible:ring-2 focus-visible:ring-accent">
             Criar conta agora
           </Link>
         )}
@@ -261,7 +262,7 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
   }
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 sm:p-8 rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-2xl">
+    <div className="w-full max-w-md mx-auto p-6 sm:p-8 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top shadow-2xl">
       {formBody}
     </div>
   );

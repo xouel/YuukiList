@@ -3,6 +3,7 @@
 /**
  * YuukiList — Formulário de Cadastro de Conta
  * Conforme Requisito: User Registration Interface and Client-Side Validation
+ * Paleta Mineral Asian Editorial: Acento Carmim (#E05347)
  */
 
 import React, { useState, useCallback, type FormEvent, type FocusEvent } from 'react';
@@ -95,10 +96,10 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
   const formBody = (
     <>
       <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-serif font-bold text-[#F4EFEA] tracking-tight mb-1.5">
+        <h1 className="text-xl sm:text-2xl font-serif font-bold text-[var(--color-text-primary)] tracking-tight mb-1.5">
           Criar sua Conta
         </h1>
-        <p className="text-xs sm:text-sm text-zinc-400">
+        <p className="text-xs sm:text-sm text-[var(--color-text-secondary)]">
           Junte-se ao YuukiList e organize sua jornada pelo entretenimento asiático.
         </p>
       </div>
@@ -129,7 +130,7 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
+          <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-1.5">
             E-mail
           </label>
           <input
@@ -143,10 +144,10 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
             onBlur={handleBlur('email')}
             aria-invalid={Boolean(touched.email && errors.email)}
             aria-describedby={touched.email && errors.email ? 'email-error' : undefined}
-            className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-[#24202C] border text-[#F4EFEA] placeholder-zinc-500 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+            className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-surface-sunken border text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/60 text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               touched.email && errors.email
                 ? 'border-red-500/80 focus:border-red-500'
-                : 'border-[#2B2735] focus:border-[#E05347]'
+                : 'border-stroke-subtle focus:border-stroke-accent'
             }`}
             placeholder="seu.email@exemplo.com"
           />
@@ -158,7 +159,7 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
         </div>
 
         <div>
-          <label htmlFor="username" className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
+          <label htmlFor="username" className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-1.5">
             Nome de Usuário
           </label>
           <input
@@ -172,10 +173,10 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
             onBlur={handleBlur('username')}
             aria-invalid={Boolean(touched.username && errors.username)}
             aria-describedby={touched.username && errors.username ? 'username-error' : undefined}
-            className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-[#24202C] border text-[#F4EFEA] placeholder-zinc-500 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+            className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-surface-sunken border text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/60 text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               touched.username && errors.username
                 ? 'border-red-500/80 focus:border-red-500'
-                : 'border-[#2B2735] focus:border-[#E05347]'
+                : 'border-stroke-subtle focus:border-stroke-accent'
             }`}
             placeholder="seu_usuario"
           />
@@ -187,7 +188,7 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
+          <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-1.5">
             Senha
           </label>
           <div className="relative">
@@ -202,10 +203,10 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
               onBlur={handleBlur('password')}
               aria-invalid={Boolean(touched.password && errors.password)}
               aria-describedby={touched.password && errors.password ? 'password-error' : undefined}
-              className={`w-full min-h-[44px] pl-3.5 pr-12 py-2.5 rounded-xl bg-[#24202C] border text-[#F4EFEA] placeholder-zinc-500 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 ${
+              className={`w-full min-h-[44px] pl-3.5 pr-12 py-2.5 rounded-xl bg-surface-sunken border text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/60 text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                 touched.password && errors.password
                   ? 'border-red-500/80 focus:border-red-500'
-                  : 'border-[#2B2735] focus:border-[#E05347]'
+                  : 'border-stroke-subtle focus:border-stroke-accent'
               }`}
               placeholder="Mínimo 8 caracteres"
             />
@@ -213,7 +214,7 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? 'Ocultar senha' : 'Exibir senha'}
-              className="absolute right-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none focus:ring-2 focus:ring-[#E05347]/40 rounded-lg cursor-pointer"
+              className="absolute right-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg cursor-pointer"
             >
               {showPassword ? (
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -237,7 +238,7 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full min-h-[44px] mt-2 py-2.5 px-6 rounded-xl font-semibold text-sm text-white bg-[#E05347] hover:bg-[#E05347]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-[#E05347]/20 flex items-center justify-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05347]/40"
+          className="w-full min-h-[44px] mt-2 py-2.5 px-6 rounded-xl font-semibold text-sm text-white bg-accent hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-accent/20 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           {isSubmitting ? (
             <>
@@ -257,18 +258,18 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
         </button>
       </form>
 
-      <div className="mt-6 text-center text-xs text-zinc-400">
+      <div className="mt-6 text-center text-xs text-[var(--color-text-secondary)]">
         Já possui uma conta?{' '}
         {onSwitchToLogin ? (
           <button
             type="button"
             onClick={onSwitchToLogin}
-            className="text-[#E05347] hover:underline font-semibold cursor-pointer"
+            className="text-accent hover:underline font-semibold cursor-pointer focus-visible:ring-2 focus-visible:ring-accent"
           >
             Entrar agora
           </button>
         ) : (
-          <Link href="/login" className="text-[#E05347] hover:underline font-semibold">
+          <Link href="/login" className="text-accent hover:underline font-semibold focus-visible:ring-2 focus-visible:ring-accent">
             Entrar agora
           </Link>
         )}
@@ -281,7 +282,7 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
   }
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 sm:p-8 rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-2xl">
+    <div className="w-full max-w-md mx-auto p-6 sm:p-8 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top shadow-2xl">
       {formBody}
     </div>
   );
