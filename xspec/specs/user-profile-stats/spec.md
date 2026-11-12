@@ -25,7 +25,7 @@ O sistema SHALL consolidar metricas analiticas de consumo apresentando-as em for
 - **THEN** os dados SHALL ser estruturados de forma compacta com rotulos humanizados e paleta mineral Asian Editorial
 
 ### Requirement: Profile Showcase and Activity Feed Privacy
-A interface do perfil SHALL renderizar a vitrine de obras favoritas com prioridade visual imediatamente abaixo do cabecalho de identificacao, utilizando cards em proporcao editorial 2:3 e mantendo as anotacoes privadas restritas ao titular.
+A interface do perfil SHALL renderizar a identificação do usuário sem selos decorativos vazios ('Colecionador', 'Acervo Privado') e sem emojis em botões de ação, posicionando a vitrine de favoritos com prioridade visual e mantendo as anotações privadas restritas ao titular.
 
 #### Scenario: Exibicao da vitrine de obras favoritas no perfil
 - **GIVEN** um usuario autenticado com obras sinalizadas com o indicador de favorito
@@ -46,3 +46,8 @@ A interface do perfil SHALL renderizar a vitrine de obras favoritas com priorida
 - **GIVEN** um usuario que ainda nao favoritou nenhuma obra
 - **WHEN** o perfil e renderizado na interface
 - **THEN** o sistema SHALL exibir convite visual acolhedor orientado ao catalogo sem telas de erro
+
+#### Scenario: Identificacao do usuario sem selos decorativos vazios e sem emojis
+- **GIVEN** a página de perfil renderizada na rota /profile
+- **WHEN** o cabeçalho de perfil do usuário é exibido
+- **THEN** a interface SHALL omitir selos decorativos vazios como 'Colecionador' e 'Acervo Privado' e não conter emojis em botões de compartilhamento

@@ -25,9 +25,9 @@ export function BentoSidebar({
   const activeDays = [true, true, true, false, true, true, false];
 
   return (
-    <aside aria-label="Painel Lateral Bento" className="space-y-5">
-      {/* 1. CARTÃO: RESUMO SEMANAL */}
-      <div className="p-5 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-4">
+    <aside aria-label="Painel Lateral Bento" className="rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top divide-y divide-stroke-subtle">
+      {/* 1. SEÇÃO: RESUMO SEMANAL */}
+      <div className="p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,7 +43,7 @@ export function BentoSidebar({
           <div className="pr-4">
             <span className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider block">Episódios</span>
             <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-2xl font-bold font-mono tabular-nums text-[var(--color-text-primary)]">{totalEpisodesWeekly}</span>
+              <span className="text-2xl font-bold tabular-nums text-[var(--color-text-primary)]">{totalEpisodesWeekly}</span>
               <span className="text-[10px] text-emerald-400 font-medium">ritmo alto</span>
             </div>
           </div>
@@ -51,7 +51,7 @@ export function BentoSidebar({
           <div className="pl-4">
             <span className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider block">Horas Vistas</span>
             <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-2xl font-bold font-mono tabular-nums text-[var(--color-text-primary)]">{totalHoursWeekly}h</span>
+              <span className="text-2xl font-bold tabular-nums text-[var(--color-text-primary)]">{totalHoursWeekly}h</span>
               <span className="text-[10px] text-[var(--color-text-secondary)]">estimadas</span>
             </div>
           </div>
@@ -76,7 +76,7 @@ export function BentoSidebar({
                       isActive ? 'bg-accent' : 'bg-surface-overlay'
                     }`}
                   />
-                  <span className="text-[10px] text-[var(--color-text-muted)] font-mono">{day}</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)]">{day}</span>
                 </div>
               );
             })}
@@ -84,8 +84,8 @@ export function BentoSidebar({
         </div>
       </div>
 
-      {/* 2. CARTÃO: PRÓXIMAS ESTREIAS */}
-      <div className="p-5 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-3">
+      {/* 2. SEÇÃO: PRÓXIMAS ESTREIAS */}
+      <div className="p-5 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,9 +142,9 @@ export function BentoSidebar({
         </div>
       </div>
 
-      {/* 3. CARTÃO: FEED DE ATIVIDADE PESSOAL */}
+      {/* 3. SEÇÃO: FEED DE ATIVIDADE PESSOAL */}
       {isAuthenticated && (
-        <div className="p-5 rounded-2xl bg-surface-raised border border-stroke-subtle shadow-hairline-top space-y-3">
+        <div className="p-5 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,4 +184,3 @@ export function BentoSidebar({
     </aside>
   );
 }
-

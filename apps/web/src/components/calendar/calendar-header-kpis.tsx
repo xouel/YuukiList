@@ -16,13 +16,8 @@ export function CalendarHeaderKpis({
 }: CalendarHeaderKpisProps) {
   return (
     <header className="space-y-6">
-      {/* Linha Superior: Tag de Temporada e Título Editorial */}
-      <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-accent/10 text-accent border border-accent/25">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-          <span>{kpis.seasonTag}</span>
-        </div>
-
+      {/* Título Editorial e Subtítulo */}
+      <div className="space-y-1.5">
         <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[var(--color-text-primary)] tracking-tight">
           Programação Semanal
         </h1>
@@ -48,7 +43,7 @@ export function CalendarHeaderKpis({
             <span className="w-2 h-2 rounded-full bg-accent" />
           </div>
           <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-[var(--color-text-primary)] group-hover:text-accent transition-colors">
+            <span className="text-2xl sm:text-3xl font-bold tabular-nums text-[var(--color-text-primary)] group-hover:text-accent transition-colors">
               {kpis.todayCount}
             </span>
             <span className="text-xs text-[var(--color-text-secondary)] font-medium">
@@ -78,7 +73,7 @@ export function CalendarHeaderKpis({
             </svg>
           </div>
           <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-[var(--color-text-primary)]">
+            <span className="text-2xl sm:text-3xl font-bold tabular-nums text-[var(--color-text-primary)]">
               {kpis.queueCount}
             </span>
             <span className="text-xs text-[var(--color-text-secondary)] font-medium">
@@ -104,7 +99,7 @@ export function CalendarHeaderKpis({
             </svg>
           </div>
           <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-[var(--color-text-primary)]">
+            <span className="text-2xl sm:text-3xl font-bold tabular-nums text-[var(--color-text-primary)]">
               {kpis.weekTotalCount}
             </span>
             <span className="text-xs text-[var(--color-text-secondary)] font-medium">

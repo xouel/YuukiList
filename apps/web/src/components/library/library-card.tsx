@@ -2,7 +2,7 @@
 
 /**
  * YuukiList — Card de Obra na Biblioteca Pessoal (Modo Grade Ledger)
- * Conforme Requisitos: Personal Library View and Layout Toggle & Quick Progress Tracking (R24)
+ * Conforme Requisitos: Personal Library View and Layout Toggle & Quick Progress Tracking (R32)
  */
 
 import React from 'react';
@@ -32,16 +32,6 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   MANHUA: 'Manhuas',
 };
 
-// Paleta Editorial Bimodal / Categoria: Audiovisual Ocre (#D4A373) e Lavanda (#9D8DF1), Impresso Terracota (#D97757)
-const CATEGORY_COLORS: Record<string, string> = {
-  DORAMA: 'bg-media-video/15 text-media-video border-media-video/30',
-  FILME: 'bg-media-video/15 text-media-video border-media-video/30',
-  ANIME: 'bg-media-anime/15 text-media-anime border-media-anime/30',
-  MANGA: 'bg-media-print/15 text-media-print border-media-print/30',
-  MANHWA: 'bg-media-print/15 text-media-print border-media-print/30',
-  MANHUA: 'bg-media-print/15 text-media-print border-media-print/30',
-};
-
 const STATUS_LABELS: Record<string, string> = {
   ASSISTINDO: 'Em andamento',
   LENDO: 'Em andamento',
@@ -65,7 +55,6 @@ export function LibraryCard({
   const media = item.mediaItem;
   const category = media?.category as Category | undefined;
   const categoryName = category ? CATEGORY_DISPLAY_NAMES[category] || category : undefined;
-  const categoryClass = (category && CATEGORY_COLORS[category]) || 'bg-surface-raised text-[var(--color-text-secondary)] border-stroke-subtle';
   const statusLabel = STATUS_LABELS[item.status] || item.status;
   const isCompleted = item.status === 'CONCLUIDO' || item.status === 'ASSISTIDO';
 
@@ -147,7 +136,7 @@ export function LibraryCard({
         {/* Canto Superior Esquerdo: Status Pessoal Sóbrio De-Boxed */}
         <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1 z-10 pointer-events-none">
           <span
-            className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border flex items-center gap-1.5 shadow-sm ${
+            className={`text-[10px] font-medium px-2 py-0.5 rounded border flex items-center gap-1.5 shadow-sm backdrop-blur ${
               isCompleted
                 ? 'bg-surface-canvas/90 text-emerald-400 border-emerald-500/30'
                 : 'bg-surface-canvas/90 text-[var(--color-text-primary)] border-stroke-subtle'
@@ -155,7 +144,7 @@ export function LibraryCard({
           >
             <span
               className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                isCompleted ? 'bg-emerald-400' : 'bg-media-anime'
+                isCompleted ? 'bg-emerald-400' : 'bg-accent'
               }`}
             />
             {statusLabel}
@@ -172,7 +161,7 @@ export function LibraryCard({
               <svg className="w-3 h-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414 0z"
                   clipRule="evenodd"
                 />
               </svg>
@@ -207,17 +196,17 @@ export function LibraryCard({
           </button>
         </div>
 
-        {/* Base da Capa: Categoria e Estúdios */}
+        {/* Base da Capa: Categoria em Cromo Neutro e Nota */}
         <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between z-10 pointer-events-none">
           {category && (
             <span
-              className={`text-[9px] font-bold tracking-wider px-2 py-0.5 rounded border uppercase backdrop-blur shadow-sm ${categoryClass}`}
+              className="text-[9px] font-bold tracking-wider px-2 py-0.5 rounded border border-white/10 uppercase bg-black/60 text-white/90 backdrop-blur shadow-sm"
             >
               {categoryName}
             </span>
           )}
           {typeof (media as any)?.score === 'number' && (media as any).score > 0 && (
-            <span className="text-[10px] font-mono tabular-nums font-bold px-1.5 py-0.5 rounded bg-black/75 text-amber-300 border border-white/10 flex items-center gap-1 backdrop-blur">
+            <span className="text-[10px] tabular-nums font-bold px-1.5 py-0.5 rounded bg-black/75 text-amber-300 border border-white/10 flex items-center gap-1 backdrop-blur">
               ★ {((media as any).score).toFixed(1)}
             </span>
           )}
@@ -230,25 +219,20 @@ export function LibraryCard({
           <h3 className="font-serif font-medium text-base text-[var(--color-text-primary)] line-clamp-1 group-hover:text-accent transition-colors">
             {media?.title || 'Obra sem título'}
           </h3>
-          {media?.originalTitle && (
-            <p className="text-xs text-[var(--color-text-secondary)] line-clamp-1 mt-0.5 opacity-70 font-light">
-              {media.originalTitle}
-            </p>
-          )}
         </div>
 
         {/* Barra Visual Proporcional de Progresso */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)]">
             <span className="font-light text-[11px] uppercase tracking-wider">Progresso</span>
-            <span className="font-medium font-mono tabular-nums text-[var(--color-text-primary)]">{progressText}</span>
+            <span className="font-semibold tabular-nums text-[var(--color-text-primary)]">{progressText}</span>
           </div>
 
           {progressPercentage !== null && (
             <div className="w-full bg-surface-sunken h-1.5 rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-300 ${
-                  isCompleted ? 'bg-emerald-400' : 'bg-gradient-to-r from-media-anime to-accent'
+                  isCompleted ? 'bg-emerald-400' : 'bg-gradient-to-r from-accent to-rose-400'
                 }`}
                 style={{ width: `${progressPercentage}%` }}
               />
@@ -292,7 +276,7 @@ export function LibraryCard({
               onClick={handleIncrement}
               disabled={isMutating}
               aria-label={`Avançar um ${category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA' ? 'capítulo' : 'episódio'} para ${media?.title || 'obra'}`}
-              className="min-w-[44px] min-h-[44px] px-3 inline-flex items-center justify-center rounded-xl bg-media-anime/20 hover:bg-media-anime text-media-anime hover:text-black active:scale-[0.98] border border-media-anime/40 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent"
+              className="min-w-[44px] min-h-[44px] px-3 inline-flex items-center justify-center rounded-xl bg-accent hover:bg-accent/90 text-white active:scale-[0.98] shadow-md shadow-accent/20 transition-all font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent cursor-pointer"
             >
               {isMutating ? (
                 <div className="w-4 h-4 rounded-full border border-current border-t-transparent animate-spin" />

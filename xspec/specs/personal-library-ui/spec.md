@@ -7,7 +7,7 @@ Prover a interface gráfica web da biblioteca pessoal no YuukiList, permitindo a
 ## Requirements
 
 ### Requirement: Personal Library View and Layout Toggle
-O sistema SHALL renderizar a biblioteca pessoal na rota /library com cabeçalho do Ledger em faixa única com divisores verticais sem badges pulsantes, alternância grade/lista, card pontilhado e selos de status sóbrios integrados rente à margem da capa.
+O sistema SHALL renderizar a biblioteca pessoal na rota /library com cabeçalho limpo sem rótulo 'Ledger v2.4' ou indicador redundante 'Sincronizado recentemente', sem contêineres aninhados externos, e com cards em cromo neutro onde as capas conduzem a cor sem tingimento artificial por categoria.
 
 #### Scenario: Exibicao da biblioteca pessoal em modo grade
 - **GIVEN** um usuário autenticado com obras registradas em sua biblioteca
@@ -36,13 +36,18 @@ O sistema SHALL renderizar a biblioteca pessoal na rota /library com cabeçalho 
 
 #### Scenario: Cabecalho do Ledger Pessoal com KPIs consolidados e acao de adicionar obra
 - **GIVEN** um usuário com obras registradas em sua biblioteca
-- **WHEN** a tela do Ledger Pessoal é renderizada
-- **THEN** o sistema SHALL exibir badge editorial de versão, timestamp estável sem badge pulsante (animate-pulse), contadores de Concluídos e Em Andamento em faixa com divisores verticais (divide-x) e botão de Adicionar Obra
+- **WHEN** o cabeçalho da biblioteca é renderizado
+- **THEN** o sistema SHALL omitir o rótulo decorativo 'LEDGER PESSOAL V2.4' e o texto 'Sincronizado recentemente', apresentando título editorial limpo, contadores de Concluídos e Em Andamento em faixa com divisores verticais (divide-x) e botão de Adicionar Obra
 
 #### Scenario: Card pontilhado de registrar nova obra na grade da biblioteca
 - **GIVEN** a visualização da biblioteca pessoal em modo grade
 - **WHEN** a lista de cards é montada
 - **THEN** a interface SHALL incluir ao final um card com borda tracejada de Registrar Nova Obra com botão de Pesquisa Global direcionando para exploração
+
+#### Scenario: Cards da biblioteca em cromo neutro sem tingimento por categoria
+- **GIVEN** uma obra exibida na biblioteca pessoal
+- **WHEN** o card da obra é renderizado
+- **THEN** o sistema SHALL apresentar moldura e metadados em cromo neutro sem tingimento colorido artificial por categoria e sem títulos duplicados fantasmas
 
 ### Requirement: Quick Progress Tracking and Detail Modal
 O sistema SHALL disponibilizar controle de progresso tátil com micro-pressão (:active:scale-[0.98]), números tabulares (tabular-nums), ausência de zoom agressivo (hover:scale-105), barra proporcional, alvo mínimo de 44x44px, popover de estrelas e modal detalhado.
@@ -73,7 +78,7 @@ O sistema SHALL disponibilizar controle de progresso tátil com micro-pressão (
 - **THEN** o sistema SHALL abrir um popover flutuante para escolha de nota de 1 a 10 com persistência imediata e prover botão de atalho para notas do diário
 
 ### Requirement: Library Filtering and Asynchronous States
-O sistema SHALL filtrar itens por abas inteligentes em estilo pílula com taxonomia desambiguada de status do usuário, categorias no plural e contadores integrados, busca local instantânea em tempo real por título, opções de ordenação e estados dedicados de carregamento, acervo vazio, busca sem resultados e erro.
+O sistema SHALL filtrar itens por abas editoriais limpas em linha única para status sem formato de pílula inflada e seletores discretos para categorias, busca local instantânea em tempo real por título, opções de ordenação e estados dedicados de carregamento, acervo vazio, busca sem resultados e erro.
 
 #### Scenario: Filtragem combinada por aba de status e categoria
 - **GIVEN** um usuário com múltiplas obras de diferentes formatos e status
@@ -90,10 +95,10 @@ O sistema SHALL filtrar itens por abas inteligentes em estilo pílula com taxono
 - **WHEN** o carregamento da lista ou a mutação é interrompido por erro de rede
 - **THEN** o sistema SHALL exibir um alerta visual informativo com um botão de nova tentativa
 
-#### Scenario: Abas inteligentes em estilo pilula com taxonomia desambiguada e contadores integrados
+#### Scenario: Abas editoriais limpas com taxonomia desambiguada e contadores integrados
 - **GIVEN** a barra de filtros da biblioteca pessoal
 - **WHEN** as abas de navegação de status são renderizadas
-- **THEN** as opções utilizam taxonomia de usuário como Assistindo / Lendo e Planejados em botões pílula com contadores numéricos discretos
+- **THEN** as opções utilizam taxonomia de usuário em abas editoriais com linha indicadora de estado ativo sem formato de pílula inflada e contadores numéricos discretos
 
 #### Scenario: Busca local instantanea por texto com ordenacao dinamica
 - **GIVEN** uma lista de obras carregadas na biblioteca

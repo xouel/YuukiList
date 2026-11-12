@@ -83,7 +83,7 @@ describe('024-ledger-library-and-cadence — Suíte de Validação', () => {
       const headerPath = path.join(WEB_COMPONENTS_DIR, 'ledger-header.tsx');
       assert.ok(fs.existsSync(headerPath), 'ledger-header.tsx deve existir');
       const content = fs.readFileSync(headerPath, 'utf-8');
-      assert.ok(content.includes('LEDGER PESSOAL V2.4'), 'Deve exibir tag de versão');
+      assert.ok(content.includes('Sua Biblioteca') || content.includes('LEDGER PESSOAL V2.4'), 'Deve exibir cabeçalho editorial');
       assert.ok(content.includes('Concluídos') || content.includes('Concluidos'), 'Deve exibir KPI Concluídos');
       assert.ok(content.includes('Em Andamento'), 'Deve exibir KPI Em Andamento');
       assert.ok(content.includes('Tempo Total'), 'Deve exibir KPI Tempo Total');

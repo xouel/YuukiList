@@ -17,9 +17,9 @@ export function ContinueWatching({
 }: ContinueWatchingProps) {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // Filtra apenas obras ativas (WATCHING ou READING)
+  // Filtra apenas obras ativas (ASSISTINDO ou LENDO)
   const activeItems = items.filter(
-    (item) => item.status === 'WATCHING' || item.status === 'READING'
+    (item) => item.status === 'ASSISTINDO' || item.status === 'LENDO'
   );
 
   const handleIncrement = async (item: LibraryItemDto) => {
@@ -76,7 +76,7 @@ export function ContinueWatching({
             const totalUnits = (media as any)?.totalEpisodes || (media as any)?.totalChapters || null;
             const progress = item.progress;
             const percent = totalUnits ? Math.min(100, Math.round((progress / totalUnits) * 100)) : null;
-            const unitLabel = item.status === 'READING' ? 'Cap.' : 'Ep.';
+            const unitLabel = item.status === 'LENDO' ? 'Cap.' : 'Ep.';
             const isBusy = updatingId === item.id;
 
             return (

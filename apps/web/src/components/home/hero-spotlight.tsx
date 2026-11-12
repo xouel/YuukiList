@@ -44,22 +44,18 @@ export function HeroSpotlight({
   };
 
   return (
-    <article className="relative overflow-hidden rounded-2xl bg-surface-raised border border-stroke-subtle p-6 sm:p-8 shadow-hairline-top">
+    <article aria-label="Destaque Editorial" className="relative overflow-hidden rounded-2xl bg-surface-raised border border-stroke-subtle p-6 sm:p-8 shadow-hairline-top">
       <div className="relative z-10 flex flex-col md:flex-row items-center md:items-stretch justify-between gap-6 sm:gap-8">
         {/* Lado Esquerdo: Metadados, Título, Sinopse e Controles de Progresso */}
         <div className="flex-1 flex flex-col justify-between space-y-4">
           <div>
             {/* Metadados Editoriais Superiores */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent px-2 py-0.5 rounded bg-accent/10 border border-accent/20">
-                {isAuthenticated ? 'Destaque do Diário' : 'Destaque Editorial'}
-              </span>
-              <span className="text-[var(--color-text-muted)] text-xs">•</span>
-              <span className="text-xs font-mono font-medium text-[var(--color-text-secondary)]">
+              <span className="text-xs font-medium text-[var(--color-text-secondary)]">
                 {defaultCategory}
               </span>
               <span className="text-[var(--color-text-muted)] text-xs">•</span>
-              <span className="text-xs font-mono font-semibold text-amber-400 flex items-center gap-1">
+              <span className="text-xs tabular-nums font-semibold text-amber-400 flex items-center gap-1">
                 ★ 9.6 <span className="text-[var(--color-text-muted)] font-normal">(42.1k)</span>
               </span>
             </div>
@@ -76,50 +72,70 @@ export function HeroSpotlight({
           </div>
 
           {/* Área de Ação e Progresso */}
-          {isAuthenticated && libraryItem ? (
-            <div className="pt-2 border-t border-stroke-subtle space-y-3">
-              <div className="flex items-center justify-between text-xs font-medium">
-                <span className="text-[var(--color-text-secondary)]">
-                  Seu Progresso Atual:{' '}
-                  <strong className="text-[var(--color-text-primary)]">
-                    Episódio {currentProgress} de {totalUnits} ({progressPercent}%)
-                  </strong>
-                </span>
-                <span className="text-[11px] px-2 py-0.5 rounded bg-accent/10 text-accent border border-accent/20 font-semibold">
-                  Assistindo
-                </span>
-              </div>
+          {isAuthenticated ? (
+            libraryItem ? (
+              <div className="pt-2 border-t border-stroke-subtle space-y-3">
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <span className="text-[var(--color-text-secondary)]">
+                    Seu Progresso Atual:{' '}
+                    <strong className="text-[var(--color-text-primary)]">
+                      Episódio {currentProgress} de {totalUnits} ({progressPercent}%)
+                    </strong>
+                  </span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-accent/10 text-accent border border-accent/20 font-semibold">
+                    Assistindo
+                  </span>
+                </div>
 
-              {/* Barra de Progresso Visual */}
-              <div className="w-full h-2 rounded-full bg-surface-overlay overflow-hidden border border-stroke-subtle">
-                <div
-                  className="h-full bg-gradient-to-r from-accent to-rose-400 rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
+                {/* Barra de Progresso Visual */}
+                <div className="w-full h-2 rounded-full bg-surface-overlay overflow-hidden border border-stroke-subtle">
+                  <div
+                    className="h-full bg-gradient-to-r from-accent to-rose-400 rounded-full transition-all duration-300"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
 
-              {/* Botão de Avanço Rápido Tátil (WCAG 2.2 AA >= 44x44px) */}
-              <div className="flex items-center gap-3 pt-1">
-                <button
-                  type="button"
-                  onClick={handleIncrement}
-                  disabled={isUpdating}
-                  className="min-h-[44px] min-w-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                {/* Botão de Avanço Rápido Tátil (WCAG 2.2 AA >= 44x44px) */}
+                <div className="flex items-center gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={handleIncrement}
+                    disabled={isUpdating}
+                    className="min-h-[44px] min-w-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span>{isUpdating ? 'Salvando...' : '+1 Episódio'}</span>
+                  </button>
+
+                  <Link
+                    href={`/items/${defaultSlug}`}
+                    className="min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors active:scale-[0.98]"
+                  >
+                    Ver Detalhes
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="pt-2 border-t border-stroke-subtle flex flex-wrap items-center gap-3">
+                <Link
+                  href={`/items/${defaultSlug}`}
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold text-xs sm:text-sm shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                   </svg>
-                  <span>{isUpdating ? 'Salvando...' : '+1 Episódio'}</span>
-                </button>
-
+                  <span>+ Adicionar à Lista</span>
+                </Link>
                 <Link
                   href={`/items/${defaultSlug}`}
-                  className="min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors active:scale-[0.98]"
+                  className="min-h-[44px] px-4 py-2.5 rounded-xl bg-surface-overlay hover:bg-surface-raised text-[var(--color-text-primary)] border border-stroke-subtle font-semibold text-xs sm:text-sm flex items-center justify-center transition-colors active:scale-[0.98]"
                 >
                   Ver Detalhes
                 </Link>
               </div>
-            </div>
+            )
           ) : (
             <div className="pt-2 border-t border-stroke-subtle flex flex-wrap items-center gap-3">
               <Link

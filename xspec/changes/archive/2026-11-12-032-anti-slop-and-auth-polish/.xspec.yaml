@@ -1,0 +1,19 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "032-anti-slop-and-auth-polish"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "calendar-ui"
+  - "home-hub"
+  - "personal-library-ui"
+  - "user-profile-stats"
+base_specs:
+  calendar-ui: "sha256:5a1f45103eaeecd03186b04127fdb284782e2231cca0b0a55ead1b76380864d1"
+  home-hub: "sha256:c403e3653901970560583736c42893436811ab11858e5f49d9233883b1a00511"
+  personal-library-ui: "sha256:d8b4a4124e839712a12af19138d2709954772473be2f21ae18f1fdb03ea4f4ba"
+  user-profile-stats: "sha256:409f7d8e36c39096fd424df9fd79500a220d452ce31a8bb35ae644c811f3d16a"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-12T04:21:37.414Z"

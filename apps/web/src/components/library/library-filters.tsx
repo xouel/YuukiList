@@ -2,7 +2,7 @@
 
 /**
  * YuukiList — Filtros, Abas Inteligentes, Busca Local e Alternador de Layout
- * Conforme Requisitos: Personal Library View and Layout Toggle & Library Filtering and Asynchronous States (R24)
+ * Conforme Requisitos: Personal Library View and Layout Toggle & Library Filtering and Asynchronous States (R32)
  */
 
 import React from 'react';
@@ -58,40 +58,9 @@ export function LibraryFilters({
 }: LibraryFiltersProps) {
   return (
     <div className="space-y-4 mb-6">
-      {/* Linha 1: Categorias Principais em Pílulas */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        {CATEGORIES.map((cat) => {
-          const isCatActive = selectedCategory === cat.key;
-          const count = countsByCategory ? countsByCategory[cat.key] : undefined;
-          return (
-            <button
-              key={cat.key}
-              type="button"
-              onClick={() => onCategoryChange(cat.key)}
-              className={`text-xs px-3.5 py-1.5 rounded-xl transition-all border flex items-center gap-2 font-medium shrink-0 focus-visible:ring-2 focus-visible:ring-accent ${
-                isCatActive
-                  ? 'bg-accent text-white border-accent font-bold shadow-md shadow-accent/20'
-                  : 'bg-surface-raised text-[var(--color-text-secondary)] border-stroke-subtle hover:text-[var(--color-text-primary)] hover:bg-surface-overlay'
-              }`}
-            >
-              <span>{cat.label}</span>
-              {typeof count === 'number' && count > 0 && (
-                <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                    isCatActive ? 'bg-black/30 text-white' : 'bg-surface-sunken text-[var(--color-text-secondary)]'
-                  }`}
-                >
-                  {count}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Linha 2: Abas de Status do Usuário */}
-      <div className="flex items-center justify-between gap-4 border-b border-stroke-subtle pb-3 overflow-x-auto scrollbar-none">
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      {/* Linha 1: Abas Editoriais Limpas de Status */}
+      <div className="flex items-center justify-between gap-4 border-b border-stroke-subtle pb-0 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-6 shrink-0" role="tablist">
           {STATUS_TABS.map((tab) => {
             const isActive = selectedTab === tab.key;
             const count = countsByTab ? countsByTab[tab.key] : undefined;
@@ -100,20 +69,20 @@ export function LibraryFilters({
               <button
                 key={tab.key}
                 type="button"
+                role="tab"
+                aria-selected={isActive}
                 onClick={() => onTabChange(tab.key)}
-                className={`px-3 py-1 text-xs sm:text-sm font-medium rounded-full transition-all flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-accent outline-none ${
+                className={`pb-3 text-xs sm:text-sm transition-all flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent border-b-2 -mb-[1px] cursor-pointer ${
                   isActive
-                    ? 'bg-accent text-white shadow-sm font-semibold'
-                    : 'bg-surface-raised text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay border border-stroke-subtle'
+                    ? 'border-accent text-[var(--color-text-primary)] font-bold'
+                    : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] font-medium'
                 }`}
               >
                 <span>{tab.label}</span>
                 {typeof count === 'number' && (
                   <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                      isActive
-                        ? 'bg-black/30 text-white'
-                        : 'bg-surface-sunken text-[var(--color-text-secondary)]'
+                    className={`text-[11px] tabular-nums font-normal ${
+                      isActive ? 'text-accent' : 'text-[var(--color-text-muted)]'
                     }`}
                   >
                     {count}
@@ -129,10 +98,10 @@ export function LibraryFilters({
           type="button"
           onClick={onToggleFavoriteOnly}
           aria-pressed={isFavoriteOnly}
-          className={`text-xs px-3 py-1 rounded-full transition-colors border flex items-center gap-1.5 shrink-0 focus-visible:ring-2 focus-visible:ring-accent ${
+          className={`text-xs pb-3 flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer border-b-2 -mb-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
             isFavoriteOnly
-              ? 'bg-accent/20 text-accent border-accent/50 font-semibold shadow-sm'
-              : 'bg-surface-raised text-[var(--color-text-secondary)] border-stroke-subtle hover:text-[var(--color-text-primary)] hover:bg-surface-overlay'
+              ? 'border-accent text-accent font-semibold'
+              : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
           }`}
         >
           <svg className={`w-3.5 h-3.5 ${isFavoriteOnly ? 'text-accent fill-accent' : 'text-[var(--color-text-secondary)]'}`} viewBox="0 0 24 24" stroke="currentColor">
@@ -140,6 +109,33 @@ export function LibraryFilters({
           </svg>
           <span>Favoritos</span>
         </button>
+      </div>
+
+      {/* Linha 2: Seletor Plano de Categorias */}
+      <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-none">
+        {CATEGORIES.map((cat) => {
+          const isCatActive = selectedCategory === cat.key;
+          const count = countsByCategory ? countsByCategory[cat.key] : undefined;
+          return (
+            <button
+              key={cat.key}
+              type="button"
+              onClick={() => onCategoryChange(cat.key)}
+              className={`text-xs px-2.5 py-1 rounded-md transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-accent ${
+                isCatActive
+                  ? 'bg-surface-overlay text-[var(--color-text-primary)] font-semibold border border-stroke-subtle'
+                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-raised'
+              }`}
+            >
+              <span>{cat.label}</span>
+              {typeof count === 'number' && count > 0 && (
+                <span className="text-[10px] tabular-nums text-[var(--color-text-muted)]">
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* Linha 3: Barra de Busca Local, Ordenação e Alternador de Modo */}

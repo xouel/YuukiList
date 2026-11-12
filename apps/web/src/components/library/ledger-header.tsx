@@ -16,18 +16,7 @@ interface LedgerHeaderProps {
 
 export function LedgerHeader({ metrics, onAddClick }: LedgerHeaderProps) {
   return (
-    <header className="w-full flex flex-col gap-5 pb-5 border-b border-stroke-subtle">
-      {/* Linha Superior: Tag de Versão e Timestamp */}
-      <div className="flex items-center gap-2">
-        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider bg-surface-raised text-media-anime border border-media-anime/30 uppercase">
-          LEDGER PESSOAL V2.4
-        </span>
-        <span className="text-[var(--color-text-secondary)] text-xs flex items-center gap-1.5 font-light">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-          {metrics.syncTimestampText}
-        </span>
-      </div>
-
+    <header className="w-full flex flex-col gap-4 pb-5 border-b border-stroke-subtle">
       {/* Linha Principal: Título Editorial e KPIs */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
@@ -47,7 +36,7 @@ export function LedgerHeader({ metrics, onAddClick }: LedgerHeaderProps) {
             <div className="flex items-center gap-2.5 px-3.5 py-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
               <div>
-                <div className="text-sm font-bold font-mono tabular-nums text-[var(--color-text-primary)] leading-tight">
+                <div className="text-sm font-bold tabular-nums text-[var(--color-text-primary)] leading-tight">
                   {metrics.completedCount}
                 </div>
                 <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">
@@ -60,7 +49,7 @@ export function LedgerHeader({ metrics, onAddClick }: LedgerHeaderProps) {
             <div className="flex items-center gap-2.5 px-3.5 py-2">
               <span className="w-2 h-2 rounded-full bg-media-anime shrink-0" />
               <div>
-                <div className="text-sm font-bold font-mono tabular-nums text-[var(--color-text-primary)] leading-tight">
+                <div className="text-sm font-bold tabular-nums text-[var(--color-text-primary)] leading-tight">
                   {metrics.inProgressCount}
                 </div>
                 <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">
@@ -73,7 +62,7 @@ export function LedgerHeader({ metrics, onAddClick }: LedgerHeaderProps) {
             <div className="flex items-center gap-2.5 px-3.5 py-2">
               <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
               <div>
-                <div className="text-sm font-bold font-mono tabular-nums text-[var(--color-text-primary)] leading-tight">
+                <div className="text-sm font-bold tabular-nums text-[var(--color-text-primary)] leading-tight">
                   {metrics.totalHours.toLocaleString('pt-BR')}h
                 </div>
                 <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">

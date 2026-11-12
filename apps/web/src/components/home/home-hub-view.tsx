@@ -53,7 +53,7 @@ export function HomeHubView() {
           const items = libRes.value.data || libRes.value.items || [];
           setLibraryItems(items);
           // Se tiver item em andamento, prioriza para o Hero Spotlight
-          const activeItem = items.find((i) => i.status === 'WATCHING' || i.status === 'READING');
+          const activeItem = items.find((i) => i.status === 'ASSISTINDO' || i.status === 'LENDO');
           if (activeItem && activeItem.mediaItem) {
             setFeaturedMedia(activeItem.mediaItem);
           }

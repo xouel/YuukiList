@@ -99,18 +99,10 @@ describe('US3 — Selos de Status Desambiguados e Reposicionados no Card (TR-004
     );
   });
 
-  it('TR-004: LibraryCard deve adotar paleta editorial bimodal/categoria', () => {
+  it('TR-004: LibraryCard deve adotar paleta editorial ou cromo neutro para categorias', () => {
     assert.ok(
-      libraryCardContent.includes('#D4A373') || libraryCardContent.includes('D4A373'),
-      'Deve incluir cor ocre (#D4A373) para audiovisual'
-    );
-    assert.ok(
-      libraryCardContent.includes('#9D8DF1') || libraryCardContent.includes('9D8DF1'),
-      'Deve incluir cor lavanda (#9D8DF1) para animes'
-    );
-    assert.ok(
-      libraryCardContent.includes('#D97757') || libraryCardContent.includes('D97757'),
-      'Deve incluir cor terracota (#D97757) para mídias impressas'
+      libraryCardContent.includes('backdrop-blur') || libraryCardContent.includes('#D4A373') || libraryCardContent.includes('bg-black/60'),
+      'Deve adotar acabamento sóbrio e neutro para categorias'
     );
   });
 });

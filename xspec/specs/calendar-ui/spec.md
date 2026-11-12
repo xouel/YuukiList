@@ -7,7 +7,7 @@ Fornecer a interface da rota `/calendar` no padrao Dark Editorial, permitindo na
 ## Requirements
 
 ### Requirement: Responsive Calendar Timeline with Day Grouping
-A interface SHALL renderizar a página /calendar com cabeçalho ao vivo em tipografia Shippori Mincho (font-serif), Weekly Strip de sete dias com alinhamento óptico uniforme e números tabulares, agrupamento por turnos em grade assimétrica e barra lateral analítica com relógio de fuso duplo estável, sem emojis.
+A interface SHALL renderizar a página /calendar com cabeçalho limpo sem etiqueta eyebrow de temporada, Weekly Strip de sete dias com alinhamento óptico uniforme e números tabulares, agrupamento por turnos em grade assimétrica e barra lateral analítica com relógio de fuso duplo estável, sem emojis.
 
 #### Scenario: Alternancia entre as tres abas de visualizacao
 - **GIVEN** a pagina de calendario carregada na visao de Lancamentos Gerais
@@ -32,7 +32,7 @@ A interface SHALL renderizar a página /calendar com cabeçalho ao vivo em tipog
 #### Scenario: Cabecalho ao vivo com faixa de tres KPIs e selo textual HOJE
 - **GIVEN** a tela /calendar carregada no navegador
 - **WHEN** o cabeçalho ao vivo e a Weekly Strip são exibidos
-- **THEN** a aplicação SHALL renderizar três KPIs consolidados (Hoje, Na Sua Fila, Eventos da Semana) e destacar a data atual com o selo visual textual HOJE
+- **THEN** a aplicação SHALL renderizar três KPIs consolidados e destacar a data atual com o selo textual HOJE, omitindo etiquetas eyebrow decorativas de temporada ('Temporada de Outono 2026')
 
 #### Scenario: Barra lateral com relogio de fuso duplo mais esperados e exportacao iCal
 - **GIVEN** a exibição do calendário em tela ampla

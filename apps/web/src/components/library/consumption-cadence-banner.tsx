@@ -68,7 +68,7 @@ export function ConsumptionCadenceBanner({
           <span className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-semibold">
             MÉDIA DIÁRIA
           </span>
-          <span className="text-lg font-bold text-emerald-400 font-mono leading-tight">
+          <span className="text-lg font-bold text-emerald-400 tabular-nums leading-tight">
             {data.dailyAverage} eps
           </span>
         </div>
