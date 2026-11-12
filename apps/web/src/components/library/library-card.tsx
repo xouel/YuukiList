@@ -144,17 +144,17 @@ export function LibraryCard({
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Canto Superior Esquerdo: Status Pessoal Reposicionado */}
+        {/* Canto Superior Esquerdo: Status Pessoal Sóbrio De-Boxed */}
         <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1 z-10 pointer-events-none">
           <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-md border backdrop-blur flex items-center gap-1.5 shadow-md ${
+            className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border flex items-center gap-1.5 shadow-sm ${
               isCompleted
-                ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/40'
-                : 'bg-black/75 text-[var(--color-text-primary)] border-white/10'
+                ? 'bg-surface-canvas/90 text-emerald-400 border-emerald-500/30'
+                : 'bg-surface-canvas/90 text-[var(--color-text-primary)] border-stroke-subtle'
             }`}
           >
             <span
-              className={`w-1.5 h-1.5 rounded-full ${
+              className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                 isCompleted ? 'bg-emerald-400' : 'bg-media-anime'
               }`}
             />

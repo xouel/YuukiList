@@ -38,19 +38,20 @@ export function BentoSidebar({
           <span className="text-[11px] text-[var(--color-text-muted)]">Últimos 7 dias</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-xl bg-surface-overlay border border-stroke-subtle">
+        {/* Régua de Métricas Semanais De-Boxed */}
+        <div className="grid grid-cols-2 divide-x divide-stroke-subtle py-2.5 border-y border-stroke-subtle/70">
+          <div className="pr-4">
             <span className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider block">Episódios</span>
             <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-xl font-bold font-mono text-[var(--color-text-primary)]">{totalEpisodesWeekly}</span>
+              <span className="text-2xl font-bold font-mono tabular-nums text-[var(--color-text-primary)]">{totalEpisodesWeekly}</span>
               <span className="text-[10px] text-emerald-400 font-medium">ritmo alto</span>
             </div>
           </div>
 
-          <div className="p-3 rounded-xl bg-surface-overlay border border-stroke-subtle">
+          <div className="pl-4">
             <span className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider block">Horas Vistas</span>
             <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-xl font-bold font-mono text-[var(--color-text-primary)]">{totalHoursWeekly}h</span>
+              <span className="text-2xl font-bold font-mono tabular-nums text-[var(--color-text-primary)]">{totalHoursWeekly}h</span>
               <span className="text-[10px] text-[var(--color-text-secondary)]">estimadas</span>
             </div>
           </div>
@@ -97,12 +98,12 @@ export function BentoSidebar({
           </Link>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="divide-y divide-stroke-subtle">
           {upcomingEvents.length > 0 ? (
             upcomingEvents.slice(0, 3).map((event) => (
               <div
                 key={event.id}
-                className="p-2.5 rounded-xl bg-surface-overlay border border-stroke-subtle flex items-center justify-between gap-3"
+                className="py-2.5 flex items-center justify-between gap-3"
               >
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-[var(--color-text-primary)] truncate">{event.mediaTitle}</p>
@@ -110,24 +111,24 @@ export function BentoSidebar({
                     Ep. {event.unitNumber} • {event.hasTime ? '14:00 BRT' : 'Em breve'}
                   </p>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 shrink-0">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
                   HOJE
                 </span>
               </div>
             ))
           ) : (
             <>
-              <div className="p-2.5 rounded-xl bg-surface-overlay border border-stroke-subtle flex items-center justify-between gap-3">
+              <div className="py-2.5 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-[var(--color-text-primary)] truncate">Demon Slayer: T4</p>
                   <p className="text-[10px] text-[var(--color-text-secondary)]">Episódio 5 • 17:30 BRT</p>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 shrink-0">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
                   HOJE
                 </span>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-surface-overlay border border-stroke-subtle flex items-center justify-between gap-3">
+              <div className="py-2.5 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-[var(--color-text-primary)] truncate">Wind Breaker</p>
                   <p className="text-[10px] text-[var(--color-text-secondary)]">Episódio 10 • 14:00 BRT</p>
@@ -156,10 +157,10 @@ export function BentoSidebar({
             </Link>
           </div>
 
-          <div className="space-y-3">
+          <div className="divide-y divide-stroke-subtle">
             {historyEvents.length > 0 ? (
               historyEvents.slice(0, 2).map((ev) => (
-                <div key={ev.id} className="text-xs space-y-1 p-2.5 rounded-xl bg-surface-overlay border border-stroke-subtle">
+                <div key={ev.id} className="text-xs space-y-1 py-2.5">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-[var(--color-text-primary)]">{ev.mediaItem?.title || 'Obra'}</span>
                     <span className="text-[10px] text-[var(--color-text-muted)]">recente</span>
@@ -170,7 +171,7 @@ export function BentoSidebar({
                 </div>
               ))
             ) : (
-              <div className="text-xs space-y-1.5 p-3 rounded-xl bg-surface-overlay border border-stroke-subtle">
+              <div className="text-xs space-y-1.5 py-2.5">
                 <p className="font-medium text-[var(--color-text-primary)]">Registro recente:</p>
                 <p className="text-[11px] text-[var(--color-text-secondary)] italic">
                   "Marcou Ep 14 de Sousou no Frieren e adicionou notas privadas."

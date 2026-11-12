@@ -23,7 +23,7 @@ export function LedgerHeader({ metrics, onAddClick }: LedgerHeaderProps) {
           LEDGER PESSOAL V2.4
         </span>
         <span className="text-[var(--color-text-secondary)] text-xs flex items-center gap-1.5 font-light">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
           {metrics.syncTimestampText}
         </span>
       </div>
@@ -39,56 +39,46 @@ export function LedgerHeader({ metrics, onAddClick }: LedgerHeaderProps) {
           </p>
         </div>
 
-        {/* Grupo de Ações e KPIs no Topo Direito */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* KPI 1: Concluídos */}
-          <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <div>
-              <div className="text-sm font-bold text-[var(--color-text-primary)] leading-tight">
-                {metrics.completedCount}
+        {/* Grupo de Ações e KPIs no Topo Direito (De-Boxed BroadSheet Ledger) */}
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Faixa Tabular Unificada de Métricas */}
+          <div className="flex items-stretch divide-x divide-stroke-subtle rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top overflow-hidden">
+            {/* KPI 1: Concluídos */}
+            <div className="flex items-center gap-2.5 px-3.5 py-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+              <div>
+                <div className="text-sm font-bold font-mono tabular-nums text-[var(--color-text-primary)] leading-tight">
+                  {metrics.completedCount}
+                </div>
+                <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">
+                  Concluídos
+                </div>
               </div>
-              <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">
-                Concluídos
-              </div>
             </div>
-          </div>
 
-          {/* KPI 2: Em Andamento */}
-          <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top">
-            <div className="w-7 h-7 rounded-lg bg-media-anime/15 border border-media-anime/30 flex items-center justify-center text-media-anime">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <div className="text-sm font-bold text-[var(--color-text-primary)] leading-tight">
-                {metrics.inProgressCount}
-              </div>
-              <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">
-                Em Andamento
+            {/* KPI 2: Em Andamento */}
+            <div className="flex items-center gap-2.5 px-3.5 py-2">
+              <span className="w-2 h-2 rounded-full bg-media-anime shrink-0" />
+              <div>
+                <div className="text-sm font-bold font-mono tabular-nums text-[var(--color-text-primary)] leading-tight">
+                  {metrics.inProgressCount}
+                </div>
+                <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">
+                  Em Andamento
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* KPI 3: Tempo Total */}
-          <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-surface-raised border border-stroke-subtle shadow-hairline-top">
-            <div className="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <div className="text-sm font-bold text-[var(--color-text-primary)] leading-tight">
-                {metrics.totalHours.toLocaleString('pt-BR')}h
-              </div>
-              <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">
-                Tempo Total
+            {/* KPI 3: Tempo Total */}
+            <div className="flex items-center gap-2.5 px-3.5 py-2">
+              <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+              <div>
+                <div className="text-sm font-bold font-mono tabular-nums text-[var(--color-text-primary)] leading-tight">
+                  {metrics.totalHours.toLocaleString('pt-BR')}h
+                </div>
+                <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-medium">
+                  Tempo Total
+                </div>
               </div>
             </div>
           </div>

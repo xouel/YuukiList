@@ -44,23 +44,22 @@ export function HeroSpotlight({
   };
 
   return (
-    <article className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-raised via-surface-canvas to-surface-sunken border border-stroke-subtle p-6 sm:p-8 shadow-xl shadow-hairline-top">
-      {/* Luz de fundo carmim ambiente */}
-      <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
-
+    <article className="relative overflow-hidden rounded-2xl bg-surface-raised border border-stroke-subtle p-6 sm:p-8 shadow-hairline-top">
       <div className="relative z-10 flex flex-col md:flex-row items-center md:items-stretch justify-between gap-6 sm:gap-8">
         {/* Lado Esquerdo: Metadados, Título, Sinopse e Controles de Progresso */}
         <div className="flex-1 flex flex-col justify-between space-y-4">
           <div>
-            {/* Badges Superiores */}
+            {/* Metadados Editoriais Superiores */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent/15 text-accent border border-accent/30 shadow-sm">
-                ✦ {isAuthenticated ? 'Destaque do Diário' : 'Destaque Editorial'}
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent px-2 py-0.5 rounded bg-accent/10 border border-accent/20">
+                {isAuthenticated ? 'Destaque do Diário' : 'Destaque Editorial'}
               </span>
-              <span className="text-xs font-medium px-2.5 py-0.5 rounded bg-surface-overlay text-[var(--color-text-secondary)] border border-stroke-subtle">
+              <span className="text-[var(--color-text-muted)] text-xs">•</span>
+              <span className="text-xs font-mono font-medium text-[var(--color-text-secondary)]">
                 {defaultCategory}
               </span>
-              <span className="text-xs font-semibold text-amber-400 flex items-center gap-1">
+              <span className="text-[var(--color-text-muted)] text-xs">•</span>
+              <span className="text-xs font-mono font-semibold text-amber-400 flex items-center gap-1">
                 ★ 9.6 <span className="text-[var(--color-text-muted)] font-normal">(42.1k)</span>
               </span>
             </div>

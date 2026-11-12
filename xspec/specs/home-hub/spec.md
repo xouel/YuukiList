@@ -20,12 +20,12 @@ A rota inicial da aplicação SHALL renderizar o painel dinâmico do Home Hub es
 - **THEN** o sistema SHALL empilhar os módulos verticalmente em fluxo contínuo mantendo a legibilidade e alvos de toque acessíveis
 
 ### Requirement: Hero Spotlight and Quick Tracking
-O Home Hub SHALL apresentar na área nobre um card de destaque Hero Spotlight contendo a obra em andamento prioritária com indicador visual de progresso proporcional e ação imediata de incremento rápido, ou chamada editorial convidativa para visitantes anônimos.
+O Home Hub SHALL apresentar na área nobre um Hero Spotlight com acabamento editorial límpido sem iluminação difusa artificial circular (blur-3xl), contendo a obra prioritária com progresso proporcional e incremento tátil rápido, ou chamada de acolhimento para visitantes.
 
 #### Scenario: Exibicao de obra em destaque para usuario autenticado
 - **GIVEN** um usuário autenticado com pelo menos uma obra ativa em sua biblioteca
 - **WHEN** o usuário visualiza a dobra superior do Home Hub
-- **THEN** o sistema SHALL exibir o título, sinopse, capa ampliada e botão de incremento tático de episódio ou capítulo
+- **THEN** o sistema SHALL exibir o título, sinopse, capa ampliada e botão de incremento tático de episódio ou capítulo sem artefatos difusos de fundo
 
 #### Scenario: Apresentacao editorial de acolhimento para visitante anonimo
 - **GIVEN** um visitante não autenticado acessando a aplicação
@@ -33,12 +33,12 @@ O Home Hub SHALL apresentar na área nobre um card de destaque Hero Spotlight co
 - **THEN** o sistema SHALL renderizar o Hero Spotlight com obra de referência editorial e botões convidativos para criar conta ou explorar o catálogo
 
 ### Requirement: Bento Sidebar and Personal Analytics
-A coluna lateral do Home Hub SHALL apresentar conjunto de cartões Bento com métricas compactas de ritmo semanal, régua visual de constância diária dos últimos sete dias, próximas estreias da agenda e feed de registros recentes de consumo do usuário.
+A coluna lateral do Home Hub SHALL apresentar o painel Bento desencaixado com métricas semanais em régua integrada sem sub-cards aninhados de bordas duplas, régua visual de constância diária de sete dias, próximas estreias e feed do diário pessoal.
 
 #### Scenario: Renderizacao do resumo semanal e constancia de sete dias
 - **GIVEN** um usuário autenticado com histórico recente de consumo
 - **WHEN** a coluna lateral do Home Hub é renderizada
-- **THEN** o sistema SHALL exibir o total de episódios consumidos na semana e a régua de sete dias indicando visualmente os dias com atividade registrada
+- **THEN** o sistema SHALL exibir o total de episódios e horas consumidos em régua integrada sem contêineres aninhados de borda dupla e a régua de constância de sete dias
 
 #### Scenario: Exibicao de proximos lancamentos e atividade do diario
 - **GIVEN** a presença de lançamentos agendados e eventos de consumo no perfil do usuário

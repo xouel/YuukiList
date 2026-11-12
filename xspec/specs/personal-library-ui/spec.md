@@ -7,7 +7,7 @@ Prover a interface gráfica web da biblioteca pessoal no YuukiList, permitindo a
 ## Requirements
 
 ### Requirement: Personal Library View and Layout Toggle
-O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida /library integrada ao container global, consumir e desserializar robustamente a lista de itens da API, exibir o cabeçalho analítico do Ledger com KPIs consolidados, permitir alternar entre grade e lista, exibir card pontilhado para registro e posicionar os selos de status pessoal no topo dos cards.
+O sistema SHALL renderizar a biblioteca pessoal na rota /library com cabeçalho do Ledger em faixa única com divisores verticais sem badges pulsantes, alternância grade/lista, card pontilhado e selos de status sóbrios integrados rente à margem da capa.
 
 #### Scenario: Exibicao da biblioteca pessoal em modo grade
 - **GIVEN** um usuário autenticado com obras registradas em sua biblioteca
@@ -27,7 +27,7 @@ O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida /l
 #### Scenario: Harmonizacao de layout e posicionamento superior do status pessoal
 - **GIVEN** a tela de biblioteca renderizada para um usuário autenticado
 - **WHEN** os cards de obras são exibidos na interface
-- **THEN** a página integra-se ao container global sem fundos recortados dissonantes e os selos de status pessoal são posicionados no canto superior do card
+- **THEN** a página integra-se ao container global e os selos de status pessoal são posicionados de forma sóbria rente à margem superior sem acúmulo de badges de vidro flutuantes
 
 #### Scenario: Carregamento robusto e desserializacao de itens da biblioteca
 - **GIVEN** a resposta da API contendo as obras salvas do usuário
@@ -37,7 +37,7 @@ O sistema SHALL renderizar a biblioteca pessoal do usuário na rota protegida /l
 #### Scenario: Cabecalho do Ledger Pessoal com KPIs consolidados e acao de adicionar obra
 - **GIVEN** um usuário com obras registradas em sua biblioteca
 - **WHEN** a tela do Ledger Pessoal é renderizada
-- **THEN** o sistema SHALL exibir badge editorial de versão, indicador de sincronização, contadores de Concluídos e Em Andamento, cálculo de Tempo Total e botão de Adicionar Obra
+- **THEN** o sistema SHALL exibir badge editorial de versão, timestamp estável sem badge pulsante (animate-pulse), contadores de Concluídos e Em Andamento em faixa com divisores verticais (divide-x) e botão de Adicionar Obra
 
 #### Scenario: Card pontilhado de registrar nova obra na grade da biblioteca
 - **GIVEN** a visualização da biblioteca pessoal em modo grade
