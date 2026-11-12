@@ -24,12 +24,13 @@ import {
   AdminController,
   AdminService,
   CatalogRepository,
+  PrismaCatalogRepository,
   CatalogIngestionService,
 } from '@yuukilist/api';
 import { SAMPLE_EXTERNAL_TITLES } from '../../../../scripts/sync-catalog.mjs';
 
 class ServerContainer {
-  readonly catalogRepository: CatalogRepository;
+  readonly catalogRepository: PrismaCatalogRepository;
   readonly catalogService: CatalogService;
   readonly catalogController: CatalogController;
   readonly authModule: AuthModule;
@@ -47,7 +48,7 @@ class ServerContainer {
   readonly adminController: AdminController;
 
   constructor() {
-    this.catalogRepository = new CatalogRepository();
+    this.catalogRepository = new PrismaCatalogRepository();
     this.catalogService = new CatalogService(this.catalogRepository);
     this.catalogController = new CatalogController(this.catalogService);
     this.authModule = new AuthModule();

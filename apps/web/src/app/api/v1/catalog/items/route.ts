@@ -12,6 +12,9 @@ export async function GET(request: NextRequest) {
       page: searchParams.get('page') ? Number(searchParams.get('page')) : undefined,
       limit: searchParams.get('limit') ? Number(searchParams.get('limit')) : undefined,
       sortBy: (searchParams.get('sortBy') as any) || undefined,
+      includeExternal: searchParams.get('includeExternal') !== null
+        ? searchParams.get('includeExternal') === 'true'
+        : undefined,
     };
 
     const result = await container.catalogController.list(query);

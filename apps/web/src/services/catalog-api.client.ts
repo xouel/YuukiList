@@ -8,6 +8,7 @@ import type {
   MediaItemDetailDto,
   MediaItemSummaryDto,
   PaginatedResponse,
+  FederatedCatalogResponse,
 } from '../../../../packages/shared/src/index.ts';
 
 export class CatalogApiError extends Error {
@@ -71,6 +72,9 @@ export class CatalogApiClient {
     if (query.sortBy && query.sortBy !== 'relevance') {
       params.set('sortBy', query.sortBy);
     }
+    if (query.includeExternal !== undefined) {
+      params.set('includeExternal', String(query.includeExternal));
+    }
 
     const qs = params.toString();
     return qs ? `?${qs}` : '';
@@ -117,7 +121,7 @@ export class CatalogApiClient {
   async listItems(
     query: CatalogQueryDto = {},
     signal?: AbortSignal
-  ): Promise<PaginatedResponse<MediaItemSummaryDto>> {
+  ): Promise<FederatedCatalogResponse> {
     const qs = this.buildQueryString(query);
     const url = `${this.baseUrl}/api/v1/catalog/items${qs}`;
 
@@ -141,7 +145,7 @@ export class CatalogApiClient {
         throw new CatalogApiError(errorMsg, response.status, `HTTP_${response.status}`);
       }
 
-      const data = (await response.json()) as PaginatedResponse<MediaItemSummaryDto>;
+      const data = (await response.json()) as FederatedCatalogResponse;
       return data;
     } catch (err: unknown) {
       if (err instanceof CatalogApiError) {
@@ -153,6 +157,27 @@ export class CatalogApiClient {
       const message = err instanceof Error ? err.message : 'Falha desconhecida na conexão com a API';
       throw new CatalogApiError(`Falha de rede ao consultar catálogo: ${message}`, 0, 'NETWORK_ERROR');
     }
+  }
+
+  /**
+   * Ingestão atômica sob demanda (Just-in-Time) de obra externa para o Supabase.
+   */
+  async ingestItem(item: { source: string; externalId: string; category?: string; [key: string]: any }): Promise<MediaItemDetailDto> {
+    const url = `${this.baseUrl}/api/v1/catalog/items/ingest`;
+    const response = await this.fetcher(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(item),
+    });
+
+    if (!response.ok) {
+      throw new CatalogApiError(`Erro ao ingerir obra externa: HTTP ${response.status}`, response.status);
+    }
+
+    return (await response.json()) as MediaItemDetailDto;
   }
 
   /**

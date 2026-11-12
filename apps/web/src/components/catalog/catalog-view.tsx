@@ -8,6 +8,7 @@ import type {
   CatalogQueryDto,
   MediaItemSummaryDto,
   PaginationMeta,
+  CanonicalExternalMediaDto,
 } from '../../../../../packages/shared/src/index.ts';
 import { CatalogApiClient } from '../../services/catalog-api.client.ts';
 import { LibraryApiClient } from '../../services/library-api.client.ts';
@@ -46,6 +47,8 @@ export function CatalogView({
 
   // Estado da Lista e Paginação Cumulativa (Infinite Scroll)
   const [items, setItems] = useState<MediaItemSummaryDto[]>([]);
+  const [externalItems, setExternalItems] = useState<CanonicalExternalMediaDto[]>([]);
+  const [ingestingId, setIngestingId] = useState<string | null>(null);
   const [meta, setMeta] = useState<PaginationMeta>({
     total: 0,
     page: 1,
@@ -108,8 +111,10 @@ export function CatalogView({
         const response = await apiClient.listItems({ ...currentQuery, page: 1 }, controller.signal);
         setItems(response.data);
         setMeta(response.meta);
+        const externals = response.externalResults || [];
+        setExternalItems(externals);
 
-        if (response.meta.total === 0) {
+        if (response.meta.total === 0 && externals.length === 0) {
           if (currentQuery.q || currentQuery.category || currentQuery.status || currentQuery.country || currentQuery.theme) {
             setViewStatus('no-results');
           } else {
@@ -266,6 +271,21 @@ export function CatalogView({
     setLibraryMediaIds((prev) => new Set([...prev, item.id]));
   };
 
+  const handleIngestAndNavigate = async (ext: CanonicalExternalMediaDto) => {
+    const key = `${ext.source}-${ext.externalId}`;
+    if (ingestingId) return;
+
+    try {
+      setIngestingId(key);
+      const ingested = await apiClient.ingestItem(ext);
+      if (ingested && ingested.slug) {
+        window.location.href = `/items/${ingested.slug}`;
+      }
+    } catch {
+      setIngestingId(null);
+    }
+  };
+
   return (
     <div className="w-full space-y-6">
       {/* Seção Superior: Cabeçalho Editorial e Barra de Busca */}
@@ -320,17 +340,23 @@ export function CatalogView({
 
         {viewStatus === 'success' && (
           <div className="space-y-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
-              {items.map((item) => (
-                <MediaCard
-                  key={item.id}
-                  item={item}
-                  isInLibrary={libraryMediaIds.has(item.id)}
-                  onNavigate={handleNavigateToDetail}
-                  onQuickAdd={handleQuickAddSuccess}
-                />
-              ))}
-            </div>
+            {items.length === 0 && externalItems.length > 0 ? (
+              <div className="p-4 rounded-xl bg-surface-raised border border-stroke-subtle text-sm text-[var(--color-text-secondary)]">
+                Nenhuma obra cadastrada localmente com este termo exato. Veja abaixo as obras encontradas em APIs externas disponíveis para importar:
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+                {items.map((item) => (
+                  <MediaCard
+                    key={item.id}
+                    item={item}
+                    isInLibrary={libraryMediaIds.has(item.id)}
+                    onNavigate={handleNavigateToDetail}
+                    onQuickAdd={handleQuickAddSuccess}
+                  />
+                ))}
+              </div>
+            )}
 
             {/* Sentinela de Rolagem Infinita */}
             <div ref={sentinelRef} className="py-6 text-center">
@@ -342,10 +368,85 @@ export function CatalogView({
               )}
               {!isLoadingMore && meta.page >= meta.totalPages && meta.total > 0 && (
                 <p className="text-xs text-[var(--color-text-secondary)]">
-                  Você chegou ao fim do catálogo ({meta.total} obras exibidas).
+                  Você chegou ao fim do catálogo local ({meta.total} obras exibidas).
                 </p>
               )}
             </div>
+
+            {/* Seção de Obras Externas Encontradas (Busca Federada Híbrida) */}
+            {externalItems.length > 0 && (
+              <div className="pt-8 border-t border-stroke-subtle space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-serif font-medium text-[var(--color-text-primary)]">
+                      Obras Externas Encontradas
+                    </h2>
+                    <p className="text-xs sm:text-sm text-[var(--color-text-secondary)]">
+                      Resultados de APIs parceiras disponíveis para importação sob demanda com um clique.
+                    </p>
+                  </div>
+                  <span className="self-start sm:self-auto text-xs px-2.5 py-1 rounded-full bg-accent/15 text-accent border border-accent/30 font-medium">
+                    {externalItems.length} {externalItems.length === 1 ? 'obra externa' : 'obras externas'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+                  {externalItems.map((ext, idx) => {
+                    const isIngesting = ingestingId === `${ext.source}-${ext.externalId}`;
+                    return (
+                      <article
+                        key={`${ext.source}-${ext.externalId}-${idx}`}
+                        onClick={() => handleIngestAndNavigate(ext)}
+                        className="group relative bg-surface-raised rounded-xl overflow-hidden border border-stroke-subtle hover:border-accent cursor-pointer shadow-hairline-top transition-all duration-200 hover:shadow-xl hover:shadow-black/40 flex flex-col h-full"
+                      >
+                        <div className="relative aspect-[2/3] w-full overflow-hidden bg-surface-canvas">
+                          {ext.coverUrl ? (
+                            <img
+                              src={ext.coverUrl}
+                              alt={ext.title}
+                              loading="lazy"
+                              className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-surface-raised text-[var(--color-text-secondary)] text-xs text-center p-2">
+                              Sem capa
+                            </div>
+                          )}
+                          <div className="absolute top-2.5 left-2.5 z-10">
+                            <span className="text-[10px] font-semibold tracking-wide px-2 py-0.5 rounded border backdrop-blur bg-accent text-white border-accent/50 shadow-sm">
+                              {ext.source}
+                            </span>
+                          </div>
+                          <div className="absolute top-2.5 right-2.5 z-10">
+                            <span className="text-[10px] font-medium tracking-wide px-2 py-0.5 rounded border backdrop-blur bg-black/60 text-white border-white/20">
+                              {ext.category}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="p-3 flex-1 flex flex-col justify-between">
+                          <div>
+                            <h3 className="font-medium text-sm text-[var(--color-text-primary)] line-clamp-1 group-hover:text-accent transition-colors">
+                              {ext.title}
+                            </h3>
+                            {ext.originalTitle && (
+                              <p className="text-[11px] text-[var(--color-text-secondary)] line-clamp-1 mt-0.5">
+                                {ext.originalTitle}
+                              </p>
+                            )}
+                          </div>
+                          <div className="mt-2.5 pt-2 border-t border-stroke-subtle/50 flex items-center justify-between text-[11px] text-[var(--color-text-secondary)]">
+                            <span>{ext.releaseYear || 'Ano N/D'}</span>
+                            <span className="text-accent group-hover:underline font-medium flex items-center gap-1">
+                              {isIngesting ? 'Importando...' : 'Importar'}
+                            </span>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </section>

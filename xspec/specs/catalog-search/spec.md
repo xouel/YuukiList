@@ -7,20 +7,20 @@ Prover a interface HTTP e os serviços de domínio do catálogo para listagem pa
 ## Requirements
 
 ### Requirement: Catalog Items Listing and Filtering
-A API de catálogo SHALL expor o endpoint GET /api/v1/catalog/items retornando um envelope paginado com metadados de paginação e suportar filtros combinados por categoria, status de publicação e gênero combinados via conjunção lógica AND.
+A API de catálogo SHALL expor o endpoint GET /api/v1/catalog/items retornando um envelope paginado com metadados de paginação a partir do banco PostgreSQL Supabase e suportar filtros combinados por categoria, status de publicação e gênero.
 
 #### Scenario: Listagem paginada com ordenação padrão por título
-- **GIVEN** que o catálogo contém obras cadastradas
+- **GIVEN** que o catálogo contém obras cadastradas no banco Supabase
 - **WHEN** o cliente requisita GET /api/v1/catalog/items sem termo de busca
 - **THEN** a API responde com status 200, envelope contendo data e meta com total, page, limit e totalPages, ordenado alfabeticamente por título em ordem ascendente
 
 #### Scenario: Filtragem combinada por categoria e status
-- **GIVEN** que o catálogo possui obras de múltiplas categorias e status
+- **GIVEN** que o catálogo possui obras de múltiplas categorias e status no banco
 - **WHEN** o cliente requisita GET /api/v1/catalog/items com parâmetros de filtro de categoria e status de publicação
 - **THEN** a API retorna apenas as obras que satisfazem cumulativamente ambos os filtros selecionados
 
 ### Requirement: Intelligent Search with Trigram Similarity
-O mecanismo de busca SHALL normalizar o termo de consulta e realizar correspondência aproximada utilizando a extensão PostgreSQL pg_trgm com limiar de similaridade mínima de 0.35, ranqueando os resultados por relevância e desempatando alfabeticamente por título.
+O mecanismo de busca SHALL normalizar o termo de consulta, realizar correspondência aproximada utilizando PostgreSQL pg_trgm e fornecer busca federada híbrida consultando APIs externas ativas quando requisitado.
 
 #### Scenario: Busca aproximada tolerante a pequenos erros de digitação
 - **GIVEN** uma obra existente no catálogo
@@ -31,6 +31,11 @@ O mecanismo de busca SHALL normalizar o termo de consulta e realizar correspond�
 - **GIVEN** uma consulta de busca com múltiplos resultados
 - **WHEN** a requisição inclui o parâmetro opcional sortBy com valor title
 - **THEN** os resultados retornados são reordenados alfabeticamente por título em vez da pontuação de similaridade
+
+#### Scenario: Busca federada com fallback para APIs externas
+- **GIVEN** uma pesquisa por um termo sem correspondencia local suficiente no banco
+- **WHEN** a busca híbrida consulta as APIs externas em paralelo
+- **THEN** a API agrega os resultados externos com badge de proveniência e metadados canônicos
 
 ### Requirement: Catalog Item Details and Cover Endpoints
 A API de catálogo SHALL fornecer os endpoints GET /api/v1/catalog/items/:slug para detalhes completos da obra e GET /api/v1/catalog/items/:slug/cover para transmissão da capa vetorial SVG com cabeçalho de mídia apropriado e fallback seguro.

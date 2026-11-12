@@ -17,6 +17,7 @@ export interface CatalogQueryDto {
   page?: number;
   limit?: number;
   sortBy?: CatalogSortBy;
+  includeExternal?: boolean;
 }
 
 export interface PaginationMeta {
@@ -29,6 +30,10 @@ export interface PaginationMeta {
 export interface PaginatedResponse<T> {
   data: T[];
   meta: PaginationMeta;
+}
+
+export interface FederatedCatalogResponse extends PaginatedResponse<MediaItemSummaryDto> {
+  externalResults?: CanonicalExternalMediaDto[];
 }
 
 export interface MediaItemSummaryDto {

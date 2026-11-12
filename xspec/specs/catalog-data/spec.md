@@ -7,12 +7,17 @@ Gerenciar a persistência relacional, os schemas canônicos, o seed determiníst
 ## Requirements
 
 ### Requirement: Database Schema and Extension Provisioning
-A camada de dados SHALL provisionar as tabelas MediaItem, ItemGenre e ItemAlias no PostgreSQL via Prisma ORM e ativar a extensão nativa pg_trgm.
+A camada de dados SHALL provisionar as tabelas MediaItem, ItemGenre e ItemAlias no PostgreSQL via Prisma ORM, ativar a extensão nativa pg_trgm e garantir a persistência durável de catálogo no Supabase.
 
 #### Scenario: Migração inicial e extensão pg_trgm
 - **GIVEN** que o banco PostgreSQL está configurado
 - **WHEN** a migration do Prisma for executada
 - **THEN** as tabelas do catálogo são criadas com sucesso e a extensão pg_trgm fica ativa no banco
+
+#### Scenario: Persistencia permanente e consulta via Prisma ORM
+- **GIVEN** a configuracao de conexao com o Supabase PostgreSQL no Prisma Client
+- **WHEN** operacoes de consulta e escrita forem executadas pelo repositorio de catalogo
+- **THEN** os dados de obras sao persistidos e lidos diretamente do banco relacional
 
 ### Requirement: Canonical Categories and Publication Statuses
 O modelo de dados SHALL suportar exclusivamente as 6 categorias canônicas (DORAMA, FILME, ANIME, MANGA, MANHWA, MANHUA) e os 5 status canônicos de publicação (EM_ANDAMENTO, FINALIZADA, CANCELADA, HIATO, DESCONHECIDA).
@@ -23,12 +28,12 @@ O modelo de dados SHALL suportar exclusivamente as 6 categorias canônicas (DORA
 - **THEN** o sistema valida os valores contra os enums canônicos e rejeita valores fora do vocabulário oficial
 
 ### Requirement: Deterministic Seed Population
-O script de seed SHALL popular o banco de dados com exatamente 30 obras fictícias, contendo 5 doramas, 5 filmes, 5 animes, 5 mangás, 5 manhwas e 5 manhuas, cobrindo equitativamente todos os 5 status de publicação de forma idempotente.
+O mecanismo de carga inicial SHALL popular o banco de dados Supabase com um acervo ampliado de 120 obras reais consagradas, divididas equitativamente em 20 títulos para cada uma das 6 categorias canônicas de forma idempotente.
 
-#### Scenario: Execução idempotente do seed
-- **GIVEN** o banco de dados limpo ou previamente populado
-- **WHEN** o script de seed for executado uma ou mais vezes
-- **THEN** o banco conterá exatamente 30 obras únicas, com 5 itens por categoria cobrindo todos os 5 status sem duplicação
+#### Scenario: Execucao idempotente da carga ampliada de obras reais
+- **GIVEN** o banco de dados Supabase PostgreSQL conectado
+- **WHEN** o servico de carga inicial for executado
+- **THEN** o banco contera exatamente 20 obras reais para cada uma das 6 categorias canonicas sem duplicacao de registros
 
 ### Requirement: Local SVG Cover Serving and Fallback
 O repositório de dados SHALL fornecer uma capa SVG vetorial local para cada um dos 30 slugs do seed e prover um SVG substituto padrão caso o slug requisitado não exista.

@@ -16,7 +16,8 @@ import {
   type MediaItemProvenance,
   type FieldProvenance,
 } from '../../../../packages/shared/src/index.ts';
-import { CatalogRepository } from './catalog.repository.ts';
+import { CatalogRepository, type ICatalogRepository } from './catalog.repository.ts';
+import { PrismaCatalogRepository } from './prisma-catalog.repository.ts';
 import { SvgCoverService } from './svg-cover.service.ts';
 import { CoverStorageService } from './cover-storage.service.ts';
 import type { StoredMediaItem } from './seed.ts';
@@ -44,16 +45,16 @@ export interface IngestionOptions {
 }
 
 export class CatalogIngestionService {
-  private catalogRepo: CatalogRepository;
+  private catalogRepo: ICatalogRepository;
   private coverService: SvgCoverService;
   private coverStorage: CoverStorageService;
 
   constructor(
-    catalogRepo: CatalogRepository,
+    catalogRepo?: ICatalogRepository,
     coverService?: SvgCoverService,
     coverStorage?: CoverStorageService,
   ) {
-    this.catalogRepo = catalogRepo;
+    this.catalogRepo = catalogRepo || new PrismaCatalogRepository();
     this.coverService = coverService || new SvgCoverService();
     this.coverStorage = coverStorage || new CoverStorageService();
   }

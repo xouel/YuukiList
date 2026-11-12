@@ -8,24 +8,33 @@ import type {
   MediaItemDetailDto,
   MediaItemSummaryDto,
   PaginatedResponse,
+  FederatedCatalogResponse,
 } from '../../../../packages/shared/src/index.ts';
 import { CatalogRepository, type ICatalogRepository } from '../data/catalog.repository.ts';
 import { CoverStorageService } from '../data/cover-storage.service.ts';
+import { CatalogFederatedSearchService } from './catalog-federated-search.service.ts';
 
 export class CatalogService {
   private readonly repository: ICatalogRepository;
   private readonly coverStorage: CoverStorageService;
+  private readonly federatedSearch: CatalogFederatedSearchService;
 
   constructor(
     repository: ICatalogRepository = new CatalogRepository(),
-    coverStorage: CoverStorageService = new CoverStorageService()
+    coverStorage: CoverStorageService = new CoverStorageService(),
+    federatedSearch?: CatalogFederatedSearchService
   ) {
     this.repository = repository;
     this.coverStorage = coverStorage;
+    this.federatedSearch = federatedSearch || new CatalogFederatedSearchService(this.repository);
   }
 
   async listItems(query: CatalogQueryDto): Promise<PaginatedResponse<MediaItemSummaryDto>> {
     return this.repository.findMany(query);
+  }
+
+  async listFederated(query: CatalogQueryDto): Promise<FederatedCatalogResponse> {
+    return this.federatedSearch.searchFederated(query);
   }
 
   async getItemBySlug(slug: string): Promise<MediaItemDetailDto | null> {

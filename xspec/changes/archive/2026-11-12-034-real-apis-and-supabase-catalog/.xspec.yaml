@@ -1,0 +1,17 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "034-real-apis-and-supabase-catalog"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "catalog-data"
+  - "catalog-ingestion"
+  - "catalog-search"
+base_specs:
+  catalog-data: "sha256:e120e43c691587387ab4963f851181b47be2527d59efccafeeab8f6b012415e6"
+  catalog-ingestion: "sha256:635d8cd9d1e75e08c1d4ab81a97a6237727fca8ab695a1a096ffea67721c2249"
+  catalog-search: "sha256:6d6c180a8cd994df9b40292327baddd7c7e1486f4ab7b8aaaee41019f38d99ae"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-12T06:38:05.059Z"

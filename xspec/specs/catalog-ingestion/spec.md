@@ -7,7 +7,7 @@ Gerenciar o pipeline de ingestão e sincronização de dados do catálogo a part
 ## Requirements
 
 ### Requirement: External Catalog Ingestion Pipeline
-O sistema SHALL executar o pipeline de ingestão consumindo as APIs externas recomendadas na PoC (TMDB, TVmaze, Kitsu, ANN e MangaUpdates), convertendo dados heterogêneos para entidades canônicas do YuukiList com IDs internos próprios de forma idempotente.
+O sistema SHALL executar o pipeline de ingestão consumindo as APIs externas ativas (TMDB com autenticação, TVmaze, Kitsu e MangaUpdates), convertendo dados heterogêneos para entidades soberanas com IDs internos e proveniência auditável por campo.
 
 #### Scenario: Ingestao de obras audiovisuais com resolucao de episodios e temporadas
 - **GIVEN** registros de doramas e filmes obtidos através dos clientes TMDB e TVmaze
@@ -20,9 +20,14 @@ O sistema SHALL executar o pipeline de ingestão consumindo as APIs externas rec
 - **THEN** o sistema SHALL registrar a obra preservando a categoria canônica distinta (MANGA, MANHWA ou MANHUA) e o total de capítulos disponíveis
 
 #### Scenario: Preservacao retrocompativel das obras originais do seed
-- **GIVEN** as 30 obras originais semeadas na inicialização do projeto e referenciadas em bibliotecas pessoais
+- **GIVEN** as obras originais semeadas na inicialização do projeto e referenciadas em bibliotecas pessoais
 - **WHEN** a ingestão é executada no banco de dados
 - **THEN** o sistema SHALL preservar os registros e identificadores existentes associando a proveniência SEED_CANONICAL sem quebrar vínculos de bibliotecas
+
+#### Scenario: Ingestao sob demanda just in time a partir de busca externa
+- **GIVEN** uma obra retornada de uma busca externa ao vivo que ainda nao existe no catalogo
+- **WHEN** o usuario interage com a obra selecionando-a para detalhes ou adicionando-a a biblioteca
+- **THEN** o servico de ingestao converte a obra em entidade soberana e a persiste de forma atomica no Supabase
 
 ### Requirement: Field-Level Data Provenance Tracking
 O sistema SHALL registrar e persistir metadados de proveniência por campo para cada obra ingerida, indicando a fonte de dados, o identificador externo de origem e o timestamp da sincronização.

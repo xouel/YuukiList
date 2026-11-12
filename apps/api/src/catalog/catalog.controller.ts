@@ -11,6 +11,7 @@ import type {
   MediaItemDetailDto,
   MediaItemSummaryDto,
   PaginatedResponse,
+  FederatedCatalogResponse,
 } from '../../../../packages/shared/src/index.ts';
 import { CatalogService } from './catalog.service.ts';
 
@@ -31,8 +32,8 @@ export class CatalogController {
     this.service = service;
   }
 
-  async list(query: CatalogQueryDto = {}): Promise<PaginatedResponse<MediaItemSummaryDto>> {
-    return this.service.listItems(query);
+  async list(query: CatalogQueryDto = {}): Promise<FederatedCatalogResponse> {
+    return this.service.listFederated(query);
   }
 
   async getBySlug(slug: string): Promise<MediaItemDetailDto> {
