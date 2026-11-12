@@ -78,7 +78,7 @@ O sistema SHALL disponibilizar controle de progresso tátil com micro-pressão (
 - **THEN** o sistema SHALL abrir um popover flutuante para escolha de nota de 1 a 10 com persistência imediata e prover botão de atalho para notas do diário
 
 ### Requirement: Library Filtering and Asynchronous States
-O sistema SHALL filtrar itens por abas editoriais limpas em linha única para status sem formato de pílula inflada e seletores discretos para categorias, busca local instantânea em tempo real por título, opções de ordenação e estados dedicados de carregamento, acervo vazio, busca sem resultados e erro.
+O sistema SHALL filtrar itens por abas editoriais limpas em linha única para status sem formato de pílula inflada e sem barra de rolagem horizontal nativa, com seletores discretos para categorias, busca local instantânea em tempo real por título, opções de ordenação e estados dedicados de carregamento, acervo vazio, busca sem resultados e erro.
 
 #### Scenario: Filtragem combinada por aba de status e categoria
 - **GIVEN** um usuário com múltiplas obras de diferentes formatos e status
@@ -98,7 +98,7 @@ O sistema SHALL filtrar itens por abas editoriais limpas em linha única para st
 #### Scenario: Abas editoriais limpas com taxonomia desambiguada e contadores integrados
 - **GIVEN** a barra de filtros da biblioteca pessoal
 - **WHEN** as abas de navegação de status são renderizadas
-- **THEN** as opções utilizam taxonomia de usuário em abas editoriais com linha indicadora de estado ativo sem formato de pílula inflada e contadores numéricos discretos
+- **THEN** as opções utilizam taxonomia de usuário em abas editoriais com linha indicadora de estado ativo sem formato de pílula inflada, contadores numéricos discretos e sem barra de rolagem horizontal visível na interface
 
 #### Scenario: Busca local instantanea por texto com ordenacao dinamica
 - **GIVEN** uma lista de obras carregadas na biblioteca
@@ -106,12 +106,12 @@ O sistema SHALL filtrar itens por abas editoriais limpas em linha única para st
 - **THEN** a interface SHALL filtrar e reordenar os itens instantaneamente no cliente sem requisição adicional à API
 
 ### Requirement: Interactive Favorites Rewatch Actions and Inconsistency Warnings
-A interface da biblioteca pessoal SHALL disponibilizar alternância ágil de favoritos com um clique, modal interativo para registrar novo ciclo ou contador de reassistir, controle de volumes e alertas não-bloqueantes de inconsistência.
+A interface da biblioteca pessoal SHALL disponibilizar alternância ágil de favoritos com um clique sincronizada com a camada de persistência durável, modal interativo para registrar novo ciclo ou contador de reassistir, controle de volumes e alertas não-bloqueantes de inconsistência.
 
 #### Scenario: Alternancia imediata de favorito no card ou linha
 - **GIVEN** uma obra exibida na biblioteca pessoal
 - **WHEN** o usuário clica no botão de coração de favoritos
-- **THEN** a interface SHALL atualizar o estado visual otimisticamente e persistir a alteração via API
+- **THEN** a interface SHALL atualizar o estado visual otimisticamente e persistir a alteração no banco de dados
 
 #### Scenario: Execucao de acao de reassistir ou reler no modal
 - **GIVEN** o modal de detalhes de uma obra concluída aberto

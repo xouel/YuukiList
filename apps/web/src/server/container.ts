@@ -99,6 +99,4 @@ class ServerContainer {
 
 const globalForContainer = globalThis as unknown as { __container?: ServerContainer };
 export const container = globalForContainer.__container || new ServerContainer();
-if (process.env.NODE_ENV !== 'production') {
-  globalForContainer.__container = container;
-}
+globalForContainer.__container = container;

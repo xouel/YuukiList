@@ -132,3 +132,14 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Utilitário para ocultar barras de rolagem nativas preservando scroll funcional */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+

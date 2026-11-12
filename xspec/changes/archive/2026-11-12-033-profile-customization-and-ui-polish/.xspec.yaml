@@ -1,0 +1,17 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "033-profile-customization-and-ui-polish"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "home-hub"
+  - "personal-library-ui"
+  - "user-profile-stats"
+base_specs:
+  home-hub: "sha256:85280fb3d76917f2494879bc7653290fbe9bc305f523ef5dc12ceec7c53e65a3"
+  personal-library-ui: "sha256:e1559c5779ea930ec86d85a7282cdf50bc0896e4b11e49d2d10812d0cfb66846"
+  user-profile-stats: "sha256:9dfc2979b3bac557866e0a4260f251d3945e654117c8b7088dd5109b5b469877"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-12T05:40:54.181Z"

@@ -1,6 +1,7 @@
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
   extensions = [pg_trgm]
 }
 
@@ -83,6 +84,12 @@ model User {
   username           String   @unique @db.VarChar(64)
   normalizedUsername String   @unique @map("normalized_username") @db.VarChar(64)
   passwordHash       String   @map("password_hash") @db.VarChar(255)
+  avatarUrl          String?  @map("avatar_url") @db.VarChar(512)
+  avatarFrame        String?  @default("none") @map("avatar_frame") @db.VarChar(32)
+  bannerUrl          String?  @map("banner_url") @db.VarChar(512)
+  bio                String?  @db.VarChar(500)
+  phone              String?  @db.VarChar(32)
+  location           String?  @db.VarChar(120)
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
@@ -94,18 +101,20 @@ model User {
 }
 
 model UserLibraryItem {
-  id          String    @id @default(uuid()) @db.Uuid
-  userId      String    @map("user_id") @db.Uuid
-  mediaItemId String    @map("media_item_id") @db.Uuid
-  status      String    @db.VarChar(32)
-  progress    Int       @default(0)
-  rating      Float?
-  notes       String?   @db.Text
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  mediaItemId  String    @map("media_item_id") @db.Uuid
+  status       String    @db.VarChar(32)
+  progress     Int       @default(0)
+  rating       Float?
+  notes        String?   @db.Text
+  isFavorite   Boolean   @default(false) @map("is_favorite")
+  rewatchCount Int       @default(0) @map("rewatch_count")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mediaItem   MediaItem @relation(fields: [mediaItemId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaItem    MediaItem @relation(fields: [mediaItemId], references: [id], onDelete: Cascade)
 
   @@unique([userId, mediaItemId])
   @@index([userId, status])

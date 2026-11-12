@@ -14,6 +14,20 @@ export class ProfileController {
     return this.profileService.getStats(userId);
   }
 
+  async getAccount(userId: string) {
+    if (!userId) {
+      throw new Error('Usuário não autenticado');
+    }
+    return this.profileService.getAccount(userId);
+  }
+
+  async updateProfile(userId: string, body: any) {
+    if (!userId) {
+      throw new Error('Usuário não autenticado');
+    }
+    return this.profileService.updateProfile(userId, body);
+  }
+
   async createShareLink(userId: string, body: { expirationDays?: number; shareScope?: any }) {
     if (!userId) {
       throw new Error('Usuário não autenticado');

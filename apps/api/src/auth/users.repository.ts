@@ -14,6 +14,12 @@ export interface UserRecord {
   normalizedUsername: string;
   passwordHash: string;
   role: UserRoleType;
+  avatarUrl?: string | null;
+  avatarFrame?: string | null;
+  bannerUrl?: string | null;
+  bio?: string | null;
+  phone?: string | null;
+  location?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +31,7 @@ export interface IUsersRepository {
   findByUsername(username: string): Promise<UserRecord | null>;
   findByIdentifier(identifier: string): Promise<UserRecord | null>;
   setRole(id: string, role: UserRoleType): Promise<UserRecord | null>;
+  updateProfile(id: string, data: Partial<UserRecord>): Promise<UserRecord | null>;
   count(): Promise<number>;
   clear(): Promise<void>;
 }
@@ -100,6 +107,22 @@ export class UsersRepository implements IUsersRepository {
     if (!user) return null;
     user.role = role;
     user.updatedAt = new Date();
+    this.users.set(id, user);
+    return { ...user };
+  }
+
+  async updateProfile(id: string, data: Partial<UserRecord>): Promise<UserRecord | null> {
+    const user = this.users.get(id);
+    if (!user) return null;
+
+    if (data.avatarUrl !== undefined) user.avatarUrl = data.avatarUrl;
+    if (data.avatarFrame !== undefined) user.avatarFrame = data.avatarFrame;
+    if (data.bannerUrl !== undefined) user.bannerUrl = data.bannerUrl;
+    if (data.bio !== undefined) user.bio = data.bio;
+    if (data.phone !== undefined) user.phone = data.phone;
+    if (data.location !== undefined) user.location = data.location;
+    user.updatedAt = new Date();
+
     this.users.set(id, user);
     return { ...user };
   }

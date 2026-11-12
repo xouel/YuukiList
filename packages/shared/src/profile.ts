@@ -5,11 +5,38 @@ export const ShareScope = Object.freeze({
 
 export type ShareScope = (typeof ShareScope)[keyof typeof ShareScope];
 
+export type AvatarFrameType = 'none' | 'nanquim' | 'carmim' | 'ouro' | 'sakura';
+
+export interface UserProfileDto {
+  userId: string;
+  username: string;
+  email: string;
+  avatarUrl?: string | null;
+  avatarFrame?: AvatarFrameType | null;
+  bannerUrl?: string | null;
+  bio?: string | null;
+  phone?: string | null;
+  location?: string | null;
+  joinedAt: string;
+}
+
+export interface UpdateProfileDto {
+  avatarUrl?: string | null;
+  avatarFrame?: AvatarFrameType | null;
+  bannerUrl?: string | null;
+  bio?: string | null;
+  phone?: string | null;
+  location?: string | null;
+}
+
 export interface ProfileStatsDto {
   userId: string;
   username: string;
   avatarUrl?: string;
+  avatarFrame?: AvatarFrameType | null;
+  bannerUrl?: string | null;
   bio?: string;
+  location?: string | null;
   joinedAt: string;
   totalCompleted: number;
   totalWatchingOrReading: number;

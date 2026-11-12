@@ -37,6 +37,11 @@ export class ProfileService {
     const user = await this.usersRepo.findById(userId);
     const username = user ? user.username : 'Usuário';
     const joinedAt = user ? user.createdAt.toISOString() : new Date().toISOString();
+    const avatarUrl = user?.avatarUrl || undefined;
+    const avatarFrame = (user?.avatarFrame as any) || 'none';
+    const bannerUrl = user?.bannerUrl || null;
+    const bio = user?.bio || undefined;
+    const location = user?.location || null;
 
     const { items: libraryItems } = await this.libraryRepo.findMany(userId, { limit: 2000 });
 
@@ -44,6 +49,11 @@ export class ProfileService {
       return {
         userId,
         username,
+        avatarUrl,
+        avatarFrame,
+        bannerUrl,
+        bio,
+        location,
         joinedAt,
         totalCompleted: 0,
         totalWatchingOrReading: 0,
@@ -167,6 +177,11 @@ export class ProfileService {
     return {
       userId,
       username,
+      avatarUrl,
+      avatarFrame,
+      bannerUrl,
+      bio,
+      location,
       joinedAt,
       totalCompleted,
       totalWatchingOrReading,
@@ -179,6 +194,27 @@ export class ProfileService {
       topGenres,
       topCountries,
       favorites: favoriteItems,
+    };
+  }
+
+  async updateProfile(userId: string, data: any) {
+    return this.usersRepo.updateProfile(userId, data);
+  }
+
+  async getAccount(userId: string) {
+    const user = await this.usersRepo.findById(userId);
+    if (!user) return null;
+    return {
+      userId: user.id,
+      username: user.username,
+      email: user.email,
+      avatarUrl: user.avatarUrl || null,
+      avatarFrame: user.avatarFrame || 'none',
+      bannerUrl: user.bannerUrl || null,
+      bio: user.bio || null,
+      phone: user.phone || null,
+      location: user.location || null,
+      createdAt: user.createdAt,
     };
   }
 
