@@ -25,7 +25,7 @@ O sistema SHALL consolidar metricas analiticas de consumo apresentando-as em for
 - **THEN** os dados SHALL ser estruturados de forma compacta com rotulos humanizados e paleta mineral Asian Editorial
 
 ### Requirement: Profile Showcase and Activity Feed Privacy
-A interface do perfil SHALL renderizar a identificação do usuário sem selos decorativos vazios ('Colecionador', 'Acervo Privado') e sem emojis em botões de ação, posicionando a vitrine de favoritos com prioridade visual conectada aos registros favoritados pelo usuário e mantendo as anotações privadas e telefone restritos ao titular.
+A interface do perfil SHALL renderizar a identificação do usuário sem selos decorativos vazios e sem emojis, posicionando a vitrine de favoritos com prioridade visual, assegurando superfícies semânticas adaptadas a ambos os temas e mantendo anotações privadas e telefone restritos ao titular.
 
 #### Scenario: Exibicao da vitrine de obras favoritas no perfil
 - **GIVEN** um usuário autenticado com obras sinalizadas com o indicador de favorito no banco de dados
@@ -51,6 +51,11 @@ A interface do perfil SHALL renderizar a identificação do usuário sem selos d
 - **GIVEN** a página de perfil renderizada na rota /profile
 - **WHEN** o cabeçalho de perfil do usuário é exibido
 - **THEN** a interface SHALL omitir selos decorativos vazios como 'Colecionador' e 'Acervo Privado' e não conter emojis em botões de compartilhamento
+
+#### Scenario: Harmonizacao semantica de superficies e textos do perfil
+- **GIVEN** a visualização do perfil do usuário em Modo Claro ou Modo Escuro
+- **WHEN** os blocos de perfil, vitrine de favoritos e métricas analíticas são exibidos
+- **THEN** os contêineres e textos SHALL adotar superfícies e cores semânticas sem classes hexadecimais escuras fixas (bg-[#1A1820], text-[#F4EFEA])
 
 ### Requirement: User Profile Customization and Media Upload
 O sistema SHALL permitir ao usuário autenticado personalizar seu perfil por meio de um modal interativo de edição, suportando upload direto de foto de avatar e capa de topo para o Supabase Storage, seleção de moldura temática entre cinco opções editoriais, biografia e telefone opcional estritamente privado.

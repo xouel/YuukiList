@@ -50,18 +50,18 @@ export function TrendingShowcase({ items }: TrendingShowcaseProps) {
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-5 rounded-full bg-amber-500" />
-            <h3 className="font-serif-editorial text-xl sm:text-2xl font-bold tracking-tight text-[#F4EFEA]">
+            <h3 className="font-serif-editorial text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
               Tendências & Recomendações da Temporada
             </h3>
           </div>
-          <p className="text-xs text-[#9C96A2] mt-0.5 font-light">
+          <p className="text-xs text-[var(--color-text-secondary)] mt-0.5 font-light">
             Baseado nos títulos mais aclamados e favoritos da comunidade oriental
           </p>
         </div>
 
         <Link
           href="/explore"
-          className="text-xs font-semibold text-[#E05347] hover:underline flex items-center gap-1"
+          className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
         >
           <span>Ver Todas</span>
           <span>→</span>
@@ -72,9 +72,9 @@ export function TrendingShowcase({ items }: TrendingShowcaseProps) {
         {displayItems.map((item) => (
           <article
             key={item.id}
-            className="p-3.5 rounded-2xl bg-[#1A1820] border border-[#2B2735] hover:border-[#E05347]/40 transition-all group flex flex-col justify-between space-y-3"
+            className="p-3.5 rounded-2xl bg-surface-raised border border-stroke-subtle hover:border-stroke-accent transition-all group flex flex-col justify-between space-y-3 shadow-sm"
           >
-            <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-[#121115] border border-[#2B2735]">
+            <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-surface-canvas border border-stroke-subtle">
               <img
                 src={item.coverUrl}
                 alt={`Capa de ${item.title}`}
@@ -82,17 +82,17 @@ export function TrendingShowcase({ items }: TrendingShowcaseProps) {
                 loading="lazy"
               />
               <div className="absolute top-2 left-2 z-10">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-black/70 backdrop-blur text-[#F4EFEA] border border-white/10 uppercase">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-black/75 backdrop-blur text-white border border-white/10 uppercase">
                   {item.category}
                 </span>
               </div>
             </div>
 
             <div>
-              <Link href={`/items/${item.slug}`} className="group-hover:text-[#E05347] transition-colors">
-                <h4 className="font-semibold text-sm text-[#F4EFEA] truncate">{item.title}</h4>
+              <Link href={`/items/${item.slug}`} className="group-hover:text-accent transition-colors">
+                <h4 className="font-semibold text-sm text-[var(--color-text-primary)] truncate">{item.title}</h4>
               </Link>
-              <p className="text-[11px] text-[#9C96A2] font-light truncate mt-0.5">
+              <p className="text-[11px] text-[var(--color-text-secondary)] font-light truncate mt-0.5">
                 {item.genres ? item.genres.join(' • ') : 'Gêneros em destaque'}
               </p>
             </div>

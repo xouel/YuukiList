@@ -119,14 +119,14 @@ export default function ProfilePage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
-        <h1 className="text-2xl font-serif font-bold text-[#F4EFEA]">Acesso Restrito</h1>
-        <p className="text-xs text-zinc-400 leading-relaxed">
+        <h1 className="text-2xl font-serif font-bold text-[var(--color-text-primary)]">Acesso Restrito</h1>
+        <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
           Você precisa estar conectado à sua conta para visualizar seu perfil, estatísticas e opções de compartilhamento.
         </p>
         <div className="pt-2">
           <a
             href="/login?redirect=/profile"
-            className="inline-block px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#E05347] hover:bg-[#E05347]/90 text-white transition-colors cursor-pointer shadow-sm"
+            className="inline-block px-5 py-2.5 rounded-xl text-xs font-semibold bg-accent hover:bg-accent/90 text-white transition-colors cursor-pointer shadow-sm"
           >
             Entrar no YuukiList
           </a>
@@ -138,14 +138,14 @@ export default function ProfilePage() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fadeIn">
       {/* 1. Cabeçalho Editorial do Perfil com Capa e Moldura */}
-      <section className="rounded-2xl bg-[#1A1820] border border-[#2B2735] shadow-lg overflow-hidden">
+      <section className="rounded-2xl bg-surface-raised border border-stroke-subtle shadow-sm overflow-hidden">
         {/* Capa de Topo / Banner */}
         <div
-          className="h-32 sm:h-44 w-full bg-cover bg-center border-b border-[#2B2735]"
+          className="h-32 sm:h-44 w-full bg-cover bg-center border-b border-stroke-subtle"
           style={{
             backgroundImage: accountData?.bannerUrl || stats?.bannerUrl
               ? `url(${accountData?.bannerUrl || stats?.bannerUrl})`
-              : 'linear-gradient(to right, #1A1820, #24202C)',
+              : 'linear-gradient(to right, var(--surface-raised), var(--surface-overlay))',
           }}
         />
 
@@ -162,17 +162,17 @@ export default function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-[#24202C] flex items-center justify-center text-2xl sm:text-3xl font-serif font-bold text-[#E05347]">
+                <div className="w-full h-full bg-surface-sunken flex items-center justify-center text-2xl sm:text-3xl font-serif font-bold text-accent">
                   {stats?.username ? stats.username.charAt(0).toUpperCase() : 'Y'}
                 </div>
               )}
             </AvatarFrame>
 
             <div className="space-y-1 mb-1">
-              <h1 className="text-xl sm:text-2xl font-serif font-bold text-[#F4EFEA] tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-serif font-bold text-[var(--color-text-primary)] tracking-tight">
                 {stats?.username || user?.username}
               </h1>
-              <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-400">
+              <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-secondary)]">
                 <span>
                   Membro desde{' '}
                   {stats?.joinedAt
@@ -201,7 +201,7 @@ export default function ProfilePage() {
             </button>
             <button
               onClick={() => setIsShareOpen(true)}
-              className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold bg-[#24202C] hover:bg-[#2F2A3A] text-[#F4EFEA] border border-[#2B2735] hover:border-[#3B3647] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold bg-surface-overlay hover:bg-surface-sunken text-[var(--color-text-primary)] border border-stroke-subtle hover:border-stroke-strong transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -210,7 +210,7 @@ export default function ProfilePage() {
             </button>
             <button
               onClick={logout}
-              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#24202C] hover:bg-[#2F2A3A] text-zinc-400 hover:text-zinc-200 border border-[#2B2735] transition-colors cursor-pointer"
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-surface-overlay hover:bg-surface-sunken text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-stroke-subtle transition-colors cursor-pointer"
             >
               Sair
             </button>
@@ -219,8 +219,8 @@ export default function ProfilePage() {
 
         {/* Bio do Perfil */}
         {(accountData?.bio || stats?.bio) && (
-          <div className="px-6 pb-6 pt-2 border-t border-[#2B2735]/60">
-            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-light">
+          <div className="px-6 pb-6 pt-2 border-t border-stroke-subtle">
+            <p className="text-xs sm:text-sm text-[var(--color-text-secondary)] leading-relaxed font-light">
               {accountData?.bio || stats?.bio}
             </p>
           </div>
@@ -234,39 +234,39 @@ export default function ProfilePage() {
       {stats && <ProfileStats stats={stats} />}
 
       {/* 4. Soberania de Dados e LGPD */}
-      <section className="p-6 rounded-2xl bg-[#1A1820] border border-[#2B2735] space-y-6">
+      <section className="p-6 rounded-2xl bg-surface-raised border border-stroke-subtle space-y-6 shadow-sm">
         <div>
-          <h2 className="text-base font-serif font-bold text-[#F4EFEA] flex items-center gap-2">
+          <h2 className="text-base font-serif font-bold text-[var(--color-text-primary)] flex items-center gap-2">
             <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
             Soberania de Dados & LGPD
           </h2>
-          <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1 leading-relaxed">
             Seus dados pertencem exclusivamente a você. Exporte seus registros em formatos abertos ou exerça seu direito de exclusão definitiva.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl bg-[#24202C] border border-[#2B2735] space-y-2.5">
-            <h3 className="text-xs font-semibold text-zinc-200 uppercase tracking-wider">
+          <div className="p-4 rounded-xl bg-surface-overlay border border-stroke-subtle space-y-2.5">
+            <h3 className="text-xs font-semibold text-[var(--color-text-primary)] uppercase tracking-wider">
               Portabilidade de Dados
             </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
               Faça o download de todos os seus registros de biblioteca, notas do diário e preferências da conta.
             </p>
             <div className="flex items-center gap-2 pt-1">
               <button
                 onClick={handleExportJson}
                 disabled={!!exporting}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#1A1820] hover:bg-[#221E2A] text-zinc-200 border border-[#2B2735] transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-raised hover:bg-surface-sunken text-[var(--color-text-primary)] border border-stroke-subtle transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {exporting === 'JSON' ? 'Baixando...' : 'Exportar JSON'}
               </button>
               <button
                 onClick={handleExportCsv}
                 disabled={!!exporting}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#1A1820] hover:bg-[#221E2A] text-zinc-200 border border-[#2B2735] transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-raised hover:bg-surface-sunken text-[var(--color-text-primary)] border border-stroke-subtle transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {exporting === 'CSV' ? 'Baixando...' : 'Exportar CSV'}
               </button>
@@ -277,7 +277,7 @@ export default function ProfilePage() {
             <h3 className="text-xs font-semibold text-rose-300 uppercase tracking-wider">
               Exclusão Definitiva
             </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
               Elimine permanentemente sua conta, biblioteca, anotações de diário e links compartilhados.
             </p>
             <div className="pt-1">

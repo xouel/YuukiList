@@ -65,8 +65,8 @@ describe('018-asian-editorial-foundation — Suíte de Validação', () => {
       const cssContent = readFileSync(cssPath, 'utf8');
 
       assert.ok(cssContent.includes('[data-theme="light"]'), 'Deve conter mapeamento para [data-theme="light"]');
-      assert.ok(cssContent.includes('--color-bg-base: #f8fafc') || cssContent.includes('--color-bg-base: #F8FAFC'), 'Light theme deve definir fundo claro #f8fafc');
-      assert.ok(cssContent.includes('--color-text-primary: #1a1820') || cssContent.includes('--color-text-primary: #0f172a'), 'Light theme deve definir texto escuro de alto contraste');
+      assert.ok(cssContent.includes('--color-bg-base: #f8fafc') || cssContent.includes('--color-bg-base: #F8FAFC') || cssContent.includes('--color-bg-base: #F9F8F5'), 'Light theme deve definir fundo claro');
+      assert.ok(cssContent.includes('--color-text-primary: #1a1820') || cssContent.includes('--color-text-primary: #0f172a') || cssContent.includes('--color-text-primary: #16141A'), 'Light theme deve definir texto escuro de alto contraste');
     });
 
     it('TR-006: globals.css deve garantir anel de foco acessível e prefers-reduced-motion', () => {

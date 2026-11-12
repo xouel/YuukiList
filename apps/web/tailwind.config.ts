@@ -42,6 +42,11 @@ const config: Config = {
           500: '#E05347',
         },
       },
+      textColor: {
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-text-secondary)',
+        muted: 'var(--color-text-muted)',
+      },
       boxShadow: {
         'hairline-top': 'var(--highlight-hairline)',
       },

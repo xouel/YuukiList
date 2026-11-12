@@ -30,7 +30,7 @@ A aplicação SHALL estruturar o layout em torno de uma casca de navegação res
 - **THEN** o sistema SHALL posicionar a área principal em um container uniforme com largura máxima de max-w-7xl e espaçamentos laterais consistentes
 
 ### Requirement: Theme Selection and Accessibility Foundations
-O sistema SHALL disponibilizar suporte ao Design System Asian Editorial baseado em nanquim, papel e carmim com tipografia em três níveis, arquitetura de design tokens semânticos (superfícies, contornos de refração e acentos de mídia bimodais), alternância acessível em tempo real para Light Editorial, anel de foco visível em conformidade com WCAG 2.2 AA e respeito estrito a preferências de movimento reduzido.
+O sistema SHALL disponibilizar suporte ao Design System Asian Editorial baseado em nanquim, papel e carmim com tipografia em três níveis, arquitetura de design tokens semânticos (superfícies, contornos de refração e acentos de mídia bimodais), alternância acessível em tempo real para Light Editorial Washi, anel de foco visível em conformidade com WCAG 2.2 AA e respeito estrito a preferências de movimento reduzido.
 
 #### Scenario: Alternancia dinamica de tema visual
 - **GIVEN** a interface carregada com o tema Dark Editorial mineral padrão
@@ -43,9 +43,9 @@ O sistema SHALL disponibilizar suporte ao Design System Asian Editorial baseado 
 - **THEN** a interface SHALL desativar transições de movimento bruscas mantendo apenas esmaecimentos sutis sem prejudicar o usuário
 
 #### Scenario: Aplicacao efetiva de cores claras nas superficies e textos
-- **GIVEN** a interface comutada para o tema Light Editorial
+- **GIVEN** a interface comutada para o tema Light Editorial Washi
 - **WHEN** a casca de navegação, cabeçalhos e conteúdo principal são renderizados
-- **THEN** as superfícies SHALL adotar tons claros e o texto principal SHALL utilizar tipografia escura de alto contraste conforme WCAG 2.2 AA
+- **THEN** as superfícies SHALL adotar fundo mineral acolhedor (#F9F8F5), cartões brancos (#FFFFFF) e o texto principal SHALL utilizar nanquim profundo (#16141A) de alto contraste conforme WCAG 2.2 AA
 
 #### Scenario: Aplicacao da escala tipografica editorial e paleta mineral
 - **GIVEN** a renderização de títulos, metadados e corpo de texto no tema padrão
@@ -55,7 +55,7 @@ O sistema SHALL disponibilizar suporte ao Design System Asian Editorial baseado 
 #### Scenario: Suporte a tokens semanticos de superficie e contornos de refracao
 - **GIVEN** a aplicacao em execucao nos temas Dark Editorial ou Light Editorial
 - **WHEN** qualquer componente renderiza conteineres, bordas ou destaques
-- **THEN** o sistema SHALL utilizar variaveis semanticas (--surface-canvas, --surface-raised, --stroke-subtle, --accent-carmim) mapeadas via classes Tailwind
+- **THEN** o sistema SHALL utilizar variaveis semanticas (--surface-canvas, --surface-raised, --stroke-subtle, --accent-carmim) mapeadas via classes Tailwind sem hexadecimais estáticos
 
 #### Scenario: Padronizacao semantica de acentos de midia bimodais
 - **GIVEN** a exibicao de badges e selos de categoria (Audiovisual, Impresso ou Animacao)

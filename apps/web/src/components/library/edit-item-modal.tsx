@@ -165,12 +165,12 @@ export function EditItemModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-lg bg-[#181C2B] rounded-2xl border border-[#262C3F] p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-lg bg-surface-raised rounded-2xl border border-stroke-subtle p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Cabeçalho */}
-        <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#262C3F]">
+        <div className="flex items-start justify-between gap-4 pb-4 border-b border-stroke-subtle">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800">
+              <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-accent/15 text-accent border border-accent/30">
                 {category || 'Obra'}
               </span>
               {rewatchCount > 0 && (
@@ -181,7 +181,7 @@ export function EditItemModal({
             </div>
             <h2
               id="edit-modal-title"
-              className="text-lg font-bold text-[#F3F4F6] mt-1.5 line-clamp-1"
+              className="text-lg font-bold text-[var(--color-text-primary)] mt-1.5 line-clamp-1"
             >
               {media?.title || 'Detalhes da Obra'}
             </h2>
@@ -195,7 +195,7 @@ export function EditItemModal({
               className={`p-2 rounded-lg border transition-all ${
                 isFavorite
                   ? 'bg-rose-500/25 text-rose-400 border-rose-500/50 hover:bg-rose-500/35'
-                  : 'bg-[#121520] text-gray-400 hover:text-rose-400 border-[#262C3F]'
+                  : 'bg-surface-canvas text-[var(--color-text-secondary)] hover:text-rose-400 border-stroke-subtle'
               }`}
             >
               <svg
@@ -217,7 +217,7 @@ export function EditItemModal({
               type="button"
               onClick={onClose}
               aria-label="Fechar modal"
-              className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-[#262C3F] transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
+              className="p-1 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay transition-colors focus-visible:ring-2 focus-visible:ring-accent"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -240,7 +240,9 @@ export function EditItemModal({
               data-testid="inconsistency-warning"
               className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-600/50 text-amber-300 text-xs flex items-start gap-3 shadow-lg"
             >
-              <span className="text-lg leading-none shrink-0">⚠️</span>
+              <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs shrink-0">
+                !
+              </div>
               <div>
                 <p className="font-semibold text-amber-200">Aviso de Inconsistência de Status</p>
                 <p className="text-amber-300/90 mt-0.5 leading-relaxed">
@@ -254,7 +256,7 @@ export function EditItemModal({
           <div>
             <label
               htmlFor="status-select"
-              className="block text-xs font-medium text-[#94A3B8] mb-1.5"
+              className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
             >
               Status de Acompanhamento
             </label>
@@ -262,7 +264,7 @@ export function EditItemModal({
               id="status-select"
               value={status}
               onChange={(e) => setStatus(e.target.value as PersonalStatus)}
-              className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none"
             >
               {allowedStatuses.map((s) => (
                 <option key={s} value={s}>
@@ -277,7 +279,7 @@ export function EditItemModal({
             <div>
               <label
                 htmlFor="progress-input"
-                className="block text-xs font-medium text-[#94A3B8] mb-1.5"
+                className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
               >
                 {category === 'MANGA' || category === 'MANHWA' || category === 'MANHUA'
                   ? 'Capítulo Atual'
@@ -287,7 +289,7 @@ export function EditItemModal({
                 <button
                   type="button"
                   onClick={() => setProgress((p) => Math.max(0, p - 1))}
-                  className="w-9 h-9 rounded-lg bg-[#262C3F] text-white hover:bg-[#323950] font-bold flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-lg bg-surface-overlay text-[var(--color-text-primary)] hover:bg-surface-sunken font-bold flex items-center justify-center transition-colors border border-stroke-subtle"
                   aria-label="Diminuir uma unidade"
                 >
                   -
@@ -298,12 +300,12 @@ export function EditItemModal({
                   min="0"
                   value={progress}
                   onChange={(e) => setProgress(Math.max(0, parseInt(e.target.value, 10) || 0))}
-                  className="flex-1 px-3 py-2 text-sm text-center rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none font-semibold"
+                  className="flex-1 px-3 py-2 text-sm text-center rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none font-semibold"
                 />
                 <button
                   type="button"
                   onClick={() => setProgress((p) => p + 1)}
-                  className="w-9 h-9 rounded-lg bg-[#262C3F] text-white hover:bg-[#323950] font-bold flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-lg bg-surface-overlay text-[var(--color-text-primary)] hover:bg-surface-sunken font-bold flex items-center justify-center transition-colors border border-stroke-subtle"
                   aria-label="Aumentar uma unidade"
                 >
                   +
@@ -317,7 +319,7 @@ export function EditItemModal({
             <div>
               <label
                 htmlFor="volume-input"
-                className="block text-xs font-medium text-[#94A3B8] mb-1.5"
+                className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
               >
                 Volume Atual (Opcional)
               </label>
@@ -328,7 +330,7 @@ export function EditItemModal({
                 placeholder="Ex: 5"
                 value={progressVolumes}
                 onChange={(e) => setProgressVolumes(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
+                className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none"
               />
             </div>
           )}
@@ -337,7 +339,7 @@ export function EditItemModal({
           <div>
             <label
               htmlFor="rating-input"
-              className="block text-xs font-medium text-[#94A3B8] mb-1.5"
+              className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5"
             >
               Sua Nota (0.0 a 10.0)
             </label>
@@ -351,13 +353,13 @@ export function EditItemModal({
                 placeholder="Sem nota"
                 value={rating}
                 onChange={(e) => setRating(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
+                className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none"
               />
               {rating !== '' && (
                 <button
                   type="button"
                   onClick={() => setRating('')}
-                  className="text-xs text-[#94A3B8] hover:text-[#F3F4F6] px-2 py-1 rounded bg-[#262C3F]"
+                  className="text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] px-2 py-1 rounded bg-surface-overlay border border-stroke-subtle"
                 >
                   Limpar
                 </button>
@@ -366,14 +368,14 @@ export function EditItemModal({
           </div>
 
           {/* Bloco de Reassistir / Reler (TR-005) */}
-          <div className="p-3.5 rounded-xl bg-[#121520] border border-[#262C3F] space-y-2.5">
+          <div className="p-3.5 rounded-xl bg-surface-sunken border border-stroke-subtle space-y-2.5">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-semibold text-[#F3F4F6]">
+                <h4 className="text-xs font-semibold text-[var(--color-text-primary)]">
                   {isLiterary ? 'Reler Obra' : 'Reassistir Obra'}
                 </h4>
-                <p className="text-[11px] text-[#94A3B8]">
-                  {isLiterary ? 'Relido' : 'Reassistido'}: <strong className="text-purple-300">{rewatchCount}</strong> {rewatchCount === 1 ? 'vez' : 'vezes'}
+                <p className="text-[11px] text-[var(--color-text-secondary)]">
+                  {isLiterary ? 'Relido' : 'Reassistido'}: <strong className="text-purple-400">{rewatchCount}</strong> {rewatchCount === 1 ? 'vez' : 'vezes'}
                 </p>
               </div>
 
@@ -381,7 +383,7 @@ export function EditItemModal({
                 <button
                   type="button"
                   onClick={() => setRewatchCount(Math.max(0, rewatchCount - 1))}
-                  className="text-[11px] text-[#94A3B8] hover:text-rose-400 px-2 py-0.5 rounded border border-[#262C3F] hover:border-rose-500/40 transition-colors"
+                  className="text-[11px] text-[var(--color-text-secondary)] hover:text-rose-400 px-2 py-0.5 rounded border border-stroke-subtle hover:border-rose-500/40 transition-colors"
                   title="Decrementar contador"
                 >
                   -1 vez
@@ -400,7 +402,7 @@ export function EditItemModal({
               <button
                 type="button"
                 onClick={handleIncrementRewatch}
-                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#262C3F] text-[#F3F4F6] hover:bg-[#323950] border border-white/5 active:scale-95 transition-all"
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-overlay text-[var(--color-text-primary)] hover:bg-surface-raised border border-stroke-subtle active:scale-95 transition-all"
               >
                 +1 Vez
               </button>
@@ -412,11 +414,11 @@ export function EditItemModal({
             <div className="flex items-center justify-between mb-1.5">
               <label
                 htmlFor="notes-textarea"
-                className="block text-xs font-medium text-[#94A3B8]"
+                className="block text-xs font-medium text-[var(--color-text-secondary)]"
               >
                 Anotações Pessoais (Privadas)
               </label>
-              <span className="text-[10px] text-gray-500">
+              <span className="text-[10px] text-[var(--color-text-muted)]">
                 {notes.length}/1000
               </span>
             </div>
@@ -427,12 +429,12 @@ export function EditItemModal({
               placeholder="Ex: Assisti até o arco do torneio, recomendo pelos efeitos visuais..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none resize-none"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none resize-none"
             />
           </div>
 
           {/* Rodapé com Ações */}
-          <div className="pt-4 border-t border-[#262C3F] flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="pt-4 border-t border-stroke-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
             {showConfirmDelete ? (
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <button
@@ -446,7 +448,7 @@ export function EditItemModal({
                 <button
                   type="button"
                   onClick={() => setShowConfirmDelete(false)}
-                  className="px-3 py-1.5 text-xs text-[#94A3B8] hover:text-white"
+                  className="px-3 py-1.5 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 >
                   Cancelar
                 </button>
@@ -465,14 +467,14 @@ export function EditItemModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-medium rounded-lg bg-[#262C3F] text-[#F3F4F6] hover:bg-[#323950] transition-colors"
+                className="px-4 py-2 text-xs font-medium rounded-lg bg-surface-overlay text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-sunken transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#06B6D4] text-[#0B0D13] hover:bg-[#22D3EE] transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-xs font-semibold rounded-lg bg-accent text-white hover:bg-accent/90 transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
               >
                 {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
               </button>

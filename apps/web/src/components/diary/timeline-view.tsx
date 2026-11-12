@@ -77,7 +77,7 @@ export function TimelineView({
     return (
       <div className="space-y-4 py-8 animate-pulse">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-28 rounded-xl bg-[#181C2B] border border-[#262C3F]" />
+          <div key={i} className="h-28 rounded-xl bg-surface-raised border border-stroke-subtle" />
         ))}
       </div>
     );
@@ -85,12 +85,14 @@ export function TimelineView({
 
   if (events.length === 0) {
     return (
-      <div className="py-16 px-4 text-center border border-dashed border-[#262C3F] rounded-2xl bg-[#121520]/50 max-w-lg mx-auto my-6">
-        <div className="w-14 h-14 rounded-full bg-[#181C2B] border border-[#262C3F] flex items-center justify-center mx-auto mb-4 text-[#06B6D4]">
-          <span className="text-2xl">📖</span>
+      <div className="py-16 px-4 text-center border border-dashed border-stroke-subtle rounded-2xl bg-surface-sunken/40 max-w-lg mx-auto my-6">
+        <div className="w-14 h-14 rounded-full bg-surface-raised border border-stroke-subtle flex items-center justify-center mx-auto mb-4 text-accent shadow-sm">
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
         </div>
-        <h3 className="text-xl font-bold text-[#F3F4F6]">Seu diário ainda não possui registros</h3>
-        <p className="text-sm text-[#94A3B8] mt-2 max-w-sm mx-auto">
+        <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Seu diário ainda não possui registros</h3>
+        <p className="text-sm text-[var(--color-text-secondary)] mt-2 max-w-sm mx-auto">
           À medida que você avança suas obras ou registra anotações privadas sobre episódios, sua linha do tempo será construída aqui!
         </p>
         {onAddNoteClick && (
@@ -98,7 +100,7 @@ export function TimelineView({
             <button
               type="button"
               onClick={onAddNoteClick}
-              className="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-[#0B0D13] bg-[#06B6D4] hover:bg-[#22D3EE] rounded-xl transition-all shadow-lg shadow-[#06B6D4]/20"
+              className="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent/90 rounded-xl transition-all shadow-md shadow-accent/20 cursor-pointer"
             >
               + Nova Anotação
             </button>
@@ -109,7 +111,7 @@ export function TimelineView({
   }
 
   return (
-    <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-2 sm:before:left-3 before:top-3 before:bottom-3 before:w-0.5 before:bg-[#262C3F]">
+    <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-2 sm:before:left-3 before:top-3 before:bottom-3 before:w-0.5 before:bg-stroke-subtle">
       {events.map((event) => {
         const config = EVENT_TYPE_CONFIG[event.type] || EVENT_TYPE_CONFIG.NOTE;
         const media = event.mediaItem;
@@ -127,11 +129,11 @@ export function TimelineView({
         return (
           <article
             key={event.id}
-            className="relative bg-[#181C2B] rounded-xl border border-[#262C3F] p-4 sm:p-5 hover:border-[#06B6D4]/40 transition-all shadow-md group"
+            className="relative bg-surface-raised rounded-xl border border-stroke-subtle p-4 sm:p-5 hover:border-stroke-accent transition-all shadow-sm group"
           >
             {/* Marcador na Linha do Tempo */}
             <span
-              className={`absolute -left-[29px] sm:-left-[37px] top-5 w-3.5 h-3.5 rounded-full ring-4 ring-[#0B0D13] ${config.dot}`}
+              className={`absolute -left-[29px] sm:-left-[37px] top-5 w-3.5 h-3.5 rounded-full ring-4 ring-[var(--surface-canvas)] ${config.dot}`}
               aria-hidden="true"
             />
 
@@ -139,7 +141,7 @@ export function TimelineView({
               {/* Informações da Obra e Evento */}
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 {media && (
-                  <div className="relative w-12 h-16 sm:w-14 sm:h-20 shrink-0 rounded-lg overflow-hidden bg-[#121520] border border-white/5">
+                  <div className="relative w-12 h-16 sm:w-14 sm:h-20 shrink-0 rounded-lg overflow-hidden bg-surface-canvas border border-stroke-subtle">
                     <img
                       src={media.coverUrl || '/covers/fallback.svg'}
                       alt={`Capa de ${media.title}`}
@@ -179,13 +181,13 @@ export function TimelineView({
                     </span>
                   </div>
 
-                  <h4 className="font-semibold text-sm sm:text-base text-[#F3F4F6] truncate">
+                  <h4 className="font-semibold text-sm sm:text-base text-[var(--color-text-primary)] truncate">
                     {media?.title || 'Obra do Acervo'}
                   </h4>
 
                   {/* Resumo do Delta */}
                   {event.type === 'PROGRESS_UPDATE' && (
-                    <p className="text-xs text-gray-300 mt-1">
+                    <p className="text-xs text-[var(--color-text-secondary)] mt-1">
                       {event.previousProgress !== null && event.previousProgress !== undefined
                         ? `Avançou de ${event.previousProgress} para ${event.newProgress} unidades`
                         : `Progresso: ${event.newProgress} unidades`}
@@ -193,25 +195,25 @@ export function TimelineView({
                   )}
 
                   {event.type === 'STATUS_CHANGE' && event.newStatus && (
-                    <p className="text-xs text-gray-300 mt-1">
+                    <p className="text-xs text-[var(--color-text-secondary)] mt-1">
                       Status alterado para <strong>{event.newStatus}</strong>
                     </p>
                   )}
 
                   {event.type === 'RATING_SET' && typeof event.rating === 'number' && (
-                    <p className="text-xs text-amber-300 mt-1">
+                    <p className="text-xs text-amber-500 mt-1 font-semibold">
                       Atribuiu nota ★ {event.rating.toFixed(1)}
                     </p>
                   )}
 
                   {event.type === 'FAVORITE_TOGGLED' && (
-                    <p className="text-xs text-rose-300 mt-1">
+                    <p className="text-xs text-rose-500 mt-1 font-semibold">
                       {event.isFavorite ? 'Marcou como favorito ♥' : 'Desmarcou favorito'}
                     </p>
                   )}
 
                   {event.type === 'REWATCH_CYCLE' && (
-                    <p className="text-xs text-indigo-300 mt-1">
+                    <p className="text-xs text-purple-400 mt-1 font-semibold">
                       Iniciou ciclo de repetição (Total: {event.rewatchCount}x)
                     </p>
                   )}
@@ -224,12 +226,12 @@ export function TimelineView({
                           isMaskedDefault={Boolean(event.isMasked)}
                           label={`Spoiler • ${event.episodeNumber ? `Ep. ${event.episodeNumber}` : event.chapterNumber ? `Cap. ${event.chapterNumber}` : 'Obra'}`}
                         >
-                          <p className="text-xs sm:text-sm text-[#F3F4F6] p-3 rounded-lg bg-[#121520] border border-[#262C3F] whitespace-pre-wrap leading-relaxed">
+                          <p className="text-xs sm:text-sm text-[var(--color-text-primary)] p-3 rounded-lg bg-surface-canvas border border-stroke-subtle whitespace-pre-wrap leading-relaxed">
                             {event.note}
                           </p>
                         </SpoilerMask>
                       ) : (
-                        <p className="text-xs sm:text-sm text-[#F3F4F6] p-3 rounded-lg bg-[#121520] border border-[#262C3F] whitespace-pre-wrap leading-relaxed">
+                        <p className="text-xs sm:text-sm text-[var(--color-text-primary)] p-3 rounded-lg bg-surface-canvas border border-stroke-subtle whitespace-pre-wrap leading-relaxed">
                           {event.note}
                         </p>
                       )}

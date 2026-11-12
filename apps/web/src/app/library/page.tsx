@@ -10,7 +10,7 @@ export const metadata = {
 export default function LibraryPage() {
   return (
     <ProtectedRoute>
-      <main className="min-h-screen bg-[#0B0D13] text-[#F3F4F6] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <main className="min-h-screen bg-background text-[var(--color-text-primary)] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <LibraryView />
       </main>
     </ProtectedRoute>

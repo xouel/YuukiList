@@ -49,7 +49,7 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-9 h-9 rounded-lg bg-[#181C2B] animate-pulse" aria-hidden="true" />
+      <div className="w-9 h-9 rounded-lg bg-surface-raised animate-pulse" aria-hidden="true" />
     );
   }
 
@@ -59,7 +59,7 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       title={theme === 'dark' ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro'}
       aria-label={theme === 'dark' ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
-      className="p-2 rounded-lg bg-[#181C2B] hover:bg-[#262C3F] text-[#F3F4F6] border border-[#262C3F] transition-colors focus-visible:ring-2 focus-visible:ring-[#06B6D4] flex items-center justify-center"
+      className="p-2 rounded-lg bg-surface-raised hover:bg-surface-overlay text-[var(--color-text-primary)] border border-stroke-subtle transition-colors focus-visible:ring-2 focus-visible:ring-accent flex items-center justify-center cursor-pointer shadow-sm"
     >
       {theme === 'dark' ? (
         // Ícone Sol (para ir para Light)

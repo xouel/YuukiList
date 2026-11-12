@@ -1,0 +1,19 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "035-light-mode-and-visual-hierarchy"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "home-hub"
+  - "navigation-shell"
+  - "personal-library-ui"
+  - "user-profile-stats"
+base_specs:
+  home-hub: "sha256:609720805c07804109aff0ae3df1404f50f2d0b2508396787930ad2c6ad5872c"
+  navigation-shell: "sha256:a2c54599f40c72c18933f4a3b725b5381900aaf8a0d81d1d64753671a7306b22"
+  personal-library-ui: "sha256:519427bd2ef90839d72f24f48486a411a0dd3c5433cd68eb6a282d2c4dac7621"
+  user-profile-stats: "sha256:70957a63e9693c05db9914e6336d2555d6ba0a1a8304ca8437ee8a14f5feb027"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-12T07:22:29.261Z"

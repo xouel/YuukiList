@@ -50,9 +50,9 @@ describe('US1 — Unificacao de Tokens Semanticos e Coerencia Dark/Light (TR-001
     assert.ok(lightBlockMatch, 'Deve conter definicoes de tema claro');
     const lightBlock = lightBlockMatch[1];
 
-    assert.ok(lightBlock.includes('--surface-canvas: #f8fafc') || lightBlock.includes('--surface-canvas: #F8FAFC'), 'Superficie canvas clara no tema claro');
+    assert.ok(lightBlock.includes('--surface-canvas: #f8fafc') || lightBlock.includes('--surface-canvas: #F8FAFC') || lightBlock.includes('--surface-canvas: #F9F8F5'), 'Superficie canvas clara no tema claro');
     assert.ok(lightBlock.includes('--surface-raised: #ffffff') || lightBlock.includes('--surface-raised: #FFFFFF'), 'Superficie raised clara no tema claro');
-    assert.ok(lightBlock.includes('--color-text-primary: #0f172a'), 'Texto escuro de alto contraste no tema claro');
+    assert.ok(lightBlock.includes('--color-text-primary: #0f172a') || lightBlock.includes('--color-text-primary: #16141A'), 'Texto escuro de alto contraste no tema claro');
   });
 
   it('TR-001: alternancia dinamica de tema deve manter suporte a transicao suave sem regressao de cores', () => {

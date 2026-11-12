@@ -47,31 +47,31 @@
 }
 
 [data-theme="light"] {
-  --color-bg-base: #f8fafc;
-  --color-bg-surface: #ffffff;
-  --color-bg-card: #f1f5f9;
-  --color-bg-card-hover: #e2e8f0;
-  --color-border: #cbd5e1;
-  --color-border-focus: #c8453b;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748B;
+  --color-bg-base: #F9F8F5;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-card: #FFFFFF;
+  --color-bg-card-hover: #F1EFEA;
+  --color-border: rgba(24, 22, 27, 0.12);
+  --color-border-focus: #C8453B;
+  --color-text-primary: #16141A;
+  --color-text-secondary: #5A5462;
+  --color-text-muted: #7E7786;
   --color-accent: #C8453B;
-  --color-accent-subtle: #FEE2E2;
+  --color-accent-subtle: #FBEAE9;
   --color-accent-cyan: #C8453B;
   --color-accent-violet: #7C3AED;
 
-  /* Superfícies Claras Padronizadas */
-  --surface-canvas: #F8FAFC;
+  /* Superfícies Claras Padronizadas — Washi Mineral */
+  --surface-canvas: #F9F8F5;
   --surface-raised: #FFFFFF;
-  --surface-overlay: #F1F5F9;
-  --surface-sunken: #E2E8F0;
+  --surface-overlay: #F1EFEA;
+  --surface-sunken: #E7E3DA;
 
   /* Contornos e Refração Claro */
-  --stroke-subtle: rgba(15, 23, 42, 0.08);
-  --stroke-strong: rgba(15, 23, 42, 0.16);
+  --stroke-subtle: rgba(24, 22, 27, 0.08);
+  --stroke-strong: rgba(24, 22, 27, 0.16);
   --stroke-accent: rgba(200, 69, 59, 0.35);
-  --highlight-hairline: inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+  --highlight-hairline: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
 
   /* Acentos de Mídia Bimodais Claro */
   --accent-media-video: #B88350;

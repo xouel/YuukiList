@@ -177,7 +177,7 @@ export function LibraryCard({
             className={`p-1.5 rounded-lg backdrop-blur transition-all shadow-md active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent ${
               item.isFavorite
                 ? 'bg-accent/25 text-accent border border-accent/50 hover:bg-accent/35'
-                : 'bg-black/60 text-[var(--color-text-secondary)] hover:text-accent border border-white/10'
+                : 'bg-black/60 text-white/80 hover:text-accent border border-white/10'
             }`}
           >
             <svg

@@ -109,11 +109,11 @@ export function EditProfileModal({
       aria-labelledby="edit-profile-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto"
     >
-      <div className="relative w-full max-w-xl rounded-2xl bg-[#1A1820] border border-stroke-subtle shadow-2xl p-6 sm:p-8 space-y-6 my-8">
+      <div className="relative w-full max-w-xl rounded-2xl bg-surface-raised border border-stroke-subtle shadow-2xl p-6 sm:p-8 space-y-6 my-8">
         {/* Cabeçalho */}
         <div className="flex items-center justify-between border-b border-stroke-subtle pb-4">
           <div>
-            <h2 id="edit-profile-title" className="font-serif-editorial text-2xl font-bold text-[#F4EFEA]">
+            <h2 id="edit-profile-title" className="font-serif-editorial text-2xl font-bold text-[var(--color-text-primary)]">
               Personalizar Perfil
             </h2>
             <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
@@ -124,7 +124,7 @@ export function EditProfileModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar modal"
-            className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-white hover:bg-surface-overlay transition-colors"
+            className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay transition-colors"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -145,7 +145,7 @@ export function EditProfileModal({
             <div
               className="h-28 w-full bg-cover bg-center relative"
               style={{
-                backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'linear-gradient(to right, #201D28, #2B2735)',
+                backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'linear-gradient(to right, var(--surface-overlay), var(--surface-sunken))',
               }}
             >
               <label className="absolute right-3 top-3 px-3 py-1.5 rounded-lg bg-black/70 hover:bg-black/90 text-white text-xs font-medium cursor-pointer backdrop-blur border border-white/10 transition-all active:scale-[0.98]">
@@ -204,7 +204,7 @@ export function EditProfileModal({
                         : 'border-stroke-subtle bg-surface-sunken hover:border-white/20'
                     }`}
                   >
-                    <span className="text-xs font-bold text-[#F4EFEA]">{f.name}</span>
+                    <span className="text-xs font-bold text-[var(--color-text-primary)]">{f.name}</span>
                     <span className="text-[10px] text-[var(--color-text-muted)] line-clamp-1 mt-0.5">
                       {f.description}
                     </span>
@@ -226,7 +226,7 @@ export function EditProfileModal({
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Compartilhe seus gostos, animes ou doramas favoritos..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-canvas border border-stroke-subtle text-xs sm:text-sm text-[#F4EFEA] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-accent transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-canvas border border-stroke-subtle text-xs sm:text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-accent transition-colors"
             />
             <span className="text-[10px] text-[var(--color-text-muted)] block text-right">
               {bio.length}/500 caracteres
@@ -246,7 +246,7 @@ export function EditProfileModal({
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Ex: São Paulo, Brasil"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-canvas border border-stroke-subtle text-xs sm:text-sm text-[#F4EFEA] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-accent transition-colors"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-canvas border border-stroke-subtle text-xs sm:text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-accent transition-colors"
               />
             </div>
 
@@ -264,7 +264,7 @@ export function EditProfileModal({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+55 (11) 99999-9999"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-canvas border border-stroke-subtle text-xs sm:text-sm text-[#F4EFEA] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-accent transition-colors"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-surface-canvas border border-stroke-subtle text-xs sm:text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-accent transition-colors"
               />
             </div>
           </div>
@@ -275,7 +275,7 @@ export function EditProfileModal({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-[var(--color-text-secondary)] hover:text-white transition-colors cursor-pointer"
+              className="px-4 py-2.5 rounded-xl text-xs font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors cursor-pointer"
             >
               Cancelar
             </button>

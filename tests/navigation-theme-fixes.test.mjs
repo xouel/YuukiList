@@ -111,8 +111,8 @@ describe('017-ui-ux-navigation-and-theme-fixes — Suíte de Validação', () =>
 
       // Validação das variáveis Light Editorial
       assert.ok(cssContent.includes('[data-theme="light"]'), 'Deve conter variáveis para data-theme="light"');
-      assert.ok(cssContent.includes('--color-bg-base: #f8fafc'), 'Light theme deve definir fundo claro');
-      assert.ok(cssContent.includes('--color-text-primary: #0f172a'), 'Light theme deve definir texto escuro');
+      assert.ok(cssContent.includes('--color-bg-base: #f8fafc') || cssContent.includes('--color-bg-base: #F9F8F5'), 'Light theme deve definir fundo claro');
+      assert.ok(cssContent.includes('--color-text-primary: #0f172a') || cssContent.includes('--color-text-primary: #16141A'), 'Light theme deve definir texto escuro');
 
       // Validação de acessibilidade WCAG 2.2 AA
       assert.ok(cssContent.includes('prefers-reduced-motion'), 'Deve conter suporte a prefers-reduced-motion');

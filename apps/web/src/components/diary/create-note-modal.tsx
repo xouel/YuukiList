@@ -110,14 +110,14 @@ export function CreateNoteModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-lg bg-[#181C2B] rounded-2xl border border-[#262C3F] p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-lg bg-surface-raised rounded-2xl border border-stroke-subtle p-6 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Cabeçalho */}
-        <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#262C3F]">
+        <div className="flex items-start justify-between gap-4 pb-4 border-b border-stroke-subtle">
           <div>
-            <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800">
+            <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-accent/15 text-accent border border-accent/30">
               Diário Pessoal
             </span>
-            <h2 id="create-note-title" className="text-lg font-bold text-[#F3F4F6] mt-1.5 line-clamp-1">
+            <h2 id="create-note-title" className="text-lg font-bold text-[var(--color-text-primary)] mt-1.5 line-clamp-1">
               Nova Anotação — {mediaTitle || 'Obra'}
             </h2>
           </div>
@@ -126,7 +126,7 @@ export function CreateNoteModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar modal"
-            className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-[#262C3F] transition-colors"
+            className="p-1 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-overlay transition-colors"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -145,7 +145,7 @@ export function CreateNoteModal({
           {/* Vínculo com Unidade (Episódio / Capítulo) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="note-unit" className="block text-xs font-medium text-[#94A3B8] mb-1.5">
+              <label htmlFor="note-unit" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
                 {isLiterary ? 'Capítulo Vinculado' : 'Episódio Vinculado'} (Opcional)
               </label>
               <input
@@ -155,13 +155,13 @@ export function CreateNoteModal({
                 placeholder={isLiterary ? 'Ex: 45' : 'Ex: 8'}
                 value={unitNumber}
                 onChange={(e) => setUnitNumber(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
+                className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none"
               />
             </div>
 
             {isLiterary ? (
               <div>
-                <label htmlFor="note-volume" className="block text-xs font-medium text-[#94A3B8] mb-1.5">
+                <label htmlFor="note-volume" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
                   Volume (Opcional)
                 </label>
                 <input
@@ -171,12 +171,12 @@ export function CreateNoteModal({
                   placeholder="Ex: 5"
                   value={volumeNumber}
                   onChange={(e) => setVolumeNumber(e.target.value)}
-                  className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
+                  className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none"
                 />
               </div>
             ) : (
               <div>
-                <label htmlFor="note-date" className="block text-xs font-medium text-[#94A3B8] mb-1.5">
+                <label htmlFor="note-date" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
                   Data da Experiência
                 </label>
                 <input
@@ -184,7 +184,7 @@ export function CreateNoteModal({
                   type="date"
                   value={occurredDate}
                   onChange={(e) => setOccurredDate(e.target.value)}
-                  className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
+                  className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none"
                 />
               </div>
             )}
@@ -193,7 +193,7 @@ export function CreateNoteModal({
           {/* Data para obras literárias */}
           {isLiterary && (
             <div>
-              <label htmlFor="note-date-lit" className="block text-xs font-medium text-[#94A3B8] mb-1.5">
+              <label htmlFor="note-date-lit" className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
                 Data da Experiência
               </label>
               <input
@@ -201,7 +201,7 @@ export function CreateNoteModal({
                 type="date"
                 value={occurredDate}
                 onChange={(e) => setOccurredDate(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none"
+                className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none"
               />
             </div>
           )}
@@ -209,10 +209,10 @@ export function CreateNoteModal({
           {/* Texto da Anotação */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label htmlFor="note-text" className="block text-xs font-medium text-[#94A3B8]">
+              <label htmlFor="note-text" className="block text-xs font-medium text-[var(--color-text-secondary)]">
                 Sua Reflexão ou Comentário (Privado)
               </label>
-              <span className="text-[10px] text-gray-500">
+              <span className="text-[10px] text-[var(--color-text-muted)]">
                 {note.length}/1000
               </span>
             </div>
@@ -223,19 +223,21 @@ export function CreateNoteModal({
               placeholder="O que você achou desta parte? Registre suas impressões, teorias e sentimentos..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg bg-[#121520] border border-[#262C3F] text-[#F3F4F6] focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none resize-none"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-surface-canvas border border-stroke-subtle text-[var(--color-text-primary)] focus:border-accent focus:ring-1 focus:ring-accent outline-none resize-none"
             />
           </div>
 
           {/* Checkbox de Spoiler */}
-          <div className="p-3 rounded-xl bg-[#121520] border border-[#262C3F] flex items-center justify-between gap-3 cursor-pointer" onClick={() => setContainsSpoiler(!containsSpoiler)}>
+          <div className="p-3 rounded-xl bg-surface-sunken border border-stroke-subtle flex items-center justify-between gap-3 cursor-pointer" onClick={() => setContainsSpoiler(!containsSpoiler)}>
             <div className="flex items-center gap-2.5">
-              <span className="text-base">⚠️</span>
+              <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center font-bold text-xs">
+                !
+              </div>
               <div>
-                <p className="text-xs font-semibold text-[#F3F4F6]">
+                <p className="text-xs font-semibold text-[var(--color-text-primary)]">
                   Contém Spoiler
                 </p>
-                <p className="text-[11px] text-[#94A3B8]">
+                <p className="text-[11px] text-[var(--color-text-secondary)]">
                   Oculta este texto automaticamente para visitantes e quem ainda não alcançou esta parte.
                 </p>
               </div>
@@ -247,23 +249,23 @@ export function CreateNoteModal({
               checked={containsSpoiler}
               onChange={(e) => setContainsSpoiler(e.target.checked)}
               onClick={(e) => e.stopPropagation()}
-              className="w-4 h-4 rounded text-[#06B6D4] focus:ring-[#06B6D4] bg-[#121520] border-[#262C3F] cursor-pointer"
+              className="w-4 h-4 rounded text-accent focus:ring-accent bg-surface-canvas border-stroke-subtle cursor-pointer"
             />
           </div>
 
           {/* Rodapé */}
-          <div className="pt-3 border-t border-[#262C3F] flex items-center justify-end gap-2">
+          <div className="pt-3 border-t border-stroke-subtle flex items-center justify-end gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium rounded-lg bg-[#262C3F] text-[#F3F4F6] hover:bg-[#323950] transition-colors"
+              className="px-4 py-2 text-xs font-medium rounded-lg bg-surface-overlay text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-surface-sunken transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#06B6D4] text-[#0B0D13] hover:bg-[#22D3EE] transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-xs font-semibold rounded-lg bg-accent text-white hover:bg-accent/90 transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
             >
               {isSubmitting ? 'Salvando...' : 'Salvar no Diário'}
             </button>

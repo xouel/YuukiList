@@ -7,7 +7,7 @@ Prover a interface gráfica web da biblioteca pessoal no YuukiList, permitindo a
 ## Requirements
 
 ### Requirement: Personal Library View and Layout Toggle
-O sistema SHALL renderizar a biblioteca pessoal na rota /library com cabeçalho limpo sem rótulo 'Ledger v2.4' ou indicador redundante 'Sincronizado recentemente', sem contêineres aninhados externos, e com cards em cromo neutro onde as capas conduzem a cor sem tingimento artificial por categoria.
+O sistema SHALL renderizar a biblioteca pessoal na rota /library com cabeçalho limpo sem rótulo 'Ledger v2.4' ou indicador redundante 'Sincronizado recentemente', sem contêineres aninhados externos, com suporte dinâmico a ambos os temas visuais e cards em cromo neutro onde as capas conduzem a cor sem tingimento artificial por categoria.
 
 #### Scenario: Exibicao da biblioteca pessoal em modo grade
 - **GIVEN** um usuário autenticado com obras registradas em sua biblioteca
@@ -48,6 +48,11 @@ O sistema SHALL renderizar a biblioteca pessoal na rota /library com cabeçalho 
 - **GIVEN** uma obra exibida na biblioteca pessoal
 - **WHEN** o card da obra é renderizado
 - **THEN** o sistema SHALL apresentar moldura e metadados em cromo neutro sem tingimento colorido artificial por categoria e sem títulos duplicados fantasmas
+
+#### Scenario: Conteiner da biblioteca integrado ao tema visual ativo
+- **GIVEN** o acesso à rota /library em Modo Claro ou Modo Escuro
+- **WHEN** a página da biblioteca pessoal é renderizada
+- **THEN** o contêiner principal SHALL utilizar classes semânticas integradas ao tema sem aplicar cores hexadecimais escuras fixas (bg-[#0B0D13])
 
 ### Requirement: Quick Progress Tracking and Detail Modal
 O sistema SHALL disponibilizar controle de progresso tátil com micro-pressão (:active:scale-[0.98]), números tabulares (tabular-nums), ausência de zoom agressivo (hover:scale-105), barra proporcional, alvo mínimo de 44x44px, popover de estrelas e modal detalhado.

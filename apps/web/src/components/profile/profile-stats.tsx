@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * YuukiList — Painel Estatístico & Métricas Analíticas
+ * Tokens minerais Dark Editorial (#1A1820 / #2B2735) e Washi Light Editorial gerenciados via bg-surface-raised e border-stroke-subtle
+ */
+
 import React from 'react';
 import type { ProfileStatsDto } from '@yuukilist/shared';
 
@@ -20,67 +25,67 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
 
   return (
     <div className="space-y-6" aria-labelledby="profile-stats-heading">
-      <div className="pb-2 border-b border-[#2B2735]">
+      <div className="pb-2 border-b border-stroke-subtle">
         <h2
           id="profile-stats-heading"
-          className="text-lg sm:text-xl font-serif font-bold text-[#F4EFEA] tracking-tight"
+          className="text-lg sm:text-xl font-serif font-bold text-[var(--color-text-primary)] tracking-tight"
         >
           Estatísticas & Métricas de Consumo
         </h2>
-        <p className="text-xs text-zinc-400 mt-0.5">
+        <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
           Resumo consolidado do tempo investido e distribuição cultural do seu acervo.
         </p>
       </div>
 
       {/* 1. Cards de Métricas-Chave Compactos */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-sm flex flex-col justify-between">
-          <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
             Obras Concluídas
           </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-mono font-bold text-[#F4EFEA]">
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-[var(--color-text-primary)]">
               {stats.totalCompleted}
             </span>
-            <span className="text-xs text-zinc-500">títulos</span>
+            <span className="text-xs text-[var(--color-text-muted)]">títulos</span>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-sm flex flex-col justify-between">
-          <span className="text-[11px] font-semibold text-[#E05347] uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-accent uppercase tracking-wider">
             Tempo Estimado
           </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-mono font-bold text-[#E05347]">
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-accent">
               {stats.totalEstimatedHours}h
             </span>
-            <span className="text-xs text-zinc-500">investidas</span>
+            <span className="text-xs text-[var(--color-text-muted)]">investidas</span>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-sm flex flex-col justify-between">
-          <span className="text-[11px] font-semibold text-amber-400/90 uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-amber-500 uppercase tracking-wider">
             Capítulos & Volumes
           </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-mono font-bold text-amber-300">
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-amber-500">
               {stats.totalChaptersRead}
             </span>
-            <span className="text-xs text-zinc-500">
+            <span className="text-xs text-[var(--color-text-muted)]">
               cap. {stats.totalVolumesRead > 0 && `(${stats.totalVolumesRead} vol.)`}
             </span>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#1A1820] border border-[#2B2735] shadow-sm flex flex-col justify-between">
-          <span className="text-[11px] font-semibold text-purple-300 uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-surface-raised border border-stroke-subtle shadow-sm flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-purple-400 uppercase tracking-wider">
             Média de Avaliações
           </span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-mono font-bold text-purple-300">
+            <span className="text-2xl sm:text-3xl font-mono font-bold text-purple-400">
               {stats.averageRating ? `★ ${stats.averageRating}` : '—'}
             </span>
-            <span className="text-xs text-zinc-500">/ 10</span>
+            <span className="text-xs text-[var(--color-text-muted)]">/ 10</span>
           </div>
         </div>
       </div>
@@ -88,13 +93,13 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
       {/* 2. Distribuição por Categoria e Metadados Compactos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Distribuição por Categoria */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#1A1820] border border-[#2B2735] space-y-3.5">
-          <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+        <div className="p-4 sm:p-5 rounded-2xl bg-surface-raised border border-stroke-subtle space-y-3.5 shadow-sm">
+          <h3 className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
             Distribuição por Categoria
           </h3>
 
           {Object.keys(stats.categoryDistribution).length === 0 ? (
-            <p className="text-xs text-zinc-500 py-4 text-center">
+            <p className="text-xs text-[var(--color-text-muted)] py-4 text-center">
               Nenhuma obra catalogada na biblioteca ainda.
             </p>
           ) : (
@@ -102,14 +107,14 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
               {Object.entries(stats.categoryDistribution).map(([category, data]) => (
                 <div key={category} className="space-y-1">
                   <div className="flex items-center justify-between text-xs font-medium">
-                    <span className="text-zinc-300">{category}</span>
-                    <span className="text-zinc-400 font-mono">
+                    <span className="text-[var(--color-text-secondary)]">{category}</span>
+                    <span className="text-[var(--color-text-muted)] font-mono">
                       {data.count} ({data.percentage}%)
                     </span>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-[#24202C] overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-surface-sunken overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${categoryColors[category] || 'bg-[#E05347]'}`}
+                      className={`h-full rounded-full ${categoryColors[category] || 'bg-accent'}`}
                       style={{ width: `${Math.min(100, data.percentage)}%` }}
                     />
                   </div>
@@ -120,41 +125,41 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
         </div>
 
         {/* Top Gêneros e Países */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#1A1820] border border-[#2B2735] space-y-4">
+        <div className="p-4 sm:p-5 rounded-2xl bg-surface-raised border border-stroke-subtle space-y-4 shadow-sm">
           <div>
-            <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
+            <h3 className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-2">
               Gêneros Mais Consumidos
             </h3>
             {stats.topGenres.length === 0 ? (
-              <p className="text-xs text-zinc-500">Nenhum gênero registrado.</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Nenhum gênero registrado.</p>
             ) : (
               <div className="flex flex-wrap gap-1.5">
                 {stats.topGenres.map((g) => (
                   <span
                     key={g.genre}
-                    className="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-[#24202C] text-zinc-300 border border-[#2B2735]"
+                    className="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-surface-sunken text-[var(--color-text-secondary)] border border-stroke-subtle"
                   >
-                    {g.genre} <strong className="text-[#E05347] font-mono ml-1">{g.count}</strong>
+                    {g.genre} <strong className="text-accent font-mono ml-1">{g.count}</strong>
                   </span>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="pt-3 border-t border-[#2B2735]">
-            <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
+          <div className="pt-3 border-t border-stroke-subtle">
+            <h3 className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-2">
               Países de Origem
             </h3>
             {stats.topCountries.length === 0 ? (
-              <p className="text-xs text-zinc-500">Nenhum país registrado.</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Nenhum país registrado.</p>
             ) : (
               <div className="flex flex-wrap gap-1.5">
                 {stats.topCountries.map((c) => (
                   <span
                     key={c.country}
-                    className="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-[#24202C] text-zinc-300 border border-[#2B2735]"
+                    className="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-surface-sunken text-[var(--color-text-secondary)] border border-stroke-subtle"
                   >
-                    {c.country} <strong className="text-[#F4EFEA] font-mono ml-1">{c.count}</strong>
+                    {c.country} <strong className="text-[var(--color-text-primary)] font-mono ml-1">{c.count}</strong>
                   </span>
                 ))}
               </div>
