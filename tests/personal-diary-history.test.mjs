@@ -226,5 +226,106 @@ describe('R12 — Personal Diary, Timeline History & Spoiler Protection (012-dia
       );
     });
   });
-});
 
+  describe('Persistência PostgreSQL via Prisma Client no DiaryRepository (TR-009)', () => {
+    it('TR-009: deve persistir e recuperar eventos entre instâncias distintas usando PrismaClient mockado', async () => {
+      const dbHistoryRows = [];
+      const uuidMedia = '11111111-1111-4111-8111-111111111111';
+      const uuidUser = '22222222-2222-4222-8222-222222222222';
+
+      const mockPrisma = {
+        mediaItem: {
+          findFirst: async ({ where }) => {
+            if (where?.slug === 'alquimia-das-almas' || where?.id === uuidMedia) {
+              return { id: uuidMedia };
+            }
+            return null;
+          },
+        },
+        historyEvent: {
+          create: async ({ data }) => {
+            const now = new Date();
+            const row = {
+              id: `33333333-3333-4333-8333-33333333333${dbHistoryRows.length + 1}`,
+              userId: data.userId,
+              mediaItemId: data.mediaItemId,
+              type: data.type,
+              occurredAt: data.occurredAt || now,
+              previousStatus: data.previousStatus ?? null,
+              newStatus: data.newStatus ?? null,
+              previousProgress: data.previousProgress ?? null,
+              newProgress: data.newProgress ?? null,
+              rating: data.rating ?? null,
+              isFavorite: data.isFavorite ?? null,
+              rewatchCount: data.rewatchCount ?? null,
+              note: data.note ?? null,
+              episodeNumber: data.episodeNumber ?? null,
+              chapterNumber: data.chapterNumber ?? null,
+              volumeNumber: data.volumeNumber ?? null,
+              containsSpoiler: Boolean(data.containsSpoiler),
+              createdAt: now,
+              updatedAt: now,
+            };
+            dbHistoryRows.push(row);
+            return row;
+          },
+          findUnique: async ({ where }) => dbHistoryRows.find((r) => r.id === where.id) || null,
+          findFirst: async ({ where }) =>
+            dbHistoryRows.find((r) => r.id === where.id && r.userId === where.userId) || null,
+          findMany: async ({ where }) =>
+            dbHistoryRows
+              .filter((r) => {
+                if (where.userId && r.userId !== where.userId) return false;
+                if (where.mediaItemId && r.mediaItemId !== where.mediaItemId) return false;
+                if (where.type && r.type !== where.type) return false;
+                return true;
+              })
+              .sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime()),
+          update: async ({ where, data }) => {
+            const idx = dbHistoryRows.findIndex((r) => r.id === where.id);
+            if (idx < 0) return null;
+            dbHistoryRows[idx] = { ...dbHistoryRows[idx], ...data, updatedAt: new Date() };
+            return dbHistoryRows[idx];
+          },
+          deleteMany: async ({ where }) => {
+            const before = dbHistoryRows.length;
+            for (let i = dbHistoryRows.length - 1; i >= 0; i--) {
+              const r = dbHistoryRows[i];
+              if (r.userId === where.userId && (!where.id || r.id === where.id)) {
+                dbHistoryRows.splice(i, 1);
+              }
+            }
+            return { count: before - dbHistoryRows.length };
+          },
+          count: async ({ where }) =>
+            dbHistoryRows.filter((r) => !where?.userId || r.userId === where.userId).length,
+        },
+      };
+
+      // Instância 1 cria o evento no banco (simulando primeira função serverless)
+      const writerRepo = new DiaryRepository(mockPrisma);
+      const created = await writerRepo.create(uuidUser, {
+        mediaItemId: 'alquimia-das-almas',
+        type: 'NOTE',
+        note: 'Persistido no Postgres!',
+        episodeNumber: 3,
+        containsSpoiler: true,
+      });
+      assert.equal(created.mediaItemId, uuidMedia);
+
+      // Instância 2 separada (simulando novo cold start na Vercel) lê do Postgres
+      const readerRepo = new DiaryRepository(mockPrisma);
+      const list = await readerRepo.findMany(uuidUser, { type: 'NOTE' });
+      assert.equal(list.length, 1);
+      assert.equal(list[0].note, 'Persistido no Postgres!');
+
+      const updated = await readerRepo.update(uuidUser, created.id, { note: 'Editado no Postgres' });
+      assert.equal(updated?.note, 'Editado no Postgres');
+      assert.equal(await readerRepo.count(uuidUser), 1);
+
+      const deleted = await readerRepo.delete(uuidUser, created.id);
+      assert.equal(deleted, true);
+      assert.equal(await readerRepo.count(uuidUser), 0);
+    });
+  });
+});

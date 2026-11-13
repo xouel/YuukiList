@@ -304,4 +304,82 @@ describe('R15 — User Profile, Statistics, Granular Sharing & LGPD (015-profile
       assert.equal(linksCheck.length, 0, 'Links de compartilhamento devem ser expurgados');
     });
   });
+
+  describe('Persistência PostgreSQL via Prisma Client no ProfileRepository (TR-012)', () => {
+    it('TR-012: deve persistir e revogar ShareLinks entre instâncias distintas com PrismaClient mockado', async () => {
+      const dbShareLinks = [];
+      const uuidUser = '44444444-4444-4444-8444-444444444444';
+
+      const mockPrisma = {
+        shareLink: {
+          create: async ({ data }) => {
+            const row = {
+              id: `55555555-5555-4555-8555-55555555555${dbShareLinks.length + 1}`,
+              userId: data.userId,
+              token: data.token,
+              shareScope: data.shareScope,
+              expiresAt: data.expiresAt,
+              isRevoked: Boolean(data.isRevoked),
+              createdAt: new Date(),
+            };
+            dbShareLinks.push(row);
+            return row;
+          },
+          findUnique: async ({ where }) =>
+            dbShareLinks.find((l) => l.token === where.token) || null,
+          findMany: async ({ where }) =>
+            dbShareLinks.filter(
+              (l) =>
+                l.userId === where.userId &&
+                l.isRevoked === where.isRevoked &&
+                l.expiresAt > where.expiresAt.gt
+            ),
+          updateMany: async ({ where, data }) => {
+            let count = 0;
+            for (const row of dbShareLinks) {
+              const idOk = !where.id || row.id === where.id;
+              const userOk = !where.userId || row.userId === where.userId;
+              const revOk = where.isRevoked === undefined || row.isRevoked === where.isRevoked;
+              if (idOk && userOk && revOk) {
+                Object.assign(row, data);
+                count++;
+              }
+            }
+            return { count };
+          },
+          deleteMany: async ({ where }) => {
+            const before = dbShareLinks.length;
+            for (let i = dbShareLinks.length - 1; i >= 0; i--) {
+              if (dbShareLinks[i].userId === where.userId) {
+                dbShareLinks.splice(i, 1);
+              }
+            }
+            return { count: before - dbShareLinks.length };
+          },
+        },
+      };
+
+      // Instância 1 cria link
+      const writerProfileRepo = new ProfileRepository(mockPrisma);
+      const link = await writerProfileRepo.createShareLink(uuidUser, 30, ShareScope.FAVORITES_ONLY);
+      assert.ok(link.token);
+      assert.equal(link.publicUrl, `/share/${link.token}`);
+
+      // Instância 2 (novo cold start) consulta por token e lista links ativos
+      const readerProfileRepo = new ProfileRepository(mockPrisma);
+      const fetched = await readerProfileRepo.findShareLinkByToken(link.token);
+      assert.ok(fetched);
+      assert.equal(fetched.shareScope, ShareScope.FAVORITES_ONLY);
+      assert.equal((await readerProfileRepo.findActiveLinksByUser(uuidUser)).length, 1);
+
+      // Revogação persiste entre instâncias
+      const revoked = await readerProfileRepo.revokeShareLink(uuidUser, link.id);
+      assert.equal(revoked, true);
+      assert.equal((await writerProfileRepo.findActiveLinksByUser(uuidUser)).length, 0);
+
+      // Purge limpa banco
+      await readerProfileRepo.purgeUserData(uuidUser);
+      assert.equal(await readerProfileRepo.findShareLinkByToken(link.token), null);
+    });
+  });
 });

@@ -4,6 +4,7 @@
 
 export * from './data/seed-data.ts';
 export * from './data/seed.ts';
+export * from './data/sample-external-titles.ts';
 export * from './data/cover-storage.service.ts';
 export * from './data/svg-cover.service.ts';
 export * from './data/catalog-ingestion.service.ts';
@@ -56,6 +57,7 @@ export * from './provisional/provisional.module.ts';
 export * from './admin/admin.service.ts';
 export * from './admin/admin.controller.ts';
 export * from './admin/admin.module.ts';
+export * from './health/health.service.ts';
 export * from './app.module.ts';
 export * from '../../../packages/shared/src/index.ts';
 

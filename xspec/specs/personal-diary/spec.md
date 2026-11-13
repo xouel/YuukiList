@@ -7,7 +7,7 @@ Prover o subsistema de histórico cronológico e diário pessoal no YuukiList, r
 ## Requirements
 
 ### Requirement: Chronological History Event Tracking and Lifecycle
-O sistema SHALL persistir eventos cronológicos de histórico pelos endpoints `/api/v1/diary` e `/api/v1/diary/:id` alinhados ao `DiaryController` (`list`, `create`, `update`, `remove`) e `DiaryApiClient`, mantendo o desacoplamento estrito entre histórico e biblioteca.
+O sistema SHALL persistir eventos cronológicos de histórico no PostgreSQL/Supabase via Prisma ORM (`DiaryRepository` com fallback em memória apenas quando instanciado sem `PrismaClient` em testes) pelos endpoints `/api/v1/diary` e `/api/v1/diary/:id` alinhados ao `DiaryController` (`list`, `create`, `update`, `remove`) e `DiaryApiClient`, mantendo o desacoplamento estrito entre histórico e biblioteca.
 
 #### Scenario: Geracao automatica de evento de historico ao avancar progresso
 - **GIVEN** um usuário autenticado com uma obra em andamento na biblioteca
@@ -23,6 +23,11 @@ O sistema SHALL persistir eventos cronológicos de histórico pelos endpoints `/
 - **GIVEN** um evento de histórico registrado previamente para uma obra com status Concluído
 - **WHEN** o usuário exclui o referido evento da linha do tempo
 - **THEN** o sistema SHALL remover o evento via `DELETE /api/v1/diary/:id` acionando `DiaryController.remove` mantendo intactos status, nota e progresso na biblioteca
+
+#### Scenario: Persistencia duravel do diario no PostgreSQL entre reinicios
+- **GIVEN** o `DiaryRepository` inicializado com instância ativa de `PrismaClient` conectada ao Supabase PostgreSQL
+- **WHEN** eventos do diário são criados, atualizados, filtrados ou excluídos e uma nova instância do repositório consulta os mesmos dados
+- **THEN** o sistema SHALL ler e gravar diretamente na tabela relacional `history_events` preservando todos os registros após reinícios ou cold starts serverless
 
 ### Requirement: Episode and Chapter Notes with Smart Spoiler Masking
 O backend do diário pessoal SHALL suportar anotações vinculadas a episódios, capítulos ou volumes específicos e computar dinamicamente a necessidade de mascaramento de spoiler com base no progresso registrado do usuário visualizador.

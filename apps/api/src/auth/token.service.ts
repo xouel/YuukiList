@@ -21,20 +21,40 @@ function base64UrlDecode(str: string): string {
   return Buffer.from(base64, 'base64').toString('utf8');
 }
 
+const DEV_FALLBACK_SECRET =
+  'yuukilist_dev_super_secret_key_32_bytes_long_required_12345';
+
 export class TokenService {
-  private readonly secret: string;
+  private readonly explicitSecret?: string;
 
   constructor(secret?: string) {
-    this.secret =
-      secret ||
-      process.env.JWT_SECRET ||
-      'yuukilist_dev_super_secret_key_32_bytes_long_required_12345';
+    this.explicitSecret = secret;
+  }
+
+  private resolveSecret(): string {
+    const configured = this.explicitSecret || process.env.JWT_SECRET;
+    if (configured && configured.trim().length > 0) {
+      return configured;
+    }
+
+    const isProduction =
+      process.env.NODE_ENV === 'production' ||
+      process.env.VERCEL_ENV === 'production';
+
+    if (isProduction) {
+      throw new Error(
+        'JWT_SECRET é obrigatório em ambiente de produção (NODE_ENV=production ou VERCEL_ENV=production).'
+      );
+    }
+
+    return DEV_FALLBACK_SECRET;
   }
 
   signSession(
     payload: Omit<SessionPayload, 'iat' | 'exp'>,
     expiresInSeconds: number = AUTH_COOKIE_MAX_AGE_SECONDS
   ): string {
+    const secret = this.resolveSecret();
     const now = Math.floor(Date.now() / 1000);
     const fullPayload: SessionPayload = {
       ...payload,
@@ -47,7 +67,7 @@ export class TokenService {
     const encodedPayload = base64UrlEncode(JSON.stringify(fullPayload));
 
     const signature = crypto
-      .createHmac('sha256', this.secret)
+      .createHmac('sha256', secret)
       .update(`${encodedHeader}.${encodedPayload}`)
       .digest('base64')
       .replace(/=/g, '')
@@ -58,6 +78,8 @@ export class TokenService {
   }
 
   verifySession(token: string): SessionPayload | null {
+    const secret = this.resolveSecret();
+
     if (!token || typeof token !== 'string') {
       return null;
     }
@@ -71,7 +93,7 @@ export class TokenService {
 
     try {
       const expectedSignature = crypto
-        .createHmac('sha256', this.secret)
+        .createHmac('sha256', secret)
         .update(`${encodedHeader}.${encodedPayload}`)
         .digest('base64')
         .replace(/=/g, '')

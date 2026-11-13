@@ -1,0 +1,22 @@
+name: Supabase Free Keep-Alive
+
+on:
+  schedule:
+    - cron: '0 12 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping healthcheck endpoint when configured
+        env:
+          HEALTHCHECK_URL: ${{ secrets.YUUKILIST_HEALTHCHECK_URL }}
+        run: |
+          if [ -z "$HEALTHCHECK_URL" ]; then
+            echo "Secret YUUKILIST_HEALTHCHECK_URL não configurada; encerrando keep-alive sem erro."
+            exit 0
+          fi
+          curl -fsS --max-time 25 "$HEALTHCHECK_URL" >/dev/null
+          echo "Keep-alive concluído com sucesso."
+

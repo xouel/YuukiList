@@ -8,10 +8,11 @@
     "apps/*"
   ],
   "scripts": {
+    "postinstall": "prisma generate --schema=apps/api/prisma/schema.prisma",
     "build": "npm run --workspaces --if-present build",
     "typecheck": "npm run --workspaces --if-present typecheck",
     "lint": "npm run --workspaces --if-present lint",
-    "test": "node --experimental-strip-types --test tests/*.test.mjs"
+    "test": "node --env-file-if-exists=.env --experimental-strip-types --test tests/*.test.mjs"
   },
   "devDependencies": {
     "typescript": "^5.7.0"

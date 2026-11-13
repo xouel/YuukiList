@@ -2,6 +2,7 @@
  * YuukiList — Módulo de Diário Pessoal e Histórico
  */
 
+import { PrismaClient } from '@prisma/client';
 import { CatalogRepository, type ICatalogRepository } from '../data/catalog.repository.ts';
 import { AuthGuard } from '../auth/auth.guard.ts';
 import { TokenService } from '../auth/token.service.ts';
@@ -25,9 +26,10 @@ export class DiaryModule {
     diaryRepository?: DiaryRepository,
     catalogRepository?: ICatalogRepository,
     libraryRepository?: LibraryRepository,
-    authGuard?: AuthGuard
+    authGuard?: AuthGuard,
+    prismaClient?: PrismaClient | null
   ) {
-    this.diaryRepository = diaryRepository ?? new DiaryRepository();
+    this.diaryRepository = diaryRepository ?? new DiaryRepository(prismaClient);
     this.catalogRepository = catalogRepository ?? new CatalogRepository();
     this.libraryRepository = libraryRepository ?? new LibraryRepository();
     this.diaryService = new DiaryService(

@@ -374,3 +374,74 @@ describe('US3 — Identificação do Usuário e Proteção de Rotas (TR-007, TR-
   });
 });
 
+
+describe('US4 — Enforcement de JWT_SECRET em Produção (TR-013, TR-014)', () => {
+  it('TR-013: deve recusar operação JWT em produção sem JWT_SECRET definido', () => {
+    const prevNodeEnv = process.env.NODE_ENV;
+    const prevVercelEnv = process.env.VERCEL_ENV;
+    const prevJwtSecret = process.env.JWT_SECRET;
+
+    try {
+      process.env.VERCEL_ENV = 'production';
+      delete process.env.JWT_SECRET;
+
+      const tokenService = new TokenService();
+      assert.throws(
+        () =>
+          tokenService.signSession({
+            sub: 'u-prod',
+            email: 'prod@yuukilist.test',
+            username: 'prod_user',
+            role: 'USER',
+          }),
+        /JWT_SECRET/
+      );
+      assert.throws(() => tokenService.verifySession('fake.jwt.token'), /JWT_SECRET/);
+    } finally {
+      if (prevNodeEnv === undefined) delete process.env.NODE_ENV;
+      else process.env.NODE_ENV = prevNodeEnv;
+      if (prevVercelEnv === undefined) delete process.env.VERCEL_ENV;
+      else process.env.VERCEL_ENV = prevVercelEnv;
+      if (prevJwtSecret === undefined) delete process.env.JWT_SECRET;
+      else process.env.JWT_SECRET = prevJwtSecret;
+    }
+  });
+
+  it('TR-014: deve operar normalmente com JWT_SECRET em produção e com fallback em desenvolvimento/testes', () => {
+    const prevNodeEnv = process.env.NODE_ENV;
+    const prevVercelEnv = process.env.VERCEL_ENV;
+    const prevJwtSecret = process.env.JWT_SECRET;
+
+    try {
+      process.env.NODE_ENV = 'test';
+      delete process.env.VERCEL_ENV;
+      delete process.env.JWT_SECRET;
+
+      const devService = new TokenService();
+      const devToken = devService.signSession({
+        sub: 'u-dev',
+        email: 'dev@yuukilist.test',
+        username: 'dev_user',
+        role: 'USER',
+      });
+      assert.equal(devService.verifySession(devToken)?.sub, 'u-dev');
+
+      process.env.NODE_ENV = 'production';
+      process.env.JWT_SECRET = 'strong_secret_key_for_production_validation_2026';
+      const prodToken = devService.signSession({
+        sub: 'u-prod-ok',
+        email: 'ok@yuukilist.test',
+        username: 'prod_ok',
+        role: 'USER',
+      });
+      assert.equal(devService.verifySession(prodToken)?.sub, 'u-prod-ok');
+    } finally {
+      if (prevNodeEnv === undefined) delete process.env.NODE_ENV;
+      else process.env.NODE_ENV = prevNodeEnv;
+      if (prevVercelEnv === undefined) delete process.env.VERCEL_ENV;
+      else process.env.VERCEL_ENV = prevVercelEnv;
+      if (prevJwtSecret === undefined) delete process.env.JWT_SECRET;
+      else process.env.JWT_SECRET = prevJwtSecret;
+    }
+  });
+});

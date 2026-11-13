@@ -91,11 +91,15 @@ export class SvgCoverService {
   }
 
   /**
-   * Salva o SVG gerado em disco para persistência em cache.
+   * Salva o SVG gerado em disco para persistência em cache (tolerante a FS somente leitura).
    */
   saveCover(slug: string, svg: string): string {
     const filePath = path.join(this.coversDir, `${slug}.svg`);
-    fs.writeFileSync(filePath, svg, 'utf8');
+    try {
+      fs.writeFileSync(filePath, svg, 'utf8');
+    } catch {
+      // Ambiente serverless somente leitura mantém SVG gerado apenas em memória
+    }
     return filePath;
   }
 

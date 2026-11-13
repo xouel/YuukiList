@@ -1,0 +1,19 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "038-prepare-vercel-supabase-deploy"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "auth-session"
+  - "granular-sharing"
+  - "personal-diary"
+  - "vercel-deployment-readiness"
+base_specs:
+  auth-session: "sha256:95ff50608d5158dcfa726695258aec3b927cc848857f455772219f19c77323b9"
+  granular-sharing: "sha256:84bd83714efe6458ba340422ee721a8ba4f2057240ab187e9179e612cea0df5f"
+  personal-diary: "sha256:72d38a4129c56123451ddb402a46dfd270f85634827a26581ec028fe9390028b"
+  vercel-deployment-readiness: "NEW"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-13T04:51:19.637Z"

@@ -7,6 +7,7 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
   previewFeatures = ["postgresqlExtensions"]
 }
 
@@ -51,6 +52,7 @@ model MediaItem {
   genres            ItemGenre[]
   aliases           ItemAlias[]
   libraryItems      UserLibraryItem[]
+  historyEvents     HistoryEvent[]
 
   @@index([category, publicationStatus])
   @@index([normalizedTitle(ops: raw("gin_trgm_ops"))], type: Gin, map: "media_items_normalized_title_trgm_idx")
@@ -97,6 +99,8 @@ model User {
   updatedAt          DateTime @updatedAt @map("updated_at")
 
   libraryItems       UserLibraryItem[]
+  historyEvents      HistoryEvent[]
+  shareLinks         ShareLink[]
 
   @@index([normalizedEmail])
   @@index([normalizedUsername])
@@ -124,5 +128,50 @@ model UserLibraryItem {
   @@index([userId, createdAt])
   @@map("user_library_items")
 }
+
+model HistoryEvent {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  mediaItemId      String    @map("media_item_id") @db.Uuid
+  type             String    @db.VarChar(32)
+  occurredAt       DateTime  @default(now()) @map("occurred_at")
+  previousStatus   String?   @map("previous_status") @db.VarChar(32)
+  newStatus        String?   @map("new_status") @db.VarChar(32)
+  previousProgress Int?      @map("previous_progress")
+  newProgress      Int?      @map("new_progress")
+  rating           Float?
+  isFavorite       Boolean?  @map("is_favorite")
+  rewatchCount     Int?      @map("rewatch_count")
+  note             String?   @db.Text
+  episodeNumber    Int?      @map("episode_number")
+  chapterNumber    Int?      @map("chapter_number")
+  volumeNumber     Int?      @map("volume_number")
+  containsSpoiler  Boolean   @default(false) @map("contains_spoiler")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaItem        MediaItem @relation(fields: [mediaItemId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt(sort: Desc)])
+  @@index([userId, mediaItemId])
+  @@map("history_events")
+}
+
+model ShareLink {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  token      String   @unique @db.VarChar(64)
+  shareScope String   @default("FULL_LIBRARY") @map("share_scope") @db.VarChar(32)
+  expiresAt  DateTime @map("expires_at")
+  isRevoked  Boolean  @default(false) @map("is_revoked")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("share_links")
+}
+
 
 

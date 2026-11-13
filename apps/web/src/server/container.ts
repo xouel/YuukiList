@@ -27,10 +27,12 @@ import {
   CatalogRepository,
   PrismaCatalogRepository,
   CatalogIngestionService,
+  SAMPLE_EXTERNAL_TITLES,
+  evaluateHealthStatus,
 } from '@yuukilist/api';
-import { SAMPLE_EXTERNAL_TITLES } from '../../../../scripts/sync-catalog.mjs';
 
 class ServerContainer {
+  readonly prismaClient: PrismaClient | null;
   readonly catalogRepository: PrismaCatalogRepository;
   readonly catalogService: CatalogService;
   readonly catalogController: CatalogController;
@@ -49,14 +51,21 @@ class ServerContainer {
   readonly adminController: AdminController;
 
   constructor() {
-    const prismaClient =
-      process.env.DATABASE_URL || process.env.DIRECT_URL ? new PrismaClient() : null;
+    let prismaClient: PrismaClient | null = null;
+    if (process.env.DATABASE_URL || process.env.DIRECT_URL) {
+      try {
+        prismaClient = new PrismaClient();
+      } catch {
+        prismaClient = null;
+      }
+    }
+    this.prismaClient = prismaClient;
     this.catalogRepository = new PrismaCatalogRepository(prismaClient || undefined);
     this.catalogService = new CatalogService(this.catalogRepository);
     this.catalogController = new CatalogController(this.catalogService);
     this.authModule = new AuthModule(prismaClient);
     const libraryRepo = new LibraryRepository(prismaClient);
-    const diaryRepo = new DiaryRepository();
+    const diaryRepo = new DiaryRepository(prismaClient);
     const diaryService = new DiaryService(diaryRepo, this.catalogRepository, libraryRepo);
     const libraryService = new LibraryService(libraryRepo, this.catalogRepository, diaryService);
     this.libraryController = new LibraryController(libraryService, this.authModule.authGuard);
@@ -71,7 +80,7 @@ class ServerContainer {
     this.calendarService = new CalendarService(calendarRepo, notifRepo, this.catalogRepository, libraryRepo);
     this.calendarController = new CalendarController(this.calendarService);
 
-    const profileRepo = new ProfileRepository();
+    const profileRepo = new ProfileRepository(prismaClient);
     this.profileService = new ProfileService(
       profileRepo,
       libraryRepo,
@@ -104,6 +113,10 @@ class ServerContainer {
       }
       return undefined;
     }).catch(() => {});
+  }
+
+  async checkDatabaseHealth() {
+    return evaluateHealthStatus(this.prismaClient);
   }
 }
 

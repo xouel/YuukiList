@@ -2,6 +2,7 @@
  * YuukiList — Módulo de Perfil, Estatísticas e Compartilhamento (NestJS Modular Architecture)
  */
 
+import { PrismaClient } from '@prisma/client';
 import { ProfileRepository } from './profile.repository.ts';
 import { ProfileService } from './profile.service.ts';
 import { ProfileController } from './profile.controller.ts';
@@ -22,9 +23,10 @@ export class ProfileModule {
     catalogRepo: ICatalogRepository,
     usersRepo: UsersRepository,
     diaryRepo?: DiaryRepository,
-    onProfileUpdated?: (userId: string) => void
+    onProfileUpdated?: (userId: string) => void,
+    prismaClient?: PrismaClient | null
   ) {
-    this.repository = new ProfileRepository();
+    this.repository = new ProfileRepository(prismaClient);
     this.service = new ProfileService(
       this.repository,
       libraryRepo,
