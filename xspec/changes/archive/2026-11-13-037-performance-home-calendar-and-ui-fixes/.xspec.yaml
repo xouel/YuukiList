@@ -1,0 +1,31 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "037-performance-home-calendar-and-ui-fixes"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "auth-session"
+  - "calendar-events"
+  - "calendar-ui"
+  - "catalog-browse"
+  - "catalog-search"
+  - "home-hub"
+  - "navigation-shell"
+  - "personal-diary"
+  - "personal-library"
+  - "user-profile-stats"
+base_specs:
+  auth-session: "sha256:5582a2538ef5be87f203782b17151d41919e0da64a3205131ea0c74e010b6e30"
+  calendar-events: "sha256:7ffe31baf4ceee74614d174460d62bbe8ab377c0dec77ae96029649c2c205b72"
+  calendar-ui: "sha256:830024bf838b73c7963e6849574162dea6f6818216df516fab95f66b0989a7ea"
+  catalog-browse: "sha256:11ea87f6d504a2b6dceb9b52b2eb6687ce51c4a38c9fa19c351ea87121029f2a"
+  catalog-search: "sha256:60174e7a51d760cef13aa9613381f5c3a1a2a4018583998b209c008b65266bed"
+  home-hub: "sha256:3a04fa0dabc9cdbd7294970dbce60191f38941a8b6696ab4f7e2f82846ab94a4"
+  navigation-shell: "sha256:12069eb10564cc8056e6ce90ffe9be88740e82112022169bbb9c044e5984ae38"
+  personal-diary: "sha256:a44afb1a08b71fbf55bc3c7e71aa060f565f3ef39d875890a4021bd6d47794b1"
+  personal-library: "sha256:07d97afebd54aa2aa8069dcb6fd99280ed12b44006e901624fa348c5963fe856"
+  user-profile-stats: "sha256:fabf990048963ef31f459cc9aeef340dc4ce279c9fba874b0e31b0d96e5deb3c"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-13T02:59:12.322Z"

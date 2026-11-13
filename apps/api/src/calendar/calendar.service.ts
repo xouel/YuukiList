@@ -10,19 +10,19 @@ import type {
   NotificationsListResponse,
 } from '../../../../packages/shared/src/calendar.ts';
 import { CalendarRepository, NotificationRepository } from './calendar.repository.ts';
-import { CatalogRepository } from '../data/catalog.repository.ts';
+import type { ICatalogRepository } from '../data/catalog.repository.ts';
 import { LibraryRepository } from '../library/library.repository.ts';
 
 export class CalendarService {
   private readonly calendarRepo: CalendarRepository;
   private readonly notificationRepo: NotificationRepository;
-  private readonly catalogRepo?: CatalogRepository;
+  private readonly catalogRepo?: ICatalogRepository;
   private readonly libraryRepo?: LibraryRepository;
 
   constructor(
     calendarRepo: CalendarRepository,
     notificationRepo: NotificationRepository,
-    catalogRepo?: CatalogRepository,
+    catalogRepo?: ICatalogRepository,
     libraryRepo?: LibraryRepository
   ) {
     this.calendarRepo = calendarRepo;

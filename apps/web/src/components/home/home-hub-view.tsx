@@ -22,52 +22,74 @@ const libraryApi = new LibraryApiClient();
 const diaryApi = new DiaryApiClient();
 const calendarApi = new CalendarApiClient();
 
-export function HomeHubView() {
+export interface HomeHubViewProps {
+  initialFeatured?: MediaItemSummaryDto[];
+  initialCatalog?: MediaItemSummaryDto[];
+}
+
+export function HomeHubView({ initialFeatured = [], initialCatalog = [] }: HomeHubViewProps = {}) {
   const { isAuthenticated } = useAuth();
 
-  const [featuredMedia, setFeaturedMedia] = useState<MediaItemSummaryDto | null>(null);
+  const [featuredByCategory, setFeaturedByCategory] = useState<MediaItemSummaryDto[]>(initialFeatured);
+  const [featuredMedia, setFeaturedMedia] = useState<MediaItemSummaryDto | null>(
+    initialFeatured[0] || initialCatalog[0] || null
+  );
   const [libraryItems, setLibraryItems] = useState<LibraryItemDto[]>([]);
-  const [trendingItems, setTrendingItems] = useState<MediaItemSummaryDto[]>([]);
+  const [trendingItems, setTrendingItems] = useState<MediaItemSummaryDto[]>(
+    initialCatalog.slice(0, 6)
+  );
   const [historyEvents, setHistoryEvents] = useState<HistoryEventDto[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<CalendarEventDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(initialFeatured.length === 0 && initialCatalog.length === 0);
 
   const loadData = async () => {
     setIsLoading(true);
     try {
-      // 1. Carrega itens do catálogo para destaque e tendências
-      const catalogRes = await catalogApi.listItems({ limit: 10 }).catch(() => null);
-      if (catalogRes && catalogRes.data) {
-        setFeaturedMedia(catalogRes.data[0] || null);
-        setTrendingItems(catalogRes.data.slice(1, 7));
+      const [featuredRes, catalogRes, calRes, libRes, diaryRes] = await Promise.allSettled([
+        catalogApi.getFeatured(),
+        catalogApi.listItems({ limit: 8 }),
+        calendarApi.getEvents(),
+        isAuthenticated ? libraryApi.listItems() : Promise.resolve(null),
+        isAuthenticated ? diaryApi.list() : Promise.resolve(null),
+      ]);
+
+      let defaultSpotlight: MediaItemSummaryDto | null = null;
+
+      if (featuredRes.status === 'fulfilled' && Array.isArray(featuredRes.value?.items)) {
+        setFeaturedByCategory(featuredRes.value.items);
+        defaultSpotlight = featuredRes.value.items[0] || null;
       }
 
-      // 2. Se autenticado, carrega biblioteca e diário
-      if (isAuthenticated) {
-        const [libRes, diaryRes] = await Promise.allSettled([
-          libraryApi.listItems(),
-          diaryApi.listHistory(),
-        ]);
-
-        if (libRes.status === 'fulfilled') {
-          const items = libRes.value.data || libRes.value.items || [];
-          setLibraryItems(items);
-          // Se tiver item em andamento, prioriza para o Hero Spotlight
-          const activeItem = items.find((i) => i.status === 'ASSISTINDO' || i.status === 'LENDO');
-          if (activeItem && activeItem.mediaItem) {
-            setFeaturedMedia(activeItem.mediaItem);
-          }
-        }
-
-        if (diaryRes.status === 'fulfilled' && Array.isArray(diaryRes.value)) {
-          setHistoryEvents(diaryRes.value);
+      if (catalogRes.status === 'fulfilled' && Array.isArray(catalogRes.value?.data)) {
+        setTrendingItems(catalogRes.value.data.slice(0, 6));
+        if (!defaultSpotlight) {
+          defaultSpotlight = catalogRes.value.data[0] || null;
         }
       }
 
-      // 3. Carrega eventos do calendário para próximas estreias
-      const calRes = await calendarApi.getEvents({ range: 'WEEK' }).catch(() => null);
-      if (calRes && Array.isArray(calRes.events)) {
-        setUpcomingEvents(calRes.events);
+      if (calRes.status === 'fulfilled' && calRes.value && Array.isArray(calRes.value.events)) {
+        setUpcomingEvents(calRes.value.events);
+      }
+
+      if (isAuthenticated && libRes.status === 'fulfilled' && libRes.value) {
+        const items = libRes.value.data || libRes.value.items || [];
+        setLibraryItems(items);
+        const activeItem = items.find((i) => i.status === 'ASSISTINDO' || i.status === 'LENDO');
+        if (activeItem?.mediaItem && !defaultSpotlight) {
+          defaultSpotlight = activeItem.mediaItem;
+        }
+      } else if (!isAuthenticated) {
+        setLibraryItems([]);
+      }
+
+      if (isAuthenticated && diaryRes.status === 'fulfilled' && Array.isArray(diaryRes.value)) {
+        setHistoryEvents(diaryRes.value);
+      } else if (!isAuthenticated) {
+        setHistoryEvents([]);
+      }
+
+      if (defaultSpotlight) {
+        setFeaturedMedia(defaultSpotlight);
       }
     } finally {
       setIsLoading(false);
@@ -79,16 +101,21 @@ export function HomeHubView() {
   }, [isAuthenticated]);
 
   const handleQuickIncrement = async (mediaItemId: string, nextProgress: number) => {
+    const prev = libraryItems;
+    setLibraryItems((current) =>
+      current.map((item) =>
+        item.mediaItemId === mediaItemId ? { ...item, progress: nextProgress } : item
+      )
+    );
     try {
-      await libraryApi.updateItem(mediaItemId, { progress: nextProgress });
-      // Atualiza estado local
-      setLibraryItems((prev) =>
-        prev.map((item) =>
-          item.mediaItemId === mediaItemId ? { ...item, progress: nextProgress } : item
-        )
-      );
+      const updated = await libraryApi.updateItem(mediaItemId, { progress: nextProgress });
+      if (updated) {
+        setLibraryItems((current) =>
+          current.map((item) => (item.mediaItemId === mediaItemId ? updated : item))
+        );
+      }
     } catch {
-      // Falha graciosa
+      setLibraryItems(prev);
     }
   };
 
@@ -104,8 +131,10 @@ export function HomeHubView() {
         {/* Coluna Principal: Hero + Continuar Acompanhando + Tendências (8 Colunas) */}
         <section className="lg:col-span-8 space-y-8">
           <HeroSpotlight
+            featuredByCategory={featuredByCategory}
             media={featuredMedia}
             libraryItem={featuredLibraryItem}
+            libraryItems={libraryItems}
             isAuthenticated={isAuthenticated}
             onQuickIncrement={handleQuickIncrement}
           />

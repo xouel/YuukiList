@@ -78,6 +78,8 @@ export class AuthService {
       email: userRecord.email,
       username: userRecord.username,
       role: userRecord.role,
+      avatarUrl: userRecord.avatarUrl ?? null,
+      avatarFrame: userRecord.avatarFrame ?? 'none',
       createdAt: userRecord.createdAt,
     };
 
@@ -132,6 +134,8 @@ export class AuthService {
       email: userRecord.email,
       username: userRecord.username,
       role: userRecord.role,
+      avatarUrl: userRecord.avatarUrl ?? null,
+      avatarFrame: userRecord.avatarFrame ?? 'none',
       createdAt: userRecord.createdAt,
     };
 
@@ -167,6 +171,8 @@ export class AuthService {
       email: userRecord.email,
       username: userRecord.username,
       role: userRecord.role,
+      avatarUrl: userRecord.avatarUrl ?? null,
+      avatarFrame: userRecord.avatarFrame ?? 'none',
       createdAt: userRecord.createdAt,
     };
   }

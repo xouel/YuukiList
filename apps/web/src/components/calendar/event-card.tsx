@@ -59,22 +59,25 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
     setIsUpdatingProgress(true);
 
     const targetProgress = event.number || 1;
+    const isReading =
+      event.mediaType === 'MANGA' || event.mediaType === 'MANHWA' || event.mediaType === 'MANHUA';
 
     try {
       // 1. Atualizar progresso na biblioteca
-      await libraryApi.updateItem(event.mediaItemId, {
-        currentProgress: targetProgress,
-      });
+      await libraryApi.updateItem(event.mediaItemId, { progress: targetProgress });
 
-      // 2. Registrar evento no diário
-      await diaryApi.createEvent({
-        mediaItemId: event.mediaItemId,
-        type: 'PROGRESS_UPDATE',
-        episodeNumber: event.number || null,
-        chapterNumber: event.type === 'CHAPTER_RELEASE' ? (event.number || null) : null,
-        newProgress: targetProgress,
-        note: `Marcado via Programação Semanal (${subtitle})`,
-      });
+      // 2. Registrar evento no diário (falha secundária não reverte progresso salvo)
+      try {
+        await diaryApi.createEvent({
+          mediaItemId: event.mediaItemId,
+          type: 'PROGRESS_UPDATE',
+          episodeNumber: isReading ? null : event.number || null,
+          chapterNumber: isReading ? event.number || null : null,
+          note: `Marcado via Programação Semanal (${subtitle})`,
+        });
+      } catch {
+        // Silencioso: progresso principal já foi persistido na biblioteca
+      }
 
       setIsWatched(true);
       if (onProgressUpdated) {
@@ -113,6 +116,12 @@ export function EventCard({ event, onProgressUpdated }: EventCardProps) {
             <img
               src={event.coverImage}
               alt={event.mediaTitle}
+              onError={(e) => {
+                const fallback = `/api/v1/catalog/items/${event.mediaSlug}/cover`;
+                if (!e.currentTarget.src.endsWith(fallback)) {
+                  e.currentTarget.src = fallback;
+                }
+              }}
               className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
               loading="lazy"
             />

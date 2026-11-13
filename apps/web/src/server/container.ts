@@ -57,7 +57,7 @@ class ServerContainer {
     this.authModule = new AuthModule(prismaClient);
     const libraryRepo = new LibraryRepository(prismaClient);
     const diaryRepo = new DiaryRepository();
-    const diaryService = new DiaryService(diaryRepo, libraryRepo);
+    const diaryService = new DiaryService(diaryRepo, this.catalogRepository, libraryRepo);
     const libraryService = new LibraryService(libraryRepo, this.catalogRepository, diaryService);
     this.libraryController = new LibraryController(libraryService, this.authModule.authGuard);
     this.diaryController = new DiaryController(diaryService, this.authModule.authGuard);
@@ -77,7 +77,8 @@ class ServerContainer {
       libraryRepo,
       this.catalogRepository,
       this.authModule.usersRepository,
-      diaryRepo
+      diaryRepo,
+      (userId) => this.authModule.invalidateUserCache(userId)
     );
     this.profileController = new ProfileController(this.profileService);
 

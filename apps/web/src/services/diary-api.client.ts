@@ -69,7 +69,7 @@ export class DiaryApiClient {
 
   async list(filter: HistoryFilterDto = {}): Promise<HistoryEventDto[]> {
     const qs = this.buildQueryString(filter);
-    const url = `${this.baseUrl}/api/v1/diary/events${qs}`;
+    const url = `${this.baseUrl}/api/v1/diary${qs}`;
 
     try {
       const res = await this.fetcher(url, {
@@ -94,7 +94,7 @@ export class DiaryApiClient {
   }
 
   async createEvent(body: CreateHistoryEventDto): Promise<HistoryEventDto> {
-    const url = `${this.baseUrl}/api/v1/diary/events`;
+    const url = `${this.baseUrl}/api/v1/diary`;
 
     try {
       const res = await this.fetcher(url, {
@@ -123,7 +123,7 @@ export class DiaryApiClient {
   }
 
   async updateEvent(id: string, body: UpdateHistoryEventDto): Promise<HistoryEventDto> {
-    const url = `${this.baseUrl}/api/v1/diary/events/${encodeURIComponent(id)}`;
+    const url = `${this.baseUrl}/api/v1/diary/${encodeURIComponent(id)}`;
 
     try {
       const res = await this.fetcher(url, {
@@ -152,7 +152,7 @@ export class DiaryApiClient {
   }
 
   async deleteEvent(id: string): Promise<{ success: boolean }> {
-    const url = `${this.baseUrl}/api/v1/diary/events/${encodeURIComponent(id)}`;
+    const url = `${this.baseUrl}/api/v1/diary/${encodeURIComponent(id)}`;
 
     try {
       const res = await this.fetcher(url, {

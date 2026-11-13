@@ -8,29 +8,47 @@ import type {
 } from '../../../../packages/shared/src/profile.ts';
 import { ProfileRepository } from './profile.repository.ts';
 import { LibraryRepository } from '../library/library.repository.ts';
-import { CatalogRepository } from '../data/catalog.repository.ts';
+import { type ICatalogRepository } from '../data/catalog.repository.ts';
 import { UsersRepository } from '../auth/users.repository.ts';
 import { DiaryRepository } from '../diary/diary.repository.ts';
+import type { MediaItemDetailDto } from '../../../../packages/shared/src/catalog.ts';
 
 export class ProfileService {
   private readonly profileRepo: ProfileRepository;
   private readonly libraryRepo: LibraryRepository;
-  private readonly catalogRepo: CatalogRepository;
+  private readonly catalogRepo: ICatalogRepository;
   private readonly usersRepo: UsersRepository;
   private readonly diaryRepo?: DiaryRepository;
+  private readonly onProfileUpdated?: (userId: string) => void;
 
   constructor(
     profileRepo: ProfileRepository,
     libraryRepo: LibraryRepository,
-    catalogRepo: CatalogRepository,
+    catalogRepo: ICatalogRepository,
     usersRepo: UsersRepository,
-    diaryRepo?: DiaryRepository
+    diaryRepo?: DiaryRepository,
+    onProfileUpdated?: (userId: string) => void
   ) {
     this.profileRepo = profileRepo;
     this.libraryRepo = libraryRepo;
     this.catalogRepo = catalogRepo;
     this.usersRepo = usersRepo;
     this.diaryRepo = diaryRepo;
+    this.onProfileUpdated = onProfileUpdated;
+  }
+
+  private async resolveMediaMap(
+    items: Array<{ mediaItemId: string }>
+  ): Promise<Map<string, MediaItemDetailDto>> {
+    const map = new Map<string, MediaItemDetailDto>();
+    if (items.length === 0) return map;
+
+    const mediaList = await this.catalogRepo.findByIds(items.map((i) => i.mediaItemId));
+    for (const media of mediaList) {
+      map.set(media.id.toLowerCase(), media);
+      map.set(media.slug.toLowerCase(), media);
+    }
+    return map;
   }
 
   async getStats(userId: string): Promise<ProfileStatsDto> {
@@ -82,6 +100,7 @@ export class ProfileService {
     const genreCounts: Record<string, number> = {};
     const countryCounts: Record<string, number> = {};
     const favoriteItems: ProfileStatsDto['favorites'] = [];
+    const mediaMap = await this.resolveMediaMap(libraryItems);
 
     for (const item of libraryItems) {
       const statusStr = String(item.status);
@@ -108,11 +127,8 @@ export class ProfileService {
         totalRatingCount++;
       }
 
-      // Fetch catalog item metadata
-      let media = await this.catalogRepo.findById(item.mediaItemId);
-      if (!media) {
-        media = await this.catalogRepo.findBySlug(item.mediaItemId);
-      }
+      // Fetch catalog item metadata from preloaded batch map
+      const media = mediaMap.get(item.mediaItemId.toLowerCase()) || null;
 
       const category = media ? media.category : 'OUTROS';
       categoryCounts[category] = (categoryCounts[category] || 0) + 1;
@@ -199,7 +215,11 @@ export class ProfileService {
   }
 
   async updateProfile(userId: string, data: any) {
-    return this.usersRepo.updateProfile(userId, data);
+    const updated = await this.usersRepo.updateProfile(userId, data);
+    if (updated && this.onProfileUpdated) {
+      this.onProfileUpdated(userId);
+    }
+    return updated;
   }
 
   async getAccount(userId: string) {
@@ -252,14 +272,12 @@ export class ProfileService {
     const { items: libraryItems } = await this.libraryRepo.findMany(link.userId, { limit: 2000 });
 
     const sharedItems: SharedProfileItemDto[] = [];
+    const sharedMediaMap = await this.resolveMediaMap(libraryItems);
     for (const item of libraryItems) {
       if (link.shareScope === 'FAVORITES_ONLY' && !item.isFavorite) {
         continue;
       }
-      let media = await this.catalogRepo.findById(item.mediaItemId);
-      if (!media) {
-        media = await this.catalogRepo.findBySlug(item.mediaItemId);
-      }
+      const media = sharedMediaMap.get(item.mediaItemId.toLowerCase()) || null;
 
       sharedItems.push({
         mediaItemId: item.mediaItemId,
@@ -293,9 +311,9 @@ export class ProfileService {
 
     const { items: libraryItems } = await this.libraryRepo.findMany(userId, { limit: 5000 });
     const formattedLibrary = [];
+    const exportMediaMap = await this.resolveMediaMap(libraryItems);
     for (const item of libraryItems) {
-      let media = await this.catalogRepo.findById(item.mediaItemId);
-      if (!media) media = await this.catalogRepo.findBySlug(item.mediaItemId);
+      const media = exportMediaMap.get(item.mediaItemId.toLowerCase()) || null;
       formattedLibrary.push({
         id: item.id,
         mediaItemId: item.mediaItemId,
@@ -346,10 +364,10 @@ export class ProfileService {
     ];
 
     const rows: string[] = [headers.join(',')];
+    const csvMediaMap = await this.resolveMediaMap(libraryItems);
 
     for (const item of libraryItems) {
-      let media = await this.catalogRepo.findById(item.mediaItemId);
-      if (!media) media = await this.catalogRepo.findBySlug(item.mediaItemId);
+      const media = csvMediaMap.get(item.mediaItemId.toLowerCase()) || null;
 
       const title = (media?.title || item.mediaItemId).replace(/"/g, '""');
       const category = media?.category || 'OUTROS';

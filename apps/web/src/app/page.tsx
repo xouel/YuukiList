@@ -1,10 +1,14 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { HomeHubView } from '../components/home/home-hub-view.tsx';
+import { container } from '../server/container.ts';
+import type { MediaItemSummaryDto } from '../../../../packages/shared/src/index.ts';
 
 interface HomePageProps {
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }> | { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'YuukiList — Início & Painel de Acompanhamento',
@@ -27,5 +31,24 @@ export default async function HomePage(props: HomePageProps) {
     redirect(`/explore?${params.toString()}`);
   }
 
-  return <HomeHubView />;
+  let initialFeatured: MediaItemSummaryDto[] = [];
+  let initialCatalog: MediaItemSummaryDto[] = [];
+
+  try {
+    const [featuredRes, catalogRes] = await Promise.all([
+      container.catalogController.getFeaturedByCategory(),
+      container.catalogController.list({ page: 1, limit: 8 }),
+    ]);
+    initialFeatured = featuredRes.items || [];
+    initialCatalog = catalogRes.data || [];
+  } catch {
+    // Fallback resiliente para carregamento no cliente caso DB esteja indisponível no SSR
+  }
+
+  return (
+    <HomeHubView
+      initialFeatured={initialFeatured}
+      initialCatalog={initialCatalog}
+    />
+  );
 }

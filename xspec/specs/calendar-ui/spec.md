@@ -50,7 +50,7 @@ A interface SHALL renderizar a página /calendar com cabeçalho limpo sem etique
 - **THEN** a interface SHALL renderizar ambos os horários com font-mono tabular-nums sem causar salto ou layout jitter no card
 
 ### Requirement: Local Timezone Conversion and Reliability Badges
-A interface SHALL converter horários com números tabulares (tabular-nums), exibir badges de confiabilidade, eliminar dilatação hover:scale-105 e disponibilizar botões com resposta elástica no clique (:active:scale-[0.98]) nos cards de lançamento.
+A interface SHALL converter horários com `tabular-nums`, exibir badges de confiabilidade, eliminar `hover:scale-105`, garantir fallback resiliente de capas em caso de erro de carregamento nos cards e barra lateral, e enviar payload `{ progress }` com registro no endpoint `/api/v1/diary` na ação `+1 Visto`.
 
 #### Scenario: Formatacao automatica para o fuso local do usuario
 - **GIVEN** um evento registrado com horario definido em UTC ou fuso da regiao de origem
@@ -75,4 +75,9 @@ A interface SHALL converter horários com números tabulares (tabular-nums), exi
 #### Scenario: Acao rapida de mais um visto no card de lancamento integrada a biblioteca
 - **GIVEN** um evento de lançamento de obra que o usuário possui em acompanhamento na biblioteca
 - **WHEN** o usuário aciona o botão de incremento rápido no card
-- **THEN** o sistema SHALL responder com micro-pressão no clique (:active:scale-[0.98]), atualizar o progresso na biblioteca, registrar o evento no diário e alterar o estado do botão com alvo tátil de 44x44px
+- **THEN** o sistema SHALL responder com micro-pressão no clique (:active:scale-[0.98]), atualizar o progresso enviando `{ progress }` na biblioteca, registrar o evento via `/api/v1/diary` e alterar o estado do botão com alvo tátil de 44x44px
+
+#### Scenario: Fallback resiliente de capas nos cards e sidebar do calendario
+- **GIVEN** um card de evento ou item da barra lateral Mais Esperados com URL de capa externa ou ausente
+- **WHEN** a imagem falha ao carregar no navegador
+- **THEN** o elemento `<img>` SHALL acionar fallback automático para `/api/v1/catalog/items/:slug/cover` garantindo exibição contínua da capa da obra

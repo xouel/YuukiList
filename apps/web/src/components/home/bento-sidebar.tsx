@@ -108,7 +108,10 @@ export function BentoSidebar({
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-[var(--color-text-primary)] truncate">{event.mediaTitle}</p>
                   <p className="text-[10px] text-[var(--color-text-secondary)]">
-                    Ep. {event.unitNumber} • {event.hasTime ? '14:00 BRT' : 'Em breve'}
+                    {event.mediaType === 'MANGA' || event.mediaType === 'MANHWA' || event.mediaType === 'MANHUA'
+                      ? 'Cap.'
+                      : 'Ep.'}{' '}
+                    {event.number ?? 1} • {event.hasTime ? '14:00 BRT' : 'Em breve'}
                   </p>
                 </div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
@@ -166,7 +169,11 @@ export function BentoSidebar({
                     <span className="text-[10px] text-[var(--color-text-muted)]">recente</span>
                   </div>
                   <p className="text-[11px] text-[var(--color-text-secondary)]">
-                    {ev.newProgress ? `Progresso atualizado para ${ev.newProgress}` : 'Novo registro no diário'}
+                    {ev.episodeNumber
+                      ? `Episódio ${ev.episodeNumber}`
+                      : ev.chapterNumber
+                        ? `Capítulo ${ev.chapterNumber}`
+                        : ev.note || 'Novo registro no diário'}
                   </p>
                 </div>
               ))

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import type {
   Category,
   PublicationStatus,
@@ -9,8 +10,9 @@ import type {
   MediaItemSummaryDto,
   PaginationMeta,
   CanonicalExternalMediaDto,
+  FederatedCatalogResponse,
 } from '../../../../../packages/shared/src/index.ts';
-import { CatalogApiClient } from '../../services/catalog-api.client.ts';
+import { CatalogApiClient, CatalogApiError } from '../../services/catalog-api.client.ts';
 import { LibraryApiClient } from '../../services/library-api.client.ts';
 import { useAuth } from '../../context/auth-context.tsx';
 import { SearchBar } from './search-bar.tsx';
@@ -21,6 +23,7 @@ import { EmptyState, NoResultsState, ErrorState } from './async-feedback.tsx';
 
 interface CatalogViewProps {
   initialQuery?: CatalogQueryDto;
+  initialData?: FederatedCatalogResponse;
   apiClient?: CatalogApiClient;
 }
 
@@ -28,8 +31,10 @@ const STORAGE_KEY = 'yuuki:catalog:nav_state';
 
 export function CatalogView({
   initialQuery = {},
+  initialData,
   apiClient = new CatalogApiClient(),
 }: CatalogViewProps) {
+  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const [libraryMediaIds, setLibraryMediaIds] = useState<Set<string>>(new Set());
 
@@ -39,31 +44,46 @@ export function CatalogView({
     category: initialQuery.category,
     status: initialQuery.status,
     country: initialQuery.country,
+    genre: initialQuery.genre,
     theme: initialQuery.theme,
     sortBy: initialQuery.sortBy || 'relevance',
-    page: 1,
-    limit: 20,
+    page: initialQuery.page || 1,
+    limit: initialQuery.limit || 20,
   });
 
   // Estado da Lista e Paginação Cumulativa (Infinite Scroll)
-  const [items, setItems] = useState<MediaItemSummaryDto[]>([]);
-  const [externalItems, setExternalItems] = useState<CanonicalExternalMediaDto[]>([]);
+  const [items, setItems] = useState<MediaItemSummaryDto[]>(initialData?.data || []);
+  const [externalItems, setExternalItems] = useState<CanonicalExternalMediaDto[]>(
+    initialData?.externalResults || []
+  );
   const [ingestingId, setIngestingId] = useState<string | null>(null);
-  const [meta, setMeta] = useState<PaginationMeta>({
-    total: 0,
-    page: 1,
-    limit: 20,
-    totalPages: 0,
-  });
+  const [meta, setMeta] = useState<PaginationMeta>(
+    initialData?.meta || {
+      total: 0,
+      page: 1,
+      limit: 20,
+      totalPages: 0,
+    }
+  );
 
   // Estados Assíncronos: loading | success | empty | no-results | error
-  const [viewStatus, setViewStatus] = useState<'loading' | 'success' | 'empty' | 'no-results' | 'error'>('loading');
+  const [viewStatus, setViewStatus] = useState<'loading' | 'success' | 'empty' | 'no-results' | 'error'>(() => {
+    if (!initialData) return 'loading';
+    const hasExternals = (initialData.externalResults?.length || 0) > 0;
+    if (initialData.meta.total === 0 && !hasExternals) {
+      return initialQuery.q || initialQuery.category || initialQuery.status || initialQuery.country || initialQuery.genre || initialQuery.theme
+        ? 'no-results'
+        : 'empty';
+    }
+    return 'success';
+  });
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
 
   // Sentinel de Rolagem Infinita
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const activeAbortController = useRef<AbortController | null>(null);
+  const didHydrateInitialData = useRef<boolean>(Boolean(initialData));
 
   // Carrega IDs das obras já presentes na biblioteca do usuário autenticado
   useEffect(() => {
@@ -115,7 +135,7 @@ export function CatalogView({
         setExternalItems(externals);
 
         if (response.meta.total === 0 && externals.length === 0) {
-          if (currentQuery.q || currentQuery.category || currentQuery.status || currentQuery.country || currentQuery.theme) {
+          if (currentQuery.q || currentQuery.category || currentQuery.status || currentQuery.country || currentQuery.genre || currentQuery.theme) {
             setViewStatus('no-results');
           } else {
             setViewStatus('empty');
@@ -124,10 +144,13 @@ export function CatalogView({
           setViewStatus('success');
         }
 
-        syncUrlWithQuery(currentQuery);
+        syncUrlWithQuery({ ...currentQuery, includeExternal: undefined });
       } catch (err: unknown) {
-        if (err && typeof err === 'object' && 'name' in err && err.name === 'AbortError') {
-          return; // Requisição cancelada por nova digitação
+        if (
+          (err instanceof CatalogApiError && err.code === 'ABORTED') ||
+          (err && typeof err === 'object' && 'name' in err && err.name === 'AbortError')
+        ) {
+          return; // Requisição cancelada por nova digitação ou navegação
         }
         setViewStatus('error');
         setErrorMessage(err instanceof Error ? err.message : 'Falha ao conectar com o catálogo');
@@ -180,7 +203,11 @@ export function CatalogView({
       }
     }
 
-    // Carregamento inicial padrão caso não haja estado restaurado
+    // Carregamento inicial padrão caso não haja estado restaurado nem SSR inicial
+    if (didHydrateInitialData.current) {
+      didHydrateInitialData.current = false;
+      return;
+    }
     loadInitialItems(query);
   }, []);
 
@@ -270,12 +297,16 @@ export function CatalogView({
           query,
         })
       );
-      window.location.href = `/items/${slug}`;
     }
+    router.push(`/items/${slug}`);
   };
 
   const handleQuickAddSuccess = (item: MediaItemSummaryDto) => {
     setLibraryMediaIds((prev) => new Set([...prev, item.id]));
+  };
+
+  const handleSearchExternal = () => {
+    loadInitialItems({ ...query, includeExternal: true, page: 1 });
   };
 
   const handleIngestAndNavigate = async (ext: CanonicalExternalMediaDto) => {
@@ -286,7 +317,7 @@ export function CatalogView({
       setIngestingId(key);
       const ingested = await apiClient.ingestItem(ext);
       if (ingested && ingested.slug) {
-        window.location.href = `/items/${ingested.slug}`;
+        router.push(`/items/${ingested.slug}`);
       }
     } catch {
       setIngestingId(null);
@@ -340,7 +371,20 @@ export function CatalogView({
         {viewStatus === 'empty' && <EmptyState />}
 
         {viewStatus === 'no-results' && (
-          <NoResultsState searchTerm={query.q} onClearFilters={handleClearFilters} />
+          <div className="space-y-4">
+            <NoResultsState searchTerm={query.q} onClearFilters={handleClearFilters} />
+            {query.q && query.q.trim().length > 0 && (
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handleSearchExternal}
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-accent/15 hover:bg-accent text-accent hover:text-white border border-accent/40 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  Buscar em fontes externas
+                </button>
+              </div>
+            )}
+          </div>
         )}
 
         {viewStatus === 'error' && (
@@ -379,6 +423,17 @@ export function CatalogView({
                 <p className="text-xs text-[var(--color-text-secondary)]">
                   Você chegou ao fim do catálogo local ({meta.total} obras exibidas).
                 </p>
+              )}
+              {query.q && query.q.trim().length > 0 && externalItems.length === 0 && (
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    onClick={handleSearchExternal}
+                    className="min-h-[44px] px-5 py-2.5 rounded-xl bg-surface-raised hover:bg-surface-overlay text-accent border border-accent/40 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    Buscar em fontes externas
+                  </button>
+                </div>
               )}
             </div>
 

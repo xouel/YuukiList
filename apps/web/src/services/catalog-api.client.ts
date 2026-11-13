@@ -160,6 +160,38 @@ export class CatalogApiClient {
   }
 
   /**
+   * Obtém 1 obra recomendada melhor avaliada para cada uma das 6 categorias canônicas.
+   */
+  async getFeatured(signal?: AbortSignal): Promise<{ items: MediaItemSummaryDto[] }> {
+    const url = `${this.baseUrl}/api/v1/catalog/featured`;
+
+    try {
+      const response = await this.fetcher(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+        signal,
+      });
+
+      if (!response.ok) {
+        throw new CatalogApiError(`Erro ao consultar destaques: HTTP ${response.status}`, response.status);
+      }
+
+      return (await response.json()) as { items: MediaItemSummaryDto[] };
+    } catch (err: unknown) {
+      if (err instanceof CatalogApiError) {
+        throw err;
+      }
+      if (err && typeof err === 'object' && 'name' in err && err.name === 'AbortError') {
+        throw new CatalogApiError('Requisição cancelada pelo cliente.', 0, 'ABORTED');
+      }
+      const message = err instanceof Error ? err.message : 'Falha de comunicação';
+      throw new CatalogApiError(`Erro ao carregar destaques por categoria: ${message}`, 0, 'NETWORK_ERROR');
+    }
+  }
+
+  /**
    * Ingestão atômica sob demanda (Just-in-Time) de obra externa para o Supabase.
    */
   async ingestItem(item: { source: string; externalId: string; category?: string; [key: string]: any }): Promise<MediaItemDetailDto> {

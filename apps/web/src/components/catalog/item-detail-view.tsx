@@ -250,70 +250,82 @@ export function ItemDetailView({ item, onBack }: ItemDetailViewProps) {
     }
   };
 
-  // Alternância de episódio individual no gerenciador
-  const handleMarkEpisode = async (episodeNumber: number) => {
+  const getKnownTotalUnits = () => {
+    const isReading = item.category === 'MANGA' || item.category === 'MANHWA' || item.category === 'MANHUA';
+    return isReading ? item.totalChapters : item.totalEpisodes;
+  };
+
+  const commitProgressUpdate = async (
+    targetProgress: number,
+    diaryNote: string,
+    successMessage: string,
+    errorMessage: string
+  ) => {
     if (!isAuthenticated) return;
     const prev = libraryItem;
-    try {
-      if (libraryItem) {
-        const updated = await libraryApi.updateItem(item.id, { progress: episodeNumber });
-        setLibraryItem(updated);
-      } else {
-        const allowed = CATEGORY_ALLOWED_STATUSES[item.category] || ['ASSISTINDO'];
-        const created = await libraryApi.addItem({
-          mediaItemId: item.id,
-          status: allowed[0],
-          progress: episodeNumber,
-        });
-        setLibraryItem(created);
-      }
+    const isReading = item.category === 'MANGA' || item.category === 'MANHWA' || item.category === 'MANHUA';
+    const totalUnits = getKnownTotalUnits();
+    const reachedCompletion = Boolean(totalUnits && totalUnits > 0 && targetProgress >= totalUnits);
+    const completedStatus: PersonalStatus = item.category === 'FILME' ? 'ASSISTIDO' : 'CONCLUIDO';
+    const nextStatus: PersonalStatus = reachedCompletion
+      ? completedStatus
+      : libraryItem?.status || (CATEGORY_ALLOWED_STATUSES[item.category]?.[0] ?? 'ASSISTINDO');
 
-      await diaryApi.createEvent({
-        mediaItemId: item.id,
-        type: 'PROGRESS',
-        episodeNumber,
-        note: `Progresso atualizado para o episódio ${episodeNumber}`,
-      });
-
-      showFeedback(`Episódio ${episodeNumber} marcado com sucesso.`);
-      fetchDiaryEvents();
-    } catch {
-      if (prev) setLibraryItem(prev);
-      showFeedback('Falha ao registrar episódio.');
+    if (libraryItem) {
+      const optimisticBase = computeOptimisticItemUpdate(libraryItem, targetProgress, totalUnits);
+      setLibraryItem({ ...optimisticBase, status: nextStatus });
     }
+
+    try {
+      const saved = libraryItem
+        ? await libraryApi.updateItem(
+            item.id,
+            reachedCompletion ? { progress: targetProgress, status: nextStatus } : { progress: targetProgress }
+          )
+        : await libraryApi.addItem({
+            mediaItemId: item.id,
+            status: nextStatus,
+            progress: targetProgress,
+          });
+      setLibraryItem(saved);
+      showFeedback(successMessage);
+
+      try {
+        await diaryApi.createEvent({
+          mediaItemId: item.id,
+          type: reachedCompletion ? 'COMPLETED' : 'PROGRESS_UPDATE',
+          episodeNumber: isReading ? null : targetProgress,
+          chapterNumber: isReading ? targetProgress : null,
+          note: diaryNote,
+        });
+        fetchDiaryEvents();
+      } catch {
+        // Falha secundária no diário não reverte o progresso já salvo na biblioteca
+      }
+    } catch {
+      setLibraryItem(prev);
+      showFeedback(errorMessage);
+    }
+  };
+
+  // Alternância de episódio individual no gerenciador
+  const handleMarkEpisode = async (episodeNumber: number) => {
+    await commitProgressUpdate(
+      episodeNumber,
+      `Progresso atualizado para o episódio ${episodeNumber}`,
+      `Episódio ${episodeNumber} marcado com sucesso.`,
+      'Falha ao registrar episódio.'
+    );
   };
 
   // Ação em lote: marcar temporada inteira
   const handleMarkSeasonAll = async (lastEpisodeOfSeason: number, seasonTitle: string) => {
-    if (!isAuthenticated) return;
-    const prev = libraryItem;
-    try {
-      if (libraryItem) {
-        const updated = await libraryApi.updateItem(item.id, { progress: lastEpisodeOfSeason });
-        setLibraryItem(updated);
-      } else {
-        const allowed = CATEGORY_ALLOWED_STATUSES[item.category] || ['ASSISTINDO'];
-        const created = await libraryApi.addItem({
-          mediaItemId: item.id,
-          status: allowed[0],
-          progress: lastEpisodeOfSeason,
-        });
-        setLibraryItem(created);
-      }
-
-      await diaryApi.createEvent({
-        mediaItemId: item.id,
-        type: 'PROGRESS',
-        episodeNumber: lastEpisodeOfSeason,
-        note: `Conclusão em lote da ${seasonTitle}`,
-      });
-
-      showFeedback(`Temporada concluída até o episódio ${lastEpisodeOfSeason}!`);
-      fetchDiaryEvents();
-    } catch {
-      if (prev) setLibraryItem(prev);
-      showFeedback('Falha ao marcar temporada.');
-    }
+    await commitProgressUpdate(
+      lastEpisodeOfSeason,
+      `Conclusão em lote da ${seasonTitle}`,
+      `Temporada concluída até o episódio ${lastEpisodeOfSeason}!`,
+      'Falha ao marcar temporada.'
+    );
   };
 
   // Salvar alterações detalhadas pelo modal

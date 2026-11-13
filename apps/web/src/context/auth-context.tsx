@@ -29,6 +29,7 @@ export interface AuthContextValue {
   register: (dto: RegisterDto) => Promise<AuthUserResponse>;
   login: (dto: LoginDto) => Promise<AuthUserResponse>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<AuthUserResponse | null>;
   clearError: () => void;
 }
 
@@ -129,6 +130,16 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
     }
   }, [apiClient]);
 
+  const refreshUser = useCallback(async (): Promise<AuthUserResponse | null> => {
+    try {
+      const freshUser = await apiClient.getMe();
+      setUser(freshUser);
+      return freshUser;
+    } catch {
+      return null;
+    }
+  }, [apiClient]);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -138,9 +149,10 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
       register,
       login,
       logout,
+      refreshUser,
       clearError,
     }),
-    [user, isLoading, error, register, login, logout, clearError]
+    [user, isLoading, error, register, login, logout, refreshUser, clearError]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

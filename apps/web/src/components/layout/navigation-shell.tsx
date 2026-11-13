@@ -6,13 +6,14 @@
  * Paleta Mineral: var(--color-bg-surface) e var(--color-border)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../../context/auth-context.tsx';
 import { ThemeToggle } from './theme-toggle.tsx';
 import { LegalFooter } from './legal-footer.tsx';
 import { NotificationBell } from '../notifications/notification-bell.tsx';
+import { AvatarFrame } from '../profile/avatar-frame.tsx';
 
 interface NavigationShellProps {
   children: React.ReactNode;
@@ -24,6 +25,11 @@ export function NavigationShell({ children }: NavigationShellProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.avatarUrl]);
 
   const isLogin = pathname === '/login';
   const isRegister = pathname === '/register';
@@ -161,9 +167,20 @@ export function NavigationShell({ children }: NavigationShellProps) {
                   aria-expanded={isUserMenuOpen}
                   aria-label="Menu do Usuário"
                 >
-                  <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0">
-                    {user.username.charAt(0).toUpperCase()}
-                  </div>
+                  <AvatarFrame frame={user.avatarFrame || 'none'} size="sm" className="!w-8 !h-8">
+                    {user.avatarUrl && !avatarError ? (
+                      <img
+                        src={user.avatarUrl}
+                        alt={user.username}
+                        onError={() => setAvatarError(true)}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="w-full h-full bg-accent flex items-center justify-center text-xs font-bold text-white">
+                        {user.username.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </AvatarFrame>
                   <span className="hidden md:inline-block text-xs font-medium text-[var(--color-text-primary)] max-w-[100px] truncate">
                     {user.username}
                   </span>

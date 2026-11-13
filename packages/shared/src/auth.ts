@@ -16,6 +16,8 @@ export interface AuthUserResponse {
   email: string;
   username: string;
   role?: UserRole;
+  avatarUrl?: string | null;
+  avatarFrame?: string | null;
   createdAt: string | Date;
 }
 

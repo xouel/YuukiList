@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from '@/server/container';
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     let setCookieHeader = '';
     const mockRes = {
@@ -11,8 +11,14 @@ export async function POST(_request: NextRequest) {
         }
       },
     };
+    const mockReq = {
+      headers: {
+        cookie: request.headers.get('cookie') || undefined,
+        authorization: request.headers.get('authorization') || undefined,
+      },
+    };
 
-    const result = await container.authModule.authController.logout(mockRes);
+    const result = await container.authModule.authController.logout(mockRes, mockReq);
     const headers = new Headers();
     if (setCookieHeader) {
       headers.set('Set-Cookie', setCookieHeader);

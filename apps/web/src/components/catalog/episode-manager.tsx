@@ -5,7 +5,7 @@
  * Organização em abas de temporadas, botão em lote "Marcar Temporada Toda" e controle tátil individual
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { MediaItemDetailDto } from '../../../../../packages/shared/src/index.ts';
 import { generateSeasonGroups, type SeasonGroupDto } from './dossier-helpers.ts';
 
@@ -51,6 +51,10 @@ export function EpisodeManager({
   }, [currentProgress, seasonGroups]);
 
   const [activeSeasonIndex, setActiveSeasonIndex] = useState<number>(initialSeasonIndex);
+
+  useEffect(() => {
+    setActiveSeasonIndex(initialSeasonIndex);
+  }, [initialSeasonIndex]);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const activeSeason = seasonGroups[activeSeasonIndex] || seasonGroups[0];

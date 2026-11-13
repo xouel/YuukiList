@@ -5,6 +5,7 @@
 
 import { SEED_MEDIA_ITEMS } from './seed-data.ts';
 import {
+  CATEGORIES,
   generateSlug,
   normalizeSearchText,
   type Category,
@@ -20,9 +21,13 @@ export interface ICatalogRepository {
   findMany(query: CatalogQueryDto): Promise<PaginatedResponse<MediaItemSummaryDto>>;
   findBySlug(slug: string): Promise<MediaItemDetailDto | null>;
   findById(id: string): Promise<MediaItemDetailDto | null>;
+  findByIds(ids: string[]): Promise<MediaItemDetailDto[]>;
+  findFeaturedPerCategory(): Promise<MediaItemSummaryDto[]>;
+  findOngoingWorks(limit?: number): Promise<MediaItemDetailDto[]>;
   count(): Promise<number>;
   upsertMediaItem(item: StoredMediaItem): Promise<StoredMediaItem>;
   getAllItems?(): Promise<StoredMediaItem[]>;
+  onItemUpserted?(listener: () => void): () => void;
 }
 
 /**
@@ -60,6 +65,20 @@ export function calculateTrigramSimilarity(textA: string, textB: string): number
 
 export class CatalogRepository implements ICatalogRepository {
   private items: StoredMediaItem[] = [];
+  private upsertListeners = new Set<() => void>();
+
+  onItemUpserted(listener: () => void): () => void {
+    this.upsertListeners.add(listener);
+    return () => {
+      this.upsertListeners.delete(listener);
+    };
+  }
+
+  private notifyUpsertListeners(): void {
+    for (const listener of this.upsertListeners) {
+      listener();
+    }
+  }
 
   constructor(customItems?: StoredMediaItem[]) {
     if (customItems) {
@@ -163,19 +182,27 @@ export class CatalogRepository implements ICatalogRepository {
   }
 
   async upsertMediaItem(item: StoredMediaItem): Promise<StoredMediaItem> {
+    const normalizedItem: StoredMediaItem = {
+      ...item,
+      normalizedTitle: item.normalizedTitle || normalizeSearchText(item.title),
+      aliases: item.aliases || [],
+      genres: item.genres || [],
+    };
     const existingIndex = this.items.findIndex(
-      (i) => i.slug === item.slug || i.id === item.id
+      (i) => i.slug === normalizedItem.slug || i.id === normalizedItem.id
     );
     if (existingIndex >= 0) {
       this.items[existingIndex] = {
         ...this.items[existingIndex],
-        ...item,
+        ...normalizedItem,
         updatedAt: new Date(),
       };
+      this.notifyUpsertListeners();
       return this.items[existingIndex];
     }
-    this.items.push(item);
-    return item;
+    this.items.push(normalizedItem);
+    this.notifyUpsertListeners();
+    return normalizedItem;
   }
 
   async save(item: any): Promise<StoredMediaItem> {
@@ -350,5 +377,105 @@ export class CatalogRepository implements ICatalogRepository {
         totalPages,
       },
     };
+  }
+
+  private mapStoredToSummary(item: StoredMediaItem): MediaItemSummaryDto {
+    return {
+      id: item.id,
+      slug: item.slug,
+      title: item.title,
+      originalTitle: item.originalTitle,
+      category: item.category,
+      publicationStatus: item.publicationStatus,
+      coverUrl:
+        item.coverPath && item.coverPath.startsWith('http')
+          ? item.coverPath
+          : `/api/v1/catalog/items/${item.slug}/cover`,
+      releaseYear: item.releaseYear,
+      genres: [...(item.genres || [])],
+    };
+  }
+
+  private mapStoredToDetail(item: StoredMediaItem): MediaItemDetailDto {
+    return {
+      id: item.id,
+      slug: item.slug,
+      title: item.title,
+      originalTitle: item.originalTitle,
+      category: item.category,
+      publicationStatus: item.publicationStatus,
+      synopsis: item.synopsis,
+      totalEpisodes: item.totalEpisodes ?? null,
+      totalChapters: item.totalChapters ?? null,
+      totalVolumes: item.totalVolumes ?? null,
+      releaseYear: item.releaseYear,
+      coverUrl:
+        item.coverPath && item.coverPath.startsWith('http')
+          ? item.coverPath
+          : `/api/v1/catalog/items/${item.slug}/cover`,
+      genres: item.genres ? [...item.genres] : [],
+      aliases: item.aliases ? item.aliases.map((a: any) => (typeof a === 'string' ? a : a.alias)) : [],
+      provenance: item.provenance || null,
+    };
+  }
+
+  async findByIds(ids: string[]): Promise<MediaItemDetailDto[]> {
+    if (!ids || ids.length === 0) return [];
+    const lookup = new Set(ids.map((id) => String(id).trim().toLowerCase()).filter(Boolean));
+    if (lookup.size === 0) return [];
+
+    const matched: MediaItemDetailDto[] = [];
+    const seenIds = new Set<string>();
+    for (const item of this.items) {
+      if (
+        (lookup.has(item.id.toLowerCase()) || lookup.has(item.slug.toLowerCase())) &&
+        !seenIds.has(item.id)
+      ) {
+        seenIds.add(item.id);
+        matched.push(this.mapStoredToDetail(item));
+      }
+    }
+    return matched;
+  }
+
+  async findFeaturedPerCategory(): Promise<MediaItemSummaryDto[]> {
+    const activeItems = this.items.filter((item) => item.validationStatus !== 'PROVISIONAL');
+    const featured: MediaItemSummaryDto[] = [];
+
+    for (const category of CATEGORIES) {
+      const candidates = activeItems
+        .filter((item) => item.category === category)
+        .sort((a, b) => {
+          const ratingDiff = (b.rating ?? -1) - (a.rating ?? -1);
+          if (Math.abs(ratingDiff) > 0.001) return ratingDiff;
+          const yearDiff = (b.releaseYear ?? 0) - (a.releaseYear ?? 0);
+          if (yearDiff !== 0) return yearDiff;
+          return a.title.localeCompare(b.title, 'pt-BR');
+        });
+      if (candidates.length > 0) {
+        featured.push(this.mapStoredToSummary(candidates[0]));
+      }
+    }
+
+    return featured;
+  }
+
+  async findOngoingWorks(limit = 30): Promise<MediaItemDetailDto[]> {
+    const safeLimit = Math.max(1, Math.min(100, Number(limit) || 30));
+    return this.items
+      .filter(
+        (item) =>
+          item.validationStatus !== 'PROVISIONAL' &&
+          item.publicationStatus === 'EM_ANDAMENTO'
+      )
+      .sort((a, b) => {
+        const ratingDiff = (b.rating ?? -1) - (a.rating ?? -1);
+        if (Math.abs(ratingDiff) > 0.001) return ratingDiff;
+        const yearDiff = (b.releaseYear ?? 0) - (a.releaseYear ?? 0);
+        if (yearDiff !== 0) return yearDiff;
+        return a.title.localeCompare(b.title, 'pt-BR');
+      })
+      .slice(0, safeLimit)
+      .map((item) => this.mapStoredToDetail(item));
   }
 }

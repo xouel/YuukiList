@@ -5,6 +5,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import {
+  CATEGORIES,
   generateSlug,
   normalizeSearchText,
   type Category,
@@ -22,6 +23,20 @@ import { SEED_MEDIA_ITEMS } from './seed-data.ts';
 export class PrismaCatalogRepository implements ICatalogRepository {
   private prisma: PrismaClient | null = null;
   private inMemoryFallback: Map<string, StoredMediaItem> = new Map();
+  private upsertListeners = new Set<() => void>();
+
+  onItemUpserted(listener: () => void): () => void {
+    this.upsertListeners.add(listener);
+    return () => {
+      this.upsertListeners.delete(listener);
+    };
+  }
+
+  private notifyUpsertListeners(): void {
+    for (const listener of this.upsertListeners) {
+      listener();
+    }
+  }
 
   constructor(customPrisma?: PrismaClient) {
     if (customPrisma) {
@@ -276,6 +291,7 @@ export class PrismaCatalogRepository implements ICatalogRepository {
       }
     }
 
+    this.notifyUpsertListeners();
     return item;
   }
 
@@ -486,6 +502,184 @@ export class PrismaCatalogRepository implements ICatalogRepository {
     }
     const unique = new Set(Array.from(this.inMemoryFallback.values()).map((i) => i.id));
     return Array.from(unique).map((id) => this.inMemoryFallback.get(id)!);
+  }
+
+  private mapRecordToSummary(item: any): MediaItemSummaryDto {
+    return {
+      id: item.id,
+      slug: item.slug,
+      title: item.title,
+      originalTitle: item.originalTitle,
+      category: item.category as Category,
+      publicationStatus: item.publicationStatus as PublicationStatus,
+      releaseYear: item.releaseYear,
+      coverUrl:
+        item.coverPath && item.coverPath.startsWith('http')
+          ? item.coverPath
+          : `/api/v1/catalog/items/${item.slug}/cover`,
+      genres: (item.genres || []).map((g: any) => (typeof g === 'string' ? g : g.name)),
+    };
+  }
+
+  private mapRecordToDetail(item: any): MediaItemDetailDto {
+    return {
+      id: item.id,
+      slug: item.slug,
+      title: item.title,
+      originalTitle: item.originalTitle,
+      category: item.category as Category,
+      publicationStatus: item.publicationStatus as PublicationStatus,
+      synopsis: item.synopsis,
+      totalEpisodes: item.totalEpisodes ?? null,
+      totalChapters: item.totalChapters ?? null,
+      totalVolumes: item.totalVolumes ?? null,
+      releaseYear: item.releaseYear,
+      coverUrl:
+        item.coverPath && item.coverPath.startsWith('http')
+          ? item.coverPath
+          : `/api/v1/catalog/items/${item.slug}/cover`,
+      genres: (item.genres || []).map((g: any) => (typeof g === 'string' ? g : g.name)),
+      aliases: (item.aliases || []).map((a: any) => (typeof a === 'string' ? a : a.alias)),
+      provenance: (item.provenance as any) || null,
+    };
+  }
+
+  async findByIds(ids: string[]): Promise<MediaItemDetailDto[]> {
+    if (!ids || ids.length === 0) return [];
+    const cleanIds = Array.from(new Set(ids.map((id) => String(id).trim()).filter(Boolean)));
+    if (cleanIds.length === 0) return [];
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuidIds = cleanIds.filter((id) => uuidRegex.test(id));
+    const slugCandidates = Array.from(new Set(cleanIds.map((id) => id.toLowerCase())));
+
+    if (this.prisma) {
+      try {
+        const orClauses: any[] = [];
+        if (uuidIds.length > 0) {
+          orClauses.push({ id: { in: uuidIds } });
+        }
+        if (slugCandidates.length > 0) {
+          orClauses.push({ slug: { in: slugCandidates } });
+        }
+
+        const items = await this.prisma.mediaItem.findMany({
+          where: { OR: orClauses },
+          include: { genres: true, aliases: true },
+        });
+        if (items.length > 0 || uuidIds.length > 0) {
+          return items.map((item) => this.mapRecordToDetail(item));
+        }
+      } catch {
+        // Fallback para memória
+      }
+    }
+
+    const lookup = new Set(cleanIds.map((id) => id.toLowerCase()));
+    const matched: MediaItemDetailDto[] = [];
+    const seenIds = new Set<string>();
+    for (const item of this.inMemoryFallback.values()) {
+      if (
+        (lookup.has(item.id.toLowerCase()) || lookup.has(item.slug.toLowerCase())) &&
+        !seenIds.has(item.id)
+      ) {
+        seenIds.add(item.id);
+        matched.push(this.mapRecordToDetail(item));
+      }
+    }
+    return matched;
+  }
+
+  async findFeaturedPerCategory(): Promise<MediaItemSummaryDto[]> {
+    if (this.prisma) {
+      try {
+        const items = await this.prisma.mediaItem.findMany({
+          where: { category: { in: [...CATEGORIES] } },
+          distinct: ['category'],
+          orderBy: [
+            { category: 'asc' },
+            { rating: { sort: 'desc', nulls: 'last' } },
+            { releaseYear: { sort: 'desc', nulls: 'last' } },
+            { title: 'asc' },
+          ],
+          include: { genres: true },
+        });
+
+        if (items.length > 0) {
+          const byCategory = new Map<string, MediaItemSummaryDto>();
+          for (const item of items) {
+            if (!byCategory.has(item.category)) {
+              byCategory.set(item.category, this.mapRecordToSummary(item));
+            }
+          }
+          return CATEGORIES.map((cat) => byCategory.get(cat)).filter(
+            (v): v is MediaItemSummaryDto => Boolean(v)
+          );
+        }
+      } catch {
+        // Fallback para memória
+      }
+    }
+
+    const unique = new Set(Array.from(this.inMemoryFallback.values()).map((i) => i.id));
+    const allItems = Array.from(unique)
+      .map((id) => this.inMemoryFallback.get(id)!)
+      .filter((item) => item && item.validationStatus !== 'PROVISIONAL');
+
+    const featured: MediaItemSummaryDto[] = [];
+    for (const category of CATEGORIES) {
+      const candidates = allItems
+        .filter((item) => item.category === category)
+        .sort((a, b) => {
+          const ratingDiff = (b.rating ?? -1) - (a.rating ?? -1);
+          if (Math.abs(ratingDiff) > 0.001) return ratingDiff;
+          const yearDiff = (b.releaseYear ?? 0) - (a.releaseYear ?? 0);
+          if (yearDiff !== 0) return yearDiff;
+          return a.title.localeCompare(b.title, 'pt-BR');
+        });
+      if (candidates.length > 0) {
+        featured.push(this.mapRecordToSummary(candidates[0]));
+      }
+    }
+    return featured;
+  }
+
+  async findOngoingWorks(limit = 30): Promise<MediaItemDetailDto[]> {
+    const safeLimit = Math.max(1, Math.min(100, Number(limit) || 30));
+
+    if (this.prisma) {
+      try {
+        const items = await this.prisma.mediaItem.findMany({
+          where: { publicationStatus: 'EM_ANDAMENTO' },
+          orderBy: [
+            { rating: { sort: 'desc', nulls: 'last' } },
+            { releaseYear: { sort: 'desc', nulls: 'last' } },
+            { title: 'asc' },
+          ],
+          take: safeLimit,
+          include: { genres: true, aliases: true },
+        });
+        if (items.length > 0) {
+          return items.map((item) => this.mapRecordToDetail(item));
+        }
+      } catch {
+        // Fallback para memória
+      }
+    }
+
+    const unique = new Set(Array.from(this.inMemoryFallback.values()).map((i) => i.id));
+    return Array.from(unique)
+      .map((id) => this.inMemoryFallback.get(id)!)
+      .filter((item) => item && item.validationStatus !== 'PROVISIONAL' && item.publicationStatus === 'EM_ANDAMENTO')
+      .sort((a, b) => {
+        const ratingDiff = (b.rating ?? -1) - (a.rating ?? -1);
+        if (Math.abs(ratingDiff) > 0.001) return ratingDiff;
+        const yearDiff = (b.releaseYear ?? 0) - (a.releaseYear ?? 0);
+        if (yearDiff !== 0) return yearDiff;
+        return a.title.localeCompare(b.title, 'pt-BR');
+      })
+      .slice(0, safeLimit)
+      .map((item) => this.mapRecordToDetail(item));
   }
 }
 

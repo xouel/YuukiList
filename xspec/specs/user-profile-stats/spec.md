@@ -7,12 +7,17 @@ Modelar os dados analiticos e metricas de consumo do perfil do usuario no YuukiL
 ## Requirements
 
 ### Requirement: User Profile Metrics and Consumption Analytics
-O sistema SHALL consolidar metricas analiticas de consumo apresentando-as em formato compacto com paleta Asian Editorial e rotulos humanizados a partir do acervo completo da biblioteca.
+O sistema SHALL consolidar metricas analiticas de consumo em lote sem consultas N+1 por item da biblioteca, apresentando-as em formato compacto com paleta Asian Editorial e rotulos humanizados a partir do acervo completo.
 
 #### Scenario: Calculo consolidado de metricas de consumo
 - **GIVEN** um usuario com obras concluidas e em acompanhamento registradas em sua biblioteca
 - **WHEN** o endpoint de estatisticas de perfil e consultado
 - **THEN** o sistema SHALL retornar a contagem exata de concluidos, a media ponderada de avaliacoes e o tempo estimado calculado para as categorias com duracao disponivel
+
+#### Scenario: Consolidacao de estatisticas do perfil em lote sem loop sequencial
+- **GIVEN** um usuário autenticado possuindo dezenas de obras em sua biblioteca
+- **WHEN** `ProfileService.getStats` calcula tempo investido, gêneros, países e favoritos
+- **THEN** o serviço SHALL utilizar os metadados de `mediaItem` pré-carregados ou resolução em lote único (`findByIds`), evitando chamadas `findById` individuais dentro de loops
 
 ### Requirement: Profile Showcase and Activity Feed Privacy
 A interface do perfil SHALL renderizar a identificacao do usuario sem selos decorativos vazios e sem emojis, posicionando a vitrine de favoritos conectada a biblioteca com prioridade visual no topo do perfil, assegurando superficies semanticas e mantendo dados privados restritos.

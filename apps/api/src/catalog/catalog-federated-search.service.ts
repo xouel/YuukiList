@@ -48,7 +48,8 @@ export class CatalogFederatedSearchService {
     const searchTerm = query.q?.trim() || '';
     const shouldQueryExternal =
       searchTerm.length >= 2 &&
-      (query.includeExternal !== false || localResult.data.length < 3);
+      (query.includeExternal === true ||
+        (query.includeExternal !== false && localResult.data.length < 3));
 
     if (!shouldQueryExternal) {
       return {

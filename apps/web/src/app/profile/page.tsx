@@ -13,7 +13,7 @@ import { AvatarFrame } from '@/components/profile/avatar-frame';
 import { EditProfileModal } from '@/components/profile/edit-profile-modal';
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, isLoading: isAuthLoading, logout } = useAuth();
+  const { user, isAuthenticated, isLoading: isAuthLoading, logout, refreshUser } = useAuth();
   const [stats, setStats] = useState<ProfileStatsDto | null>(null);
   const [accountData, setAccountData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -62,7 +62,7 @@ export default function ProfilePage() {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.message || 'Erro ao salvar alterações.');
     }
-    await loadProfile();
+    await Promise.all([loadProfile(), refreshUser()]);
   };
 
   const handleExportJson = async () => {
@@ -106,7 +106,7 @@ export default function ProfilePage() {
   const handleRemoveFavorite = async (mediaItemId: string) => {
     const libraryApi = new LibraryApiClient();
     await libraryApi.updateItem(mediaItemId, { isFavorite: false });
-    await loadProfile();
+    await Promise.all([loadProfile(), refreshUser()]);
   };
 
   if (isAuthLoading || loading) {

@@ -179,12 +179,18 @@ describe('Integração Geral do Dossiê e Rota /items/[slug] (TR-001, TR-002, TR
 
   it('TR-002: Rota /items/[slug] deve suportar retorno preservando navegação e filtros', () => {
     const filePath = join(projectRoot, 'apps/web/src/app/items/[slug]/page.tsx');
+    const routeViewPath = join(projectRoot, 'apps/web/src/components/catalog/item-detail-route-view.tsx');
     assert.ok(existsSync(filePath), 'Página da rota deve existir');
+    assert.ok(existsSync(routeViewPath), 'Wrapper cliente da rota deve existir');
     const content = readFileSync(filePath, 'utf8');
+    const routeViewContent = readFileSync(routeViewPath, 'utf8');
 
-    assert.ok(!content.includes('#06B6D4'), 'Rota não deve conter cor ciano legada');
-    assert.ok(!content.includes('#181C2B'), 'Rota não deve conter cor azul legada');
-    assert.ok(content.includes('router.back') || content.includes('handleBack'), 'Deve manter lógica de retorno');
+    assert.ok(!content.includes('#06B6D4') && !routeViewContent.includes('#06B6D4'), 'Rota não deve conter cor ciano legada');
+    assert.ok(!content.includes('#181C2B') && !routeViewContent.includes('#181C2B'), 'Rota não deve conter cor azul legada');
+    assert.ok(
+      routeViewContent.includes('router.back') || routeViewContent.includes('handleBack'),
+      'Deve manter lógica de retorno'
+    );
   });
 
   it('Diretriz Estrita: Ausência total de emojis na documentação e componentes do dossiê', () => {
@@ -195,6 +201,7 @@ describe('Integração Geral do Dossiê e Rota /items/[slug] (TR-001, TR-002, TR
       join(projectRoot, 'apps/web/src/components/catalog/episode-manager.tsx'),
       join(projectRoot, 'apps/web/src/components/catalog/dossier-sidebar.tsx'),
       join(projectRoot, 'apps/web/src/components/catalog/item-detail-view.tsx'),
+      join(projectRoot, 'apps/web/src/components/catalog/item-detail-route-view.tsx'),
       join(projectRoot, 'apps/web/src/app/items/[slug]/page.tsx'),
     ];
 

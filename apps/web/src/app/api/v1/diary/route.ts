@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       cookies: Object.fromEntries(request.cookies.getAll().map((c) => [c.name, c.value])),
     };
 
-    const result = await container.diaryController.createEvent(reqMock, body);
+    const result = await container.diaryController.create(reqMock, body);
     return NextResponse.json(result, { status: 201 });
   } catch (err: any) {
     return NextResponse.json(

@@ -346,9 +346,18 @@ export class LibraryService {
     });
 
     const enrichedList: LibraryItemDto[] = [];
+    const mediaList =
+      allUserItems.length > 0
+        ? await this.catalogRepository.findByIds(allUserItems.map((i) => i.mediaItemId))
+        : [];
+    const mediaMap = new Map<string, (typeof mediaList)[number]>();
+    for (const m of mediaList) {
+      mediaMap.set(m.id.toLowerCase(), m);
+      mediaMap.set(m.slug.toLowerCase(), m);
+    }
 
     for (const item of allUserItems) {
-      const media = await this.catalogRepository.findById(item.mediaItemId);
+      const media = mediaMap.get(item.mediaItemId.toLowerCase());
       if (!media) continue;
 
       if (filter.category && media.category !== filter.category) {

@@ -135,6 +135,12 @@ export function CalendarSidebarWidgets({
                     <img
                       src={item.coverImage}
                       alt={item.mediaTitle}
+                      onError={(e) => {
+                        const fallback = `/api/v1/catalog/items/${item.mediaSlug}/cover`;
+                        if (!e.currentTarget.src.endsWith(fallback)) {
+                          e.currentTarget.src = fallback;
+                        }
+                      }}
                       className="w-full h-full object-cover transition-colors"
                       loading="lazy"
                     />

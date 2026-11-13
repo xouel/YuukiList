@@ -38,8 +38,13 @@ export class AuthController {
   }
 
   logout(
-    res?: { setHeader?(name: string, value: string): void }
+    res?: { setHeader?(name: string, value: string): void },
+    req?: {
+      headers?: Record<string, string | string[] | undefined>;
+      cookies?: Record<string, string>;
+    }
   ): { success: boolean; cookie: string } {
+    this.authGuard.invalidateRequestUser(req);
     const result = this.authService.logout();
     if (res?.setHeader) {
       res.setHeader('Set-Cookie', result.cookie);

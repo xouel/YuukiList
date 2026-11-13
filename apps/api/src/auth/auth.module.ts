@@ -26,5 +26,9 @@ export class AuthModule {
     this.authGuard = new AuthGuard(this.tokenService, this.usersRepository);
     this.authController = new AuthController(this.authService, this.authGuard);
   }
+
+  invalidateUserCache(userId: string): void {
+    this.authGuard.invalidateUserCache(userId);
+  }
 }
 

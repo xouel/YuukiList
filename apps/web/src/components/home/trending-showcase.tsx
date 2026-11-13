@@ -78,7 +78,7 @@ export function TrendingShowcase({ items }: TrendingShowcaseProps) {
               <img
                 src={item.coverUrl}
                 alt={`Capa de ${item.title}`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
                 loading="lazy"
               />
               <div className="absolute top-2 left-2 z-10">

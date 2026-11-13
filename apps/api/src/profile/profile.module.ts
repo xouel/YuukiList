@@ -6,7 +6,7 @@ import { ProfileRepository } from './profile.repository.ts';
 import { ProfileService } from './profile.service.ts';
 import { ProfileController } from './profile.controller.ts';
 import { LibraryRepository } from '../library/library.repository.ts';
-import { CatalogRepository } from '../data/catalog.repository.ts';
+import { CatalogRepository, type ICatalogRepository } from '../data/catalog.repository.ts';
 import { UsersRepository } from '../auth/users.repository.ts';
 import { DiaryRepository } from '../diary/diary.repository.ts';
 
@@ -19,9 +19,10 @@ export class ProfileModule {
 
   constructor(
     libraryRepo: LibraryRepository,
-    catalogRepo: CatalogRepository,
+    catalogRepo: ICatalogRepository,
     usersRepo: UsersRepository,
-    diaryRepo?: DiaryRepository
+    diaryRepo?: DiaryRepository,
+    onProfileUpdated?: (userId: string) => void
   ) {
     this.repository = new ProfileRepository();
     this.service = new ProfileService(
@@ -29,7 +30,8 @@ export class ProfileModule {
       libraryRepo,
       catalogRepo,
       usersRepo,
-      diaryRepo
+      diaryRepo,
+      onProfileUpdated
     );
     this.controller = new ProfileController(this.service);
   }

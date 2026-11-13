@@ -36,6 +36,11 @@ export class CatalogController {
     return this.service.listFederated(query);
   }
 
+  async getFeaturedByCategory(): Promise<{ items: MediaItemSummaryDto[] }> {
+    const items = await this.service.getFeaturedByCategory();
+    return { items };
+  }
+
   async getBySlug(slug: string): Promise<MediaItemDetailDto> {
     const item = await this.service.getItemBySlug(slug);
     if (!item) {

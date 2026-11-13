@@ -20,7 +20,7 @@ A rota inicial da aplicação SHALL renderizar o painel dinâmico do Home Hub es
 - **THEN** o sistema SHALL empilhar os módulos verticalmente em fluxo contínuo mantendo a legibilidade e alvos de toque acessíveis
 
 ### Requirement: Hero Spotlight and Quick Tracking
-O Home Hub SHALL apresentar Hero Spotlight sóbrio sem etiquetas mono decorativas (eyebrow), ramificando dinamicamente as ações pelo estado de autenticação: para usuário logado, exibir controles de progresso se a obra estiver no acervo ou botões de adicionar e detalhes se não estiver, com o botão primário exibindo um único ícone de adição e o texto limpo 'Adicionar à Lista'; para visitante anônimo, exibir chamada de boas-vindas com criar conta e explorar catálogo.
+O Home Hub SHALL apresentar Hero Spotlight interativo em carrossel (navegável por clique e por arraste/deslize) exibindo 1 obra real melhor avaliada de cada uma das 6 categorias canônicas, com ações ramificadas por estado de autenticação, rótulos de unidade adequados (Episódio ou Capítulo) e sem etiquetas mono decorativas.
 
 #### Scenario: Exibicao de obra em destaque para usuario autenticado com progresso no acervo
 - **GIVEN** um usuário autenticado com a obra do destaque ativa em sua biblioteca
@@ -37,6 +37,11 @@ O Home Hub SHALL apresentar Hero Spotlight sóbrio sem etiquetas mono decorativa
 - **WHEN** a tela inicial é carregada
 - **THEN** o sistema SHALL renderizar o Hero Spotlight com obra de referência editorial e botões convidativos para criar conta ou explorar o catálogo
 
+#### Scenario: Carrossel clicável e arrastável com uma recomendação real por categoria
+- **GIVEN** a tela inicial carregada com 1 obra real recomendada de cada categoria canônica (`DORAMA`, `FILME`, `ANIME`, `MANGA`, `MANHWA`, `MANHUA`)
+- **WHEN** o usuário clica nos botões/abas de categoria ou arrasta/desliza horizontalmente o destaque
+- **THEN** o Hero Spotlight SHALL alternar entre a obra recomendada de cada categoria exibindo capa real, nota, rótulo correto da unidade (`Episódio` vs `Capítulo`) e controles sem travar em `#alive` ou fallback estático `Solo Leveling`
+
 ### Requirement: Bento Sidebar and Personal Analytics
 A coluna lateral do Home Hub SHALL apresentar o painel Bento unificado em fluxo contínuo com divisores discretos sem caixas repetitivas, com números e rótulos na tipografia regular com tabular-nums (sem font-mono decorativo).
 
@@ -51,7 +56,7 @@ A coluna lateral do Home Hub SHALL apresentar o painel Bento unificado em fluxo 
 - **THEN** o sistema SHALL listar as próximas estreias catalogadas e os registros mais recentes adicionados ao diário pessoal em seção integrada
 
 ### Requirement: Continue Watching Feed and Active Progress
-O Home Hub SHALL consultar a biblioteca do usuário autenticado e renderizar na seção Continuar Acompanhando as obras ativas (ASSISTINDO ou LENDO) com botão de avanço rápido, adotando superfícies semânticas e cores adaptáveis a ambos os temas visuais.
+O Home Hub SHALL consultar a biblioteca e o diário via métodos válidos do cliente (`libraryApi.listItems` e `diaryApi.list`) para exibir as obras ativas (`ASSISTINDO`/`LENDO`) em Continuar Acompanhando com incremento otimista, corrigir `event.number` na `BentoSidebar`, erradicar `hover:scale-105` em `TrendingShowcase` e suportar ambos os temas.
 
 #### Scenario: Exibicao de obras ativas em andamento para usuario autenticado
 - **GIVEN** um usuário autenticado com registros na biblioteca com status ASSISTINDO ou LENDO
@@ -67,3 +72,8 @@ O Home Hub SHALL consultar a biblioteca do usuário autenticado e renderizar na 
 - **GIVEN** a página inicial renderizada em Modo Claro
 - **WHEN** a seção Continuar Acompanhando e os cards de tendências são exibidos
 - **THEN** os contêineres SHALL adotar classes de superfície semânticas (bg-surface-raised) e títulos escuros legíveis sem classes hexadecimais estáticas escuras
+
+#### Scenario: Carregamento resiliente de obras ativas e eventos da sidebar na Home
+- **GIVEN** um usuário autenticado possuindo obras marcadas como `ASSISTINDO` ou `LENDO` no banco de dados
+- **WHEN** `HomeHubView` executa o carregamento inicial de biblioteca, diário e próximas estreias
+- **THEN** o sistema SHALL chamar `diaryApi.list()` sem falha de método inexistente, exibir as obras ativas em `Continuar Acompanhando`, renderizar `event.number` em `BentoSidebar` e evitar `hover:scale-105` em `TrendingShowcase`

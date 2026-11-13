@@ -7,12 +7,17 @@ Prover os componentes de interface web e páginas em Next.js para exploração r
 ## Requirements
 
 ### Requirement: Catalog Exploration and Infinite Scroll Interface
-A interface web do catalogo SHALL exibir a exploracao detalhada de obras na rota dedicada /explore com capas resilientes, manter busca com debounce e filtros de categoria, fornecer drawer recolhivel com seletor de generos literarios e audiovisuais e tratar buscas legadas.
+A interface web do catalogo SHALL exibir a exploracao detalhada de obras na rota /explore com dados iniciais pré-carregados e skeleton de rota, busca local-first com opção sob demanda para fontes externas, tratamento seguro de requisições abortadas e navegação SPA sem recarregamento completo.
 
 #### Scenario: Barra de controles condensada com drawer de filtros avancados
 - **GIVEN** o catalogo de exploracao de obras
 - **WHEN** o usuario acessa a tela de exploracao ou aciona o controle de filtros avancados
 - **THEN** a interface exibe busca e categorias em linha primaria elegante e disponibiliza drawer recolhivel para refinamento por pais, status, generos literarios e audiovisuais e ordenacao sem filtro de temas transversais
+
+#### Scenario: Navegação fluida em SPA e expansão explícita em fontes externas
+- **GIVEN** o usuário explorando o catálogo em /explore ou digitando rapidamente na barra de busca
+- **WHEN** uma requisição anterior é abortada ou o usuário clica em um card ou aciona busca externa explícita
+- **THEN** abortos com código ABORTED são ignorados sem exibir tela de erro, a navegação para /items/:slug ocorre em SPA preservando contexto e há botão para consultar fontes externas sob demanda
 
 ### Requirement: Asynchronous Feedback and Resilient States
 A interface do catálogo SHALL prover feedback visual resiliente implementando quatro estados assíncronos distintos: skeletons pulsantes para carregamento, tela limpa para catálogo vazio, aviso contextual com botão de ação para busca sem resultados e alerta de erro com botão de repetição.
@@ -33,7 +38,7 @@ A interface do catálogo SHALL prover feedback visual resiliente implementando q
 - **THEN** a interface renderiza um aviso de erro amigável acompanhado de um botão para tentar novamente a requisição
 
 ### Requirement: Item Details View and Navigation History
-A aplicacao SHALL fornecer o dossier detalhado da obra na rota /items/:slug na tipografia Shippori Mincho, com capa despoluida em proporcao 2:3, metricas em tokens semanticos, console pessoal de acompanhamento com botao de incremento unitario ergonomico ('+1 {unidade}') sem duplicidade de icone de soma, e acao de favoritar conectada a persistencia da biblioteca e vitrine de perfil.
+A aplicacao SHALL fornecer o dossier detalhado da obra na rota /items/:slug com console pessoal de acompanhamento otimista e ação funcional de marcar temporada inteira persistindo progresso, status CONCLUIDO ao completar o total conhecido e registro desacoplado no diário.
 
 #### Scenario: Exibicao da faixa de metricas editoriais e console pessoal de acompanhamento
 - **GIVEN** uma obra carregada na rota /items/:slug
@@ -44,6 +49,11 @@ A aplicacao SHALL fornecer o dossier detalhado da obra na rota /items/:slug na t
 - **GIVEN** um usuario autenticado visualizando o dossier da obra
 - **WHEN** o usuario aciona o botao de favoritar no console de acompanhamento
 - **THEN** a aplicacao SHALL persistir a marcacao de favorito na biblioteca e sincronizar o estado imediatamente com a vitrine de favoritos do perfil
+
+#### Scenario: Conclusão em lote pelo botão Marcar Temporada Toda sem rollback indevido
+- **GIVEN** um usuário autenticado no dossiê de uma obra em `/items/:slug` usando o gerenciador de episódios
+- **WHEN** o usuário aciona "Marcar Temporada Toda" até o episódio final da temporada
+- **THEN** o sistema SHALL atualizar otimisticamente a UI, persistir o progresso (promovendo status para CONCLUIDO caso atinja o total conhecido da obra), sincronizar a temporada ativa após carregar e registrar o evento em `/api/v1/diary` sem reverter a biblioteca caso o diário falhe
 
 ### Requirement: Media Card Quick Actions and Enhanced Exploration
 A interface do catálogo SHALL fornecer cards de mídia com física tátil e micro-pressão no clique (:active:scale-[0.98]), números tabulares (tabular-nums), ausência de zoom agressivo de capa (hover:scale-105), ações rápidas de inclusão e badges editoriais discretos.

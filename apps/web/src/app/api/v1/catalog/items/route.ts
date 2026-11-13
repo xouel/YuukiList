@@ -18,7 +18,12 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await container.catalogController.list(query);
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      status: 200,
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+      },
+    });
   } catch (err: any) {
     return NextResponse.json(
       { message: err.message || 'Erro interno do servidor' },
