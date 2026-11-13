@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from '@/server/container';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const cookieHeader = request.headers.get('cookie') || '';
@@ -13,8 +15,13 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    const user = await container.authModule.authController.getMe(reqMock);
-    return NextResponse.json(user, { status: 200 });
+    const user = await container.authModule.authController.getMe(reqMock, { bypassCache: true });
+    return NextResponse.json(user, {
+      status: 200,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    });
   } catch (err: any) {
     return NextResponse.json(
       { message: err.message || 'Não autenticado' },

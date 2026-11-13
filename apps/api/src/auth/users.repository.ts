@@ -238,8 +238,9 @@ export class UsersRepository implements IUsersRepository {
           },
         });
         return this.mapPrismaUser(dbUpdated);
-      } catch {
-        // Fallback gracioso em memória
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Erro desconhecido ao persistir perfil';
+        throw new Error(`Falha ao salvar perfil no banco de dados: ${message}`);
       }
     }
 

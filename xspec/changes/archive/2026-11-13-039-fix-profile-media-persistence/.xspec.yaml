@@ -1,0 +1,17 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "039-fix-profile-media-persistence"
+type: "bugfix"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "auth-session"
+  - "navigation-shell"
+  - "user-profile-stats"
+base_specs:
+  auth-session: "sha256:8f8f6a08e5d68b540a8c1d4145b4e5d37cd45aad235c63c5e2171ba12d2706bb"
+  navigation-shell: "sha256:e01d3dd62efed08f4aa0fcb4dec8c2267b383b9d054f7fced00015508a8a2d54"
+  user-profile-stats: "sha256:552ec58b785a733f50aa8ef596e77a21be327e8bf5e0e9209a18ed5d83a8c067"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-13T07:13:05.770Z"

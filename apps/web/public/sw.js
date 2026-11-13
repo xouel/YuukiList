@@ -40,8 +40,8 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // Não faz cache de endpoints de autenticação ou mutação
-  if (url.pathname.startsWith('/api/v1/auth')) return;
+  // Não faz cache de endpoints de autenticação, perfil privado ou mutação
+  if (url.pathname.startsWith('/api/v1/auth') || url.pathname.startsWith('/api/v1/profile')) return;
 
   // Estratégia Network-First: Tenta a rede primeiro para garantir código e chunks sempre frescos.
   // Em caso de falha de rede (modo offline), recorre com segurança ao cache recente.

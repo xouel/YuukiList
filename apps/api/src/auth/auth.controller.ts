@@ -52,12 +52,15 @@ export class AuthController {
     return result;
   }
 
-  async getMe(req: {
-    headers?: Record<string, string | string[] | undefined>;
-    cookies?: Record<string, string>;
-    user?: AuthUserResponse;
-  }): Promise<AuthUserResponse> {
-    const user = await this.authGuard.validateRequest(req);
+  async getMe(
+    req: {
+      headers?: Record<string, string | string[] | undefined>;
+      cookies?: Record<string, string>;
+      user?: AuthUserResponse;
+    },
+    options?: { bypassCache?: boolean }
+  ): Promise<AuthUserResponse> {
+    const user = await this.authGuard.validateRequest(req, options);
     return user;
   }
 }

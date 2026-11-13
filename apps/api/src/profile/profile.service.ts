@@ -216,10 +216,22 @@ export class ProfileService {
 
   async updateProfile(userId: string, data: any) {
     const updated = await this.usersRepo.updateProfile(userId, data);
-    if (updated && this.onProfileUpdated) {
+    if (!updated) return null;
+    if (this.onProfileUpdated) {
       this.onProfileUpdated(userId);
     }
-    return updated;
+    return {
+      userId: updated.id,
+      username: updated.username,
+      email: updated.email,
+      avatarUrl: updated.avatarUrl || null,
+      avatarFrame: updated.avatarFrame || 'none',
+      bannerUrl: updated.bannerUrl || null,
+      bio: updated.bio || null,
+      phone: updated.phone || null,
+      location: updated.location || null,
+      createdAt: updated.createdAt,
+    };
   }
 
   async getAccount(userId: string) {

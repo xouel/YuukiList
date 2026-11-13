@@ -170,6 +170,7 @@ export function NavigationShell({ children }: NavigationShellProps) {
                   <AvatarFrame frame={user.avatarFrame || 'none'} size="sm" className="!w-8 !h-8">
                     {user.avatarUrl && !avatarError ? (
                       <img
+                        key={user.avatarUrl}
                         src={user.avatarUrl}
                         alt={user.username}
                         onError={() => setAvatarError(true)}
@@ -181,10 +182,10 @@ export function NavigationShell({ children }: NavigationShellProps) {
                       </span>
                     )}
                   </AvatarFrame>
-                  <span className="hidden md:inline-block text-xs font-medium text-[var(--color-text-primary)] max-w-[100px] truncate">
+                  <span className="hidden sm:inline-block text-xs font-medium text-[var(--color-text-primary)] max-w-[100px] truncate">
                     {user.username}
                   </span>
-                  <svg className="w-3.5 h-3.5 text-[var(--color-text-muted)] hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 text-[var(--color-text-muted)] hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from '@/server/container';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB (compatível com limite de payload da Vercel)
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,9 +39,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (file.size > MAX_FILE_SIZE) {
+    if (file.size === 0 || file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { message: 'Arquivo muito grande. O limite máximo é de 5 MB.' },
+        { message: 'Arquivo inválido ou muito grande. O limite máximo é de 4 MB.' },
         { status: 400 }
       );
     }
@@ -66,7 +68,7 @@ export async function POST(request: NextRequest) {
               'Content-Type': file.type,
               'x-upsert': 'true',
             },
-            body: buffer,
+            body: new Uint8Array(bytes),
           }
         );
 

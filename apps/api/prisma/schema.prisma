@@ -89,9 +89,9 @@ model User {
   username           String   @unique @db.VarChar(64)
   normalizedUsername String   @unique @map("normalized_username") @db.VarChar(64)
   passwordHash       String   @map("password_hash") @db.VarChar(255)
-  avatarUrl          String?  @map("avatar_url") @db.VarChar(512)
+  avatarUrl          String?  @map("avatar_url") @db.Text
   avatarFrame        String?  @default("none") @map("avatar_frame") @db.VarChar(32)
-  bannerUrl          String?  @map("banner_url") @db.VarChar(512)
+  bannerUrl          String?  @map("banner_url") @db.Text
   bio                String?  @db.VarChar(500)
   phone              String?  @db.VarChar(32)
   location           String?  @db.VarChar(120)

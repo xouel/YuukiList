@@ -30,6 +30,7 @@ export interface AuthContextValue {
   login: (dto: LoginDto) => Promise<AuthUserResponse>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<AuthUserResponse | null>;
+  syncUserProfile: (patch: Partial<AuthUserResponse>) => void;
   clearError: () => void;
 }
 
@@ -140,6 +141,10 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
     }
   }, [apiClient]);
 
+  const syncUserProfile = useCallback((patch: Partial<AuthUserResponse>) => {
+    setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -150,9 +155,10 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
       login,
       logout,
       refreshUser,
+      syncUserProfile,
       clearError,
     }),
-    [user, isLoading, error, register, login, logout, refreshUser, clearError]
+    [user, isLoading, error, register, login, logout, refreshUser, syncUserProfile, clearError]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

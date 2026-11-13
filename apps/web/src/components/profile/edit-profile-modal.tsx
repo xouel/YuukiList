@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { AvatarFrameType, UpdateProfileDto } from '../../../../../packages/shared/src/index.ts';
 import { AvatarFrame, AVATAR_FRAMES } from './avatar-frame.tsx';
+import { optimizeProfileImageFile, formatCssBackgroundUrl } from '../../lib/profile-media.ts';
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -38,23 +39,39 @@ export function EditProfileModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    setAvatarUrl(initialData.avatarUrl || '');
+    setAvatarFrame((initialData.avatarFrame as AvatarFrameType) || 'none');
+    setBannerUrl(initialData.bannerUrl || '');
+    setBio(initialData.bio || '');
+    setPhone(initialData.phone || '');
+    setLocation(initialData.location || '');
+    setErrorMessage(null);
+  }, [
+    isOpen,
+    initialData.avatarUrl,
+    initialData.avatarFrame,
+    initialData.bannerUrl,
+    initialData.bio,
+    initialData.phone,
+    initialData.location,
+  ]);
+
   if (!isOpen) return null;
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'banner') => {
-    const file = e.target.files?.[0];
+    const inputEl = e.target;
+    const file = inputEl.files?.[0];
     if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage('O arquivo excede o limite máximo permitido de 5 MB.');
-      return;
-    }
 
     setIsUploading(true);
     setErrorMessage(null);
 
     try {
+      const optimizedFile = await optimizeProfileImageFile(file, type);
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', optimizedFile);
       formData.append('type', type);
 
       const res = await fetch('/api/v1/profile/upload', {
@@ -76,6 +93,7 @@ export function EditProfileModal({
     } catch (err: any) {
       setErrorMessage(err.message || 'Erro ao carregar o arquivo.');
     } finally {
+      inputEl.value = '';
       setIsUploading(false);
     }
   };
@@ -145,14 +163,16 @@ export function EditProfileModal({
             <div
               className="h-28 w-full bg-cover bg-center relative"
               style={{
-                backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'linear-gradient(to right, var(--surface-overlay), var(--surface-sunken))',
+                backgroundImage:
+                  formatCssBackgroundUrl(bannerUrl) ||
+                  'linear-gradient(to right, var(--surface-overlay), var(--surface-sunken))',
               }}
             >
               <label className="absolute right-3 top-3 px-3 py-1.5 rounded-lg bg-black/70 hover:bg-black/90 text-white text-xs font-medium cursor-pointer backdrop-blur border border-white/10 transition-all active:scale-[0.98]">
                 {isUploading ? 'Enviando...' : 'Trocar Capa'}
                 <input
                   type="file"
-                  accept="image/png,image/jpeg,image/webp"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
                   className="hidden"
                   onChange={(e) => handleFileUpload(e, 'banner')}
                   disabled={isUploading}
@@ -176,7 +196,7 @@ export function EditProfileModal({
                 {isUploading ? 'Enviando...' : 'Trocar Foto'}
                 <input
                   type="file"
-                  accept="image/png,image/jpeg,image/webp"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
                   className="hidden"
                   onChange={(e) => handleFileUpload(e, 'avatar')}
                   disabled={isUploading}

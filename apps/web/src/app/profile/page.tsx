@@ -11,9 +11,10 @@ import { ShareDialog } from '@/components/profile/share-dialog';
 import { DeleteAccountDialog } from '@/components/profile/delete-account-dialog';
 import { AvatarFrame } from '@/components/profile/avatar-frame';
 import { EditProfileModal } from '@/components/profile/edit-profile-modal';
+import { formatCssBackgroundUrl } from '@/lib/profile-media';
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, isLoading: isAuthLoading, logout, refreshUser } = useAuth();
+  const { user, isAuthenticated, isLoading: isAuthLoading, logout, refreshUser, syncUserProfile } = useAuth();
   const [stats, setStats] = useState<ProfileStatsDto | null>(null);
   const [accountData, setAccountData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,7 +32,7 @@ export default function ProfilePage() {
     try {
       const [statsData, accountRes] = await Promise.all([
         profileApiClient.getStats(),
-        fetch('/api/v1/profile/account').then((r) => (r.ok ? r.json() : null)),
+        fetch('/api/v1/profile/account', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)),
       ]);
       setStats(statsData);
       if (accountRes) setAccountData(accountRes);
@@ -61,6 +62,14 @@ export default function ProfilePage() {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.message || 'Erro ao salvar alterações.');
+    }
+    const savedAccount = await res.json().catch(() => null);
+    if (savedAccount) {
+      setAccountData(savedAccount);
+      syncUserProfile({
+        avatarUrl: savedAccount.avatarUrl ?? null,
+        avatarFrame: savedAccount.avatarFrame ?? 'none',
+      });
     }
     await Promise.all([loadProfile(), refreshUser()]);
   };
@@ -150,9 +159,9 @@ export default function ProfilePage() {
         <div
           className="h-32 sm:h-44 w-full bg-cover bg-center border-b border-stroke-subtle"
           style={{
-            backgroundImage: accountData?.bannerUrl || stats?.bannerUrl
-              ? `url(${accountData?.bannerUrl || stats?.bannerUrl})`
-              : 'linear-gradient(to right, var(--surface-raised), var(--surface-overlay))',
+            backgroundImage:
+              formatCssBackgroundUrl(accountData?.bannerUrl || stats?.bannerUrl) ||
+              'linear-gradient(to right, var(--surface-raised), var(--surface-overlay))',
           }}
         />
 

@@ -37,11 +37,14 @@ export class AuthGuard {
     this.userCache.clear();
   }
 
-  async validateRequest(req: {
-    headers?: Record<string, string | string[] | undefined>;
-    cookies?: Record<string, string>;
-    user?: AuthUserResponse;
-  }): Promise<AuthUserResponse> {
+  async validateRequest(
+    req: {
+      headers?: Record<string, string | string[] | undefined>;
+      cookies?: Record<string, string>;
+      user?: AuthUserResponse;
+    },
+    options?: { bypassCache?: boolean }
+  ): Promise<AuthUserResponse> {
     const headers = req.headers || {};
     const cookies = req.cookies;
     const token = this.tokenService.extractToken(headers, cookies);
@@ -56,7 +59,7 @@ export class AuthGuard {
     }
 
     const now = Date.now();
-    const cached = this.userCache.get(payload.sub);
+    const cached = options?.bypassCache ? undefined : this.userCache.get(payload.sub);
     if (cached && cached.expiresAt > now) {
       const authUser: AuthUserResponse = { ...cached.user };
       req.user = authUser;

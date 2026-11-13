@@ -22,7 +22,11 @@ export async function GET(request: NextRequest) {
     }
 
     const stats = await container.profileController.getStats(userId);
-    return NextResponse.json(stats);
+    return NextResponse.json(stats, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    });
   } catch (err: any) {
     return NextResponse.json(
       { message: err.message || 'Erro ao carregar estatísticas do perfil' },

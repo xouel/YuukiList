@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from '@/server/container';
 
+export const dynamic = 'force-dynamic';
+
+const NO_STORE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate',
+};
+
 export async function GET(request: NextRequest) {
   try {
     const reqMock = {
@@ -20,7 +26,7 @@ export async function GET(request: NextRequest) {
     }
 
     const account = await container.profileController.getAccount(userId);
-    return NextResponse.json(account || {});
+    return NextResponse.json(account || {}, { headers: NO_STORE_HEADERS });
   } catch (err: any) {
     return NextResponse.json(
       { message: err.message || 'Erro ao consultar conta' },

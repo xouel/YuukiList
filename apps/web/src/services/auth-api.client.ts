@@ -142,6 +142,7 @@ export class AuthApiClient {
       const response = await this.fetcher(`${this.baseUrl}/api/v1/auth/me`, {
         method: 'GET',
         credentials: 'include',
+        cache: 'no-store',
       });
 
       if (response.status === 401) {
