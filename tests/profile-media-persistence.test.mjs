@@ -233,3 +233,4 @@ describe('039-fix-profile-media-persistence — Regressão de Foto de Perfil, Ca
     assert.match(swSrc, /\/api\/v1\/profile/);
   });
 });
+

@@ -24,6 +24,8 @@ export * from './auth/errors.ts';
 export * from './auth/password.service.ts';
 export * from './auth/token.service.ts';
 export * from './auth/users.repository.ts';
+export * from './auth/email.service.ts';
+export * from './auth/password-reset.repository.ts';
 export * from './auth/auth.service.ts';
 export * from './auth/auth.guard.ts';
 export * from './auth/current-user.decorator.ts';

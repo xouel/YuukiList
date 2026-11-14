@@ -3,7 +3,14 @@ import { container } from '@/server/container';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json(
+        { message: 'Corpo da requisição inválido', code: 'VALIDATION_ERROR' },
+        { status: 400 }
+      );
+    }
+
     let setCookieHeader = '';
 
     const mockRes = {
@@ -22,9 +29,18 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result, { status: 200, headers });
   } catch (err: any) {
+    const statusCode = err?.statusCode || 500;
+    const message =
+      statusCode >= 500
+        ? 'Erro temporário no servidor ao autenticar. Tente novamente.'
+        : err?.message || 'Usuário/e-mail ou senha incorretos.';
+
     return NextResponse.json(
-      { message: err.message || 'Erro ao autenticar' },
-      { status: err.statusCode || 401 }
+      {
+        message,
+        code: err?.code || (statusCode >= 500 ? 'INTERNAL_ERROR' : 'INVALID_CREDENTIALS'),
+      },
+      { status: statusCode }
     );
   }
 }

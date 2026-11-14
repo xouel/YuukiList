@@ -7,22 +7,22 @@ Prover a interface de usuário para autenticação no YuukiList, englobando tela
 ## Requirements
 
 ### Requirement: User Registration Interface and Client-Side Validation
-O sistema SHALL apresentar a interface de cadastro integrada ao contêiner Editorial Split Dossier com validação inline de campos, alternador de abas no cliente, alternador de visibilidade de senha e feedback de erros na paleta Asian Editorial.
+O sistema SHALL apresentar a interface de cadastro integrada ao contêiner Editorial Split Dossier sem desmontar o formulário durante o envio, com validação inline de campos, alternância de abas, visibilidade de senha e feedback distinto para conflito de e-mail ou nome de usuário preservando os dados preenchidos.
 
 #### Scenario: Submissão bem-sucedida de cadastro com redirecionamento
 - **GIVEN** um usuário visitante na página de cadastro
 - **WHEN** preenche email válido, username único e senha de 8 ou mais caracteres e clica em "Criar Conta"
-- **THEN** o sistema SHALL desabilitar o botão exibindo indicador de loading, registrar a conta via API, atualizar o estado de sessão e redirecionar para a página inicial com sucesso
+- **THEN** o sistema SHALL desabilitar o botão exibindo indicador de loading sem desmontar o formulário, registrar a conta via API, atualizar o estado de sessão e redirecionar para a página inicial com sucesso
 
 #### Scenario: Validação inline de campos e feedback visual de erro
 - **GIVEN** um usuário interagindo com o formulário de cadastro
 - **WHEN** preenche um campo com formato inválido (ex.: email sem arroba ou senha curta) e desfoca do campo
 - **THEN** o sistema SHALL marcar o campo com atributo aria-invalid="true", exibir mensagem explicativa de erro e impedir a submissão do formulário
 
-#### Scenario: Exibição de feedback de erro de colisão retornado pela API
-- **GIVEN** uma tentativa de cadastro com email ou username já existente no sistema
-- **WHEN** a API retorna status 409 Conflict
-- **THEN** o sistema SHALL interceptar o erro e exibir um alerta visual informativo destacando o conflito sem limpar os dados já preenchidos pelo usuário
+#### Scenario: Exibição de feedback distinto para e-mail ou nome de usuário já cadastrado
+- **GIVEN** uma tentativa de cadastro onde o e-mail ou o nome de usuário já existe no sistema
+- **WHEN** a API retorna status 409 Conflict com `field: "email"` ou `field: "username"`
+- **THEN** o sistema SHALL manter o formulário montado com os valores preenchidos, exibir alerta `role="alert"` específico indicando se foi o e-mail ou o usuário que já está cadastrado, e marcar o campo correspondente com `aria-invalid="true"` e erro inline
 
 #### Scenario: Alternador de visibilidade de senha no formulario de cadastro
 - **GIVEN** o formulário de cadastro com o campo de senha preenchido
@@ -30,17 +30,22 @@ O sistema SHALL apresentar a interface de cadastro integrada ao contêiner Edito
 - **THEN** o sistema SHALL alternar o tipo de entrada entre password e text atualizando o ícone vetorial SVG correspondente
 
 ### Requirement: User Login Interface and Session Recovery
-O sistema SHALL apresentar a interface de login integrada ao contêiner Editorial Split Dossier com suporte a identificador híbrido, alternância fluida de abas, controle tátil de visibilidade de senha, feedback em credenciais inválidas e redirecionamento dinâmico pós-autenticação.
+O sistema SHALL apresentar a interface de login integrada ao contêiner Editorial Split Dossier sem desmontar o formulário durante o envio, com identificador híbrido, link para "Esqueci minha senha", visibilidade de senha, foco no campo de senha após erro 401 e feedback de redirecionamento/redefinição de senha.
 
 #### Scenario: Login bem-sucedido com redirecionamento dinâmico
 - **GIVEN** um usuário visitante na página de login com o parâmetro de query redirect para uma obra específica
 - **WHEN** informa identifier (email ou username) e senha corretos e submete o formulário
 - **THEN** o sistema SHALL autenticar o usuário, atualizar o contexto global de sessão e redirecionar para a URL indicada no parâmetro de redirecionamento
 
-#### Scenario: Feedback de erro para credenciais incorretas
-- **GIVEN** uma tentativa de login com credenciais incorretas ou usuário inexistente
+#### Scenario: Feedback de erro para credenciais incorretas sem perda de estado
+- **GIVEN** uma tentativa de login com identificador não encontrado ou senha incorreta
 - **WHEN** a API retorna status 401 Unauthorized
-- **THEN** o sistema SHALL exibir alerta visual amigável informando credenciais inválidas e manter o campo de senha focado para nova tentativa
+- **THEN** o sistema SHALL manter o formulário montado com o identificador preenchido, exibir alerta `role="alert"` informando usuário/e-mail ou senha incorretos e devolver o foco acessível ao campo de senha para nova tentativa
+
+#### Scenario: Feedback para falha temporária de servidor ou rede no login
+- **GIVEN** uma falha HTTP 5xx ou erro de conexão durante a submissão do login
+- **WHEN** o cliente recebe o erro diferente de 401/400
+- **THEN** o sistema SHALL exibir alerta amigável de falha temporária de conexão sem afirmar erroneamente que a senha está incorreta
 
 #### Scenario: Redirecionamento de usuário já autenticado ao acessar tela de login
 - **GIVEN** um usuário que já possui sessão ativa confirmada
@@ -62,6 +67,11 @@ O sistema SHALL apresentar a interface de login integrada ao contêiner Editoria
 - **WHEN** o contêiner 5+7 é apresentado
 - **THEN** a coluna lateral esquerda SHALL exibir a citação editorial, wordmark YUUKILIST em fonte serifada e os selos de soberania e gratuidade na paleta mineral
 
+#### Scenario: Banner de confirmação após redefinição de senha no login
+- **GIVEN** um usuário redirecionado para `/login?reset=success` após concluir a redefinição de senha
+- **WHEN** a tela de login é carregada
+- **THEN** o formulário SHALL exibir alerta visual de sucesso orientando o login com a nova senha
+
 ### Requirement: Route Protection and Client Session Context
 O sistema SHALL gerenciar o estado global de autenticação no cliente, exibir ações de sessão no cabeçalho e proteger rotas privadas contra acessos anônimos.
 
@@ -79,3 +89,21 @@ O sistema SHALL gerenciar o estado global de autenticação no cliente, exibir a
 - **GIVEN** um usuário autenticado interagindo com o cabeçalho
 - **WHEN** clica no botão "Sair"
 - **THEN** o sistema SHALL disparar o encerramento de sessão na API, limpar o estado local de autenticação e atualizar a interface para o modo anônimo
+
+### Requirement: Password Recovery and Reset Interface
+O sistema SHALL oferecer as páginas `/forgot-password` e `/reset-password` no tema Dark/Light Editorial com navegação a partir do login, validação inline de e-mail, força mínima e confirmação de nova senha, controle tátil de visibilidade e tratamento claro para links expirados ou inválidos.
+
+#### Scenario: Solicitação de recuperação de senha na tela forgot-password
+- **GIVEN** um usuário na página `/login` que aciona o link "Esqueci minha senha" e acessa `/forgot-password`
+- **WHEN** preenche um endereço de e-mail válido e envia o formulário
+- **THEN** o sistema SHALL chamar `POST /api/v1/auth/forgot-password` com feedback de loading e exibir estado neutro de confirmação orientando verificar caixa de entrada e spam
+
+#### Scenario: Validação de token e redefinição de senha na tela reset-password
+- **GIVEN** um usuário acessando `/reset-password?token=<token_valido>`
+- **WHEN** a validação inicial confirma o token e o usuário submete nova senha válida (8+ caracteres) igual ao campo de confirmação
+- **THEN** o sistema SHALL chamar `POST /api/v1/auth/reset-password` e redirecionar para `/login?reset=success`
+
+#### Scenario: Exibição de estado de link inválido ou expirado na tela reset-password
+- **GIVEN** um usuário acessando `/reset-password` sem token ou com token expirado/reutilizado
+- **WHEN** a API indica token inválido na verificação inicial ou na submissão
+- **THEN** a página SHALL informar claramente que o link expirou ou já foi utilizado e disponibilizar link acessível para solicitar nova recuperação em `/forgot-password`

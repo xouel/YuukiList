@@ -6,7 +6,7 @@
  * Paleta Mineral Asian Editorial: Acento Carmim (#E05347)
  */
 
-import React, { useState, useCallback, useMemo, type FormEvent, type FocusEvent } from 'react';
+import React, { useState, useCallback, useMemo, useRef, type FormEvent, type FocusEvent } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { LoginDto } from '../../../../../packages/shared/src/index.ts';
@@ -28,6 +28,9 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
+
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const resetSuccess = useMemo(() => searchParams?.get('reset') === 'success', [searchParams]);
 
   const redirectUrl = useMemo(() => {
     return searchParams?.get('redirect') || '/';
@@ -84,11 +87,14 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
         await login(values);
         window.location.href = redirectUrl || '/';
       } catch (err: any) {
-        const message =
-          err.statusCode === 401
-            ? 'Identificador ou senha incorretos. Verifique suas credenciais.'
-            : err.message || 'Erro ao realizar login. Tente novamente.';
+        const isAuthError = err.statusCode === 401 || err.code === 'INVALID_CREDENTIALS';
+        const message = isAuthError
+          ? 'Usuário/e-mail ou senha incorretos. Verifique suas credenciais.'
+          : err.message || 'Erro de conexão ou servidor ao autenticar. Tente novamente.';
         setApiError(message);
+        if (isAuthError) {
+          passwordInputRef.current?.focus();
+        }
       } finally {
         setIsSubmitting(false);
       }
@@ -106,6 +112,25 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
           Informe suas credenciais para gerenciar sua biblioteca e acompanhar estreias.
         </p>
       </div>
+
+      {resetSuccess && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="mb-5 p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-800/60 text-emerald-200 text-xs sm:text-sm flex items-start gap-2.5"
+        >
+          <svg
+            className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="leading-snug">Senha redefinida com sucesso! Acesse sua conta com a nova senha.</span>
+        </div>
+      )}
 
       {apiError && (
         <div
@@ -165,14 +190,23 @@ export function LoginForm({ embedded = false, onSwitchToRegister }: LoginFormPro
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)] mb-1.5"
-          >
-            Senha
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label
+              htmlFor="password"
+              className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]"
+            >
+              Senha
+            </label>
+            <Link
+              href="/forgot-password"
+              className="text-xs text-accent hover:underline font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
+            >
+              Esqueci minha senha
+            </Link>
+          </div>
           <div className="relative">
             <input
+              ref={passwordInputRef}
               id="password"
               name="password"
               type={showPassword ? 'text' : 'password'}

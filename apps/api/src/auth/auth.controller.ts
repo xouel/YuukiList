@@ -2,6 +2,8 @@ import type {
   RegisterDto,
   LoginDto,
   AuthUserResponse,
+  ForgotPasswordDto,
+  ResetPasswordDto,
 } from '../../../../packages/shared/src/index.ts';
 import { AuthService } from './auth.service.ts';
 import { AuthGuard } from './auth.guard.ts';
@@ -62,5 +64,17 @@ export class AuthController {
   ): Promise<AuthUserResponse> {
     const user = await this.authGuard.validateRequest(req, options);
     return user;
+  }
+
+  async requestPasswordReset(dto: ForgotPasswordDto): Promise<{ message: string }> {
+    return this.authService.requestPasswordReset(dto);
+  }
+
+  async validateResetToken(token: string): Promise<{ valid: boolean }> {
+    return this.authService.validateResetToken(token);
+  }
+
+  async resetPassword(dto: ResetPasswordDto): Promise<{ message: string }> {
+    return this.authService.resetPassword(dto);
   }
 }

@@ -1,5 +1,18 @@
 import type { UserRole } from './provisional.ts';
 
+export type AuthConflictField = 'email' | 'username';
+
+export type AuthErrorCode =
+  | 'VALIDATION_ERROR'
+  | 'INVALID_CREDENTIALS'
+  | 'UNAUTHORIZED'
+  | 'EMAIL_ALREADY_EXISTS'
+  | 'USERNAME_ALREADY_EXISTS'
+  | 'USER_ALREADY_EXISTS'
+  | 'RESET_TOKEN_INVALID'
+  | 'EMAIL_DELIVERY_CONFIG_ERROR'
+  | 'INTERNAL_ERROR';
+
 export interface RegisterDto {
   email: string;
   username: string;
@@ -9,6 +22,15 @@ export interface RegisterDto {
 export interface LoginDto {
   identifier: string;
   password: string;
+}
+
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+export interface ResetPasswordDto {
+  token: string;
+  newPassword: string;
 }
 
 export interface AuthUserResponse {
@@ -26,6 +48,7 @@ export interface SessionPayload {
   email: string;
   username: string;
   role?: UserRole;
+  tokenVersion?: number;
   iat: number;
   exp: number;
 }

@@ -6,6 +6,7 @@ import {
   UserRole,
 } from '../../../../packages/shared/src/index.ts';
 import type { UserRole as UserRoleType } from '../../../../packages/shared/src/index.ts';
+import { UserAlreadyExistsError } from './errors.ts';
 
 export interface UserRecord {
   id: string;
@@ -14,6 +15,7 @@ export interface UserRecord {
   username: string;
   normalizedUsername: string;
   passwordHash: string;
+  tokenVersion: number;
   role: UserRoleType;
   avatarUrl?: string | null;
   avatarFrame?: string | null;
@@ -33,11 +35,39 @@ export interface IUsersRepository {
   findByIdentifier(identifier: string): Promise<UserRecord | null>;
   setRole(id: string, role: UserRoleType): Promise<UserRecord | null>;
   updateProfile(id: string, data: Partial<UserRecord>): Promise<UserRecord | null>;
+  updatePasswordAndBumpVersion(id: string, passwordHash: string): Promise<UserRecord | null>;
   count(): Promise<number>;
   clear(): Promise<void>;
 }
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function mapPrismaUniqueConflict(err: unknown): UserAlreadyExistsError | null {
+  const e = err as { code?: string; meta?: { target?: unknown } } | null;
+  if (!e || e.code !== 'P2002') {
+    return null;
+  }
+
+  const rawTarget = Array.isArray(e.meta?.target)
+    ? e.meta?.target.join(',').toLowerCase()
+    : String(e.meta?.target || '').toLowerCase();
+
+  if (rawTarget.includes('username')) {
+    return new UserAlreadyExistsError('Este nome de usuário já está em uso.', {
+      code: 'USERNAME_ALREADY_EXISTS',
+      field: 'username',
+    });
+  }
+
+  if (rawTarget.includes('email')) {
+    return new UserAlreadyExistsError('Este e-mail já está cadastrado.', {
+      code: 'EMAIL_ALREADY_EXISTS',
+      field: 'email',
+    });
+  }
+
+  return new UserAlreadyExistsError('E-mail ou nome de usuário já cadastrado.');
+}
 
 export class UsersRepository implements IUsersRepository {
   private users: Map<string, UserRecord> = new Map();
@@ -59,6 +89,7 @@ export class UsersRepository implements IUsersRepository {
       username: dbUser.username,
       normalizedUsername: dbUser.normalizedUsername,
       passwordHash: dbUser.passwordHash,
+      tokenVersion: typeof dbUser.tokenVersion === 'number' ? dbUser.tokenVersion : 0,
       role: UserRole.USER,
       avatarUrl: dbUser.avatarUrl ?? null,
       avatarFrame: dbUser.avatarFrame ?? 'none',
@@ -84,7 +115,7 @@ export class UsersRepository implements IUsersRepository {
     const normalizedEmail = normalizeEmail(data.email);
     const normalizedUsername = normalizeUsername(data.username);
 
-    if (this.prisma) {
+    if (this.prisma && typeof this.prisma.user?.create === 'function') {
       try {
         const dbUser = await this.prisma.user.create({
           data: {
@@ -97,8 +128,13 @@ export class UsersRepository implements IUsersRepository {
           },
         });
         return this.mapPrismaUser(dbUser);
-      } catch {
-        // Fallback gracioso em caso de indisponibilidade transitória de rede
+      } catch (err: unknown) {
+        const conflict = mapPrismaUniqueConflict(err);
+        if (conflict) {
+          throw conflict;
+        }
+        const message = err instanceof Error ? err.message : 'Erro desconhecido';
+        throw new Error(`Falha ao persistir usuário no banco de dados: ${message}`);
       }
     }
 
@@ -109,6 +145,7 @@ export class UsersRepository implements IUsersRepository {
       username: data.username.trim(),
       normalizedUsername,
       passwordHash: data.passwordHash,
+      tokenVersion: 0,
       role: data.role || UserRole.USER,
       createdAt: now,
       updatedAt: now,
@@ -121,13 +158,9 @@ export class UsersRepository implements IUsersRepository {
   async findById(id: string): Promise<UserRecord | null> {
     if (!id) return null;
 
-    if (this.prisma && UUID_REGEX.test(id)) {
-      try {
-        const dbUser = await this.prisma.user.findUnique({ where: { id } });
-        if (dbUser) return this.mapPrismaUser(dbUser);
-      } catch {
-        // Fallback para memória
-      }
+    if (this.prisma && UUID_REGEX.test(id) && typeof this.prisma.user?.findUnique === 'function') {
+      const dbUser = await this.prisma.user.findUnique({ where: { id } });
+      if (dbUser) return this.mapPrismaUser(dbUser);
     }
 
     const user = this.users.get(id);
@@ -137,14 +170,15 @@ export class UsersRepository implements IUsersRepository {
   async findByEmail(email: string): Promise<UserRecord | null> {
     const target = normalizeEmail(email);
 
-    if (this.prisma) {
+    if (this.prisma && typeof this.prisma.user?.findUnique === 'function') {
       try {
         const dbUser = await this.prisma.user.findUnique({
           where: { normalizedEmail: target },
         });
-        if (dbUser) return this.mapPrismaUser(dbUser);
-      } catch {
-        // Fallback para memória
+        return dbUser ? this.mapPrismaUser(dbUser) : null;
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Erro desconhecido';
+        throw new Error(`Falha ao consultar e-mail no banco de dados: ${message}`);
       }
     }
 
@@ -159,14 +193,15 @@ export class UsersRepository implements IUsersRepository {
   async findByUsername(username: string): Promise<UserRecord | null> {
     const target = normalizeUsername(username);
 
-    if (this.prisma) {
+    if (this.prisma && typeof this.prisma.user?.findUnique === 'function') {
       try {
         const dbUser = await this.prisma.user.findUnique({
           where: { normalizedUsername: target },
         });
-        if (dbUser) return this.mapPrismaUser(dbUser);
-      } catch {
-        // Fallback para memória
+        return dbUser ? this.mapPrismaUser(dbUser) : null;
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Erro desconhecido';
+        throw new Error(`Falha ao consultar nome de usuário no banco de dados: ${message}`);
       }
     }
 
@@ -182,16 +217,17 @@ export class UsersRepository implements IUsersRepository {
     if (!identifier) return null;
     const target = identifier.trim().toLowerCase();
 
-    if (this.prisma) {
+    if (this.prisma && typeof this.prisma.user?.findFirst === 'function') {
       try {
         const dbUser = await this.prisma.user.findFirst({
           where: {
             OR: [{ normalizedEmail: target }, { normalizedUsername: target }],
           },
         });
-        if (dbUser) return this.mapPrismaUser(dbUser);
-      } catch {
-        // Fallback para memória
+        return dbUser ? this.mapPrismaUser(dbUser) : null;
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Erro desconhecido';
+        throw new Error(`Falha ao consultar identificador no banco de dados: ${message}`);
       }
     }
 
@@ -244,6 +280,29 @@ export class UsersRepository implements IUsersRepository {
       }
     }
 
+    this.users.set(id, existing);
+    return { ...existing };
+  }
+
+  async updatePasswordAndBumpVersion(id: string, passwordHash: string): Promise<UserRecord | null> {
+    if (!id) return null;
+
+    if (this.prisma && UUID_REGEX.test(id) && typeof this.prisma.user?.update === 'function') {
+      const dbUpdated = await this.prisma.user.update({
+        where: { id },
+        data: {
+          passwordHash,
+          tokenVersion: { increment: 1 },
+        },
+      });
+      return this.mapPrismaUser(dbUpdated);
+    }
+
+    const existing = this.users.get(id);
+    if (!existing) return null;
+    existing.passwordHash = passwordHash;
+    existing.tokenVersion = (existing.tokenVersion ?? 0) + 1;
+    existing.updatedAt = new Date();
     this.users.set(id, existing);
     return { ...existing };
   }

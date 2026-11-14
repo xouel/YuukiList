@@ -157,3 +157,4 @@ export async function optimizeProfileImageFile(
     lastModified: Date.now(),
   });
 }
+

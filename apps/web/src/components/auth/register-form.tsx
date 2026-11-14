@@ -81,11 +81,15 @@ export function RegisterForm({ embedded = false, onSwitchToLogin }: RegisterForm
         await register(values);
         window.location.href = '/';
       } catch (err: any) {
-        const message =
-          err.statusCode === 409
-            ? 'Email ou nome de usuário já cadastrado no YuukiList.'
-            : err.message || 'Erro ao criar conta. Verifique seus dados.';
+        const message = err.message || 'Erro ao criar conta. Verifique seus dados.';
         setApiError(message);
+        if (err.field === 'email' || err.serverCode === 'EMAIL_ALREADY_EXISTS') {
+          setErrors((prev) => ({ ...prev, email: message }));
+          setTouched((prev) => ({ ...prev, email: true }));
+        } else if (err.field === 'username' || err.serverCode === 'USERNAME_ALREADY_EXISTS') {
+          setErrors((prev) => ({ ...prev, username: message }));
+          setTouched((prev) => ({ ...prev, username: true }));
+        }
       } finally {
         setIsSubmitting(false);
       }

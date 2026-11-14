@@ -82,7 +82,6 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
 
   const register = useCallback(
     async (dto: RegisterDto): Promise<AuthUserResponse> => {
-      setIsLoading(true);
       setError(null);
       try {
         const newUser = await apiClient.register(dto);
@@ -92,8 +91,6 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
         const message = err.message || 'Erro ao criar conta';
         setError(message);
         throw err;
-      } finally {
-        setIsLoading(false);
       }
     },
     [apiClient]
@@ -101,7 +98,6 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
 
   const login = useCallback(
     async (dto: LoginDto): Promise<AuthUserResponse> => {
-      setIsLoading(true);
       setError(null);
       try {
         const loggedUser = await apiClient.login(dto);
@@ -111,8 +107,6 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
         const message = err.message || 'Identificador ou senha inválidos';
         setError(message);
         throw err;
-      } finally {
-        setIsLoading(false);
       }
     },
     [apiClient]

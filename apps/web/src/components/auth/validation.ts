@@ -59,3 +59,46 @@ export function validateLoginFields(values: LoginDto): LoginFormErrors {
 
   return errors;
 }
+
+export interface ForgotPasswordFormErrors {
+  email?: string;
+}
+
+export function validateForgotPasswordFields(values: { email?: string }): ForgotPasswordFormErrors {
+  const errors: ForgotPasswordFormErrors = {};
+
+  if (!values.email || !values.email.trim()) {
+    errors.email = 'O e-mail é obrigatório.';
+  } else if (!isValidEmail(values.email)) {
+    errors.email = 'Informe um endereço de e-mail válido (ex.: usuario@exemplo.com).';
+  }
+
+  return errors;
+}
+
+export interface ResetPasswordFormErrors {
+  password?: string;
+  confirmPassword?: string;
+}
+
+export function validateResetPasswordFields(values: {
+  password?: string;
+  confirmPassword?: string;
+}): ResetPasswordFormErrors {
+  const errors: ResetPasswordFormErrors = {};
+
+  if (!values.password) {
+    errors.password = 'A nova senha é obrigatória.';
+  } else if (!isValidPassword(values.password)) {
+    errors.password = 'A senha deve conter no mínimo 8 caracteres (máximo 128).';
+  }
+
+  if (!values.confirmPassword) {
+    errors.confirmPassword = 'Confirme sua nova senha.';
+  } else if (values.password && values.confirmPassword !== values.password) {
+    errors.confirmPassword = 'As senhas informadas não coincidem.';
+  }
+
+  return errors;
+}
+

@@ -1,0 +1,15 @@
+# X-Spec Change Metadata (Managed by X-Spec Deterministic Engine)
+schema_version: 2
+id: "040-auth-feedback-and-password-recovery"
+type: "feature"
+status: "ARCHIVED"
+skip_specs: false
+touched_capabilities:
+  - "auth-session"
+  - "auth-ui"
+base_specs:
+  auth-session: "sha256:845fe9fe0693783d642c9ddbe32971350dd9d54fd703ae5ce5d857c1d88c9422"
+  auth-ui: "sha256:6c3ecae2815d0b84c6f494feca03d6c9b3ba3baec4341cbd062d63680a2e88cc"
+impacted_files: []
+depends_on: []
+updated_at: "2026-11-14T03:58:40.789Z"

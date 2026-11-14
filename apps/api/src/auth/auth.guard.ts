@@ -6,7 +6,7 @@ import { UnauthorizedError } from './errors.ts';
 export class AuthGuard {
   private readonly tokenService: TokenService;
   private readonly usersRepository: UsersRepository;
-  private readonly userCache = new Map<string, { user: AuthUserResponse; expiresAt: number }>();
+  private readonly userCache = new Map<string, { user: AuthUserResponse; tokenVersion: number; expiresAt: number }>();
   private readonly cacheTtlMs: number;
 
   constructor(tokenService: TokenService, usersRepository: UsersRepository, cacheTtlMs = 45_000) {
@@ -59,8 +59,9 @@ export class AuthGuard {
     }
 
     const now = Date.now();
+    const tokenVersionInPayload = payload.tokenVersion ?? 0;
     const cached = options?.bypassCache ? undefined : this.userCache.get(payload.sub);
-    if (cached && cached.expiresAt > now) {
+    if (cached && cached.expiresAt > now && cached.tokenVersion === tokenVersionInPayload) {
       const authUser: AuthUserResponse = { ...cached.user };
       req.user = authUser;
       return authUser;
@@ -70,6 +71,12 @@ export class AuthGuard {
     if (!user) {
       this.userCache.delete(payload.sub);
       throw new UnauthorizedError('Usuário associado à sessão não existe');
+    }
+
+    const currentTokenVersion = user.tokenVersion ?? 0;
+    if (currentTokenVersion !== tokenVersionInPayload) {
+      this.userCache.delete(payload.sub);
+      throw new UnauthorizedError('Sessão revogada após redefinição de senha');
     }
 
     const authUser: AuthUserResponse = {
@@ -85,6 +92,7 @@ export class AuthGuard {
     if (this.cacheTtlMs > 0) {
       this.userCache.set(payload.sub, {
         user: authUser,
+        tokenVersion: currentTokenVersion,
         expiresAt: now + this.cacheTtlMs,
       });
     }
